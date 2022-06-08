@@ -46,18 +46,13 @@ join_districts <- function(dt, units, type) {
 }
 
 
-join_munis <- function(dt, units, type) {
+join_munis <- function(dt, units, dest) {
 
-    stopifnot(type == "o" | type == "d")
-    if (type == "d") {
-        key <- "EF02U5"
-        col <- "muni_d"
-    } else {
-          key <- "EF03U5"
-          col <- "muni_o"
-      }
-
-    do_join(dt, units, key, col)
+    unit <- get_unit("mu", dest)
+    ags <- get_ags(unit)
+    ## print(class(dt))
+    ## print(class(units))
+    do_join(dt, munis, ags, unit)
     
     return(NULL)
 }
@@ -67,6 +62,8 @@ do_join <- function(dt, units, key, col) {
 
     setkeyv(dt, key)
     setkeyv(units, "AGS")
+
     dt[units, (col) := i.GEN]
 
 }
+
