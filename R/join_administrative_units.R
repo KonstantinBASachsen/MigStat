@@ -1,24 +1,24 @@
 join_administries <- function(dt, states, districts, municipalities) {
 
-    join_states(dt, states, "d")
-    join_districts(dt, districts, "d")
-    join_munis(dt, municipalities, T)
+    sexony:::join_states(dt, states, T)
+    sexony:::join_districts(dt, districts, T)
+    sexony:::join_munis(dt, municipalities, T)
 
-    join_states(dt, states, "o")
-    join_districts(dt, districts, "o")
-    join_munis(dt, municipalities, F)
+    sexony:::join_states(dt, states, F)
+    sexony:::join_districts(dt, districts, F)
+    sexony:::join_munis(dt, municipalities, F)
 
     return(NULL)
 
 }
 
 
-join_states <- function(dt, units, type) {
+join_states <- function(dt, units, dest) {
 
     unit <- sexony:::get_unit("st", dest)
-    ags <- sexony::get_ags(unit)
+    ags <- sexony:::get_ags(unit)
     
-    do_join(dt, units, key, col)
+    sexony:::do_join(dt, units, ags, unit)
 
     return(NULL)
 }
@@ -26,9 +26,9 @@ join_states <- function(dt, units, type) {
 join_districts <- function(dt, units, dest) {
 
     unit <- sexony:::get_unit("di", dest)
-    ags <- sexony::get_ags(unit)
+    ags <- sexony:::get_ags(unit)
 
-    do_join(dt, units, key, col)
+    sexony:::do_join(dt, units, ags, unit)
     
     return(NULL)
 }
@@ -37,9 +37,9 @@ join_districts <- function(dt, units, dest) {
 join_munis <- function(dt, units, dest) {
 
     unit <- sexony:::get_unit("mu", dest)
-    ags <- sexony::get_ags(unit)
+    ags <- sexony:::get_ags(unit)
 
-    do_join(dt, munis, ags, unit)
+    sexony:::do_join(dt, munis, ags, unit)
     
     return(NULL)
 }
