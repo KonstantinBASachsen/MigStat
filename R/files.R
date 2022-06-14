@@ -26,8 +26,8 @@ read_shapes <- function(path) {
     districts <- sf::read_sf(paste(path, districts_file, sep = "/"))
     districts <- data.table::setDT(districts)
 
-    shapes <- list("states" = states, "districts" = districts, "munis" = munis)
-    
+    shapes <- list("state" = states, "district" = districts, "muni" = munis)
+    ### should get these names from function because I use them in utils as well
     return(shapes)    
     }
 
