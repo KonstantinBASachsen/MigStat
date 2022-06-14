@@ -31,7 +31,14 @@ read_shapes <- function(path) {
     return(shapes)    
     }
 
-
+##' Reads the example migration statistics
+##'
+##' Reads the example migration statistics and returns a data.table
+##' @title Read example migration statistics
+##' @param file file path of data
+##' @return data.table
+##' @export read_example
+##' @author Konstantin
 read_example <- function(file) {
 
     df <- foreign::read.spss(file, to.data.frame = TRUE)
