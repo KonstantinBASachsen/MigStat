@@ -53,13 +53,14 @@ join_munis <- function(dt, units, dest) {
     unit <- get_unit("mu", dest)
     ags <- get_ags(unit)
 
-    do_join(dt, munis, ags, unit)
+    do_join(dt, units, ags, unit)
     
     return(NULL)
 }
 
 do_join <- function(dt, units, key, col) {
 
+    i.GEN <- NULL
     setkeyv(dt, key)
     setkeyv(units, "AGS")
 
