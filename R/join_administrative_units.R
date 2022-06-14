@@ -1,3 +1,17 @@
+##' Joins names of administrative units to migration statistics.
+##'
+##' This function uses the columns in the migration statistics that
+##' hold the keys (e.g. ags) and uses this to join the corresponding
+##' names from data.tables.
+##' @title join unit names
+##' @param dt data.table migration statistics
+##' @param states data.table federal states
+##' @param districts data.table districts
+##' @param municipalities data.table municipalities
+##' @return NULL, updates dt instead
+##' @import data.table
+##' @export join_administries
+##' @author Konstantin
 join_administries <- function(dt, states, districts, municipalities) {
 
     sexony:::join_states(dt, states, T)
@@ -44,18 +58,6 @@ join_munis <- function(dt, units, dest) {
     return(NULL)
 }
 
-##' Helper function that performs the join of names of administrative
-##' units to migration statistics.
-##' 
-##' @title join names of administrative units from shapefile
-##' @param dt migration statistics data.table
-##' @param units data.table administrative units
-##' @param key key column in migration statistics data.table
-##' @param col column name of new column in migratin statistics. Holds
-##'     the joined administrative units.
-##' @import data.table
-##' @return NULL, dt is updated
-##' @author Konstantin
 do_join <- function(dt, units, key, col) {
 
     setkeyv(dt, key)
