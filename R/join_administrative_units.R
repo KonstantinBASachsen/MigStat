@@ -57,7 +57,16 @@ join_munis <- function(dt, units, dest) {
     return(NULL)
 }
 
-
+##' Helper function
+##' @title join names of administrative units from shapefile
+##' @param dt migration statistics data.table
+##' @param units data.table administrative units
+##' @param key key column in migration statistics data.table
+##' @param col column name of new column in migratin statistics. Holds
+##'     the joined administrative units.
+##' @import data.table
+##' @return
+##' @author Konstantin
 do_join <- function(dt, units, key, col) {
 
     setkeyv(dt, key)
