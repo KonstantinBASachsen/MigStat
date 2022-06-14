@@ -1,22 +1,15 @@
 library(tinytest)
 
-map_path <- "/home/konstantin/Documents/sexony/data/vg250_3112.utm32s.shape.ebenen/vg250_ebenen"
-muni_file  <- "VG250_GEM.shp"
-states_file <- "VG250_LAN.shp"
-districts_file <- "VG250_KRS.shp"
+map_path <- "/home/konstantin/Documents/sexony/inst/extdata/vg250_3112.utm32s.shape.ebenen/vg250_ebenen"
+shapes <- sexony::read_shapes(map_path)
 
+example_path <- "~/network/Rohdaten/Wanderungsdaten FDZ/Dokumente StaLa/WandZuzug_dummy_2010-2013_4480-2021.sav"
 
-df <- read.spss("~/network/Rohdaten/Wanderungsdaten FDZ/Dokumente StaLa/WandZuzug_dummy_2010-2013_4480-2021.sav",
-                to.data.frame = TRUE)
-dt <- setDT(df)
+df <- foreign::read.spss(example_path, to.data.frame = TRUE)
+dt <- data.table::setDT(df)
 
-munis <- read_sf(paste(map_path, muni_file, sep = "/"))
-munis <- setDT(munis)
+sexony::join_administries(dt, shapes$states, shapes$districts, shapes$munis)
 
-states <- read_sf(paste(map_path, states_file, sep = "/"))
-states <- setDT(states)
+wanted_cols <- c("state_o", "district_d", "muni_o")
 
-districts <- read_sf(paste(map_path, districts_file, sep = "/"))
-districts <- setDT(districts)
-
-labels <- attr(dt, "variable.labels")
+expect_equal(sum(wanted_cols %in% colnames(dt)), length(wanted_cols))
