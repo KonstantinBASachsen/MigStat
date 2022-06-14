@@ -30,3 +30,13 @@ read_shapes <- function(path) {
     
     return(shapes)    
     }
+
+
+read_example <- function(file) {
+
+    df <- foreign::read.spss(file, to.data.frame = TRUE)
+    dt <- data.table::setDT(df)
+    
+    return(dt)
+    
+}
