@@ -15,30 +15,18 @@ join_administries <- function(dt, states, districts, municipalities) {
 
 join_states <- function(dt, units, type) {
 
-    stopifnot(type == "o" | type == "d")
-    if (type == "d") {
-        key <- "EF02U2"
-        col <- "state_d"
-    } else {
-          key <- "EF03U2"
-          col <- "state_o"
-      }
-
+    unit <- sexony:::get_unit("st", dest)
+    ags <- sexony::get_ags(unit)
+    
     do_join(dt, units, key, col)
 
     return(NULL)
 }
 
-join_districts <- function(dt, units, type) {
+join_districts <- function(dt, units, dest) {
 
-    stopifnot(type == "o" | type == "d")
-    if (type == "d") {
-        key <- "EF02U4"
-        col <- "district_d"
-    } else {
-          key <- "EF03U4"
-          col <- "district_o"
-      }
+    unit <- sexony:::get_unit("di", dest)
+    ags <- sexony::get_ags(unit)
 
     do_join(dt, units, key, col)
     
@@ -48,10 +36,9 @@ join_districts <- function(dt, units, type) {
 
 join_munis <- function(dt, units, dest) {
 
-    unit <- get_unit("mu", dest)
-    ags <- get_ags(unit)
-    ## print(class(dt))
-    ## print(class(units))
+    unit <- sexony:::get_unit("mu", dest)
+    ags <- sexony::get_ags(unit)
+
     do_join(dt, munis, ags, unit)
     
     return(NULL)
