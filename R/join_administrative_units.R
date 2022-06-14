@@ -2,11 +2,11 @@ join_administries <- function(dt, states, districts, municipalities) {
 
     join_states(dt, states, "d")
     join_districts(dt, districts, "d")
-    join_munis(dt, municipalities, "d")
+    join_munis(dt, municipalities, T)
 
     join_states(dt, states, "o")
     join_districts(dt, districts, "o")
-    join_munis(dt, municipalities, "o")
+    join_munis(dt, municipalities, F)
 
     return(NULL)
 
