@@ -14,13 +14,13 @@
 ##' @author Konstantin
 join_administries <- function(dt, states, districts, municipalities) {
 
-    sexony:::join_states(dt, states, T)
-    sexony:::join_districts(dt, districts, T)
-    sexony:::join_munis(dt, municipalities, T)
+    join_states(dt, states, T)
+    join_districts(dt, districts, T)
+    join_munis(dt, municipalities, T)
 
-    sexony:::join_states(dt, states, F)
-    sexony:::join_districts(dt, districts, F)
-    sexony:::join_munis(dt, municipalities, F)
+    join_states(dt, states, F)
+    join_districts(dt, districts, F)
+    join_munis(dt, municipalities, F)
 
     return(NULL)
 
@@ -29,20 +29,20 @@ join_administries <- function(dt, states, districts, municipalities) {
 
 join_states <- function(dt, units, dest) {
 
-    unit <- sexony:::get_unit("st", dest)
-    ags <- sexony:::get_ags(unit)
+    unit <- get_unit("st", dest)
+    ags <- get_ags(unit)
     
-    sexony:::do_join(dt, units, ags, unit)
+    do_join(dt, units, ags, unit)
 
     return(NULL)
 }
 
 join_districts <- function(dt, units, dest) {
 
-    unit <- sexony:::get_unit("di", dest)
-    ags <- sexony:::get_ags(unit)
+    unit <- get_unit("di", dest)
+    ags <- get_ags(unit)
 
-    sexony:::do_join(dt, units, ags, unit)
+    do_join(dt, units, ags, unit)
     
     return(NULL)
 }
@@ -50,10 +50,10 @@ join_districts <- function(dt, units, dest) {
 
 join_munis <- function(dt, units, dest) {
 
-    unit <- sexony:::get_unit("mu", dest)
-    ags <- sexony:::get_ags(unit)
+    unit <- get_unit("mu", dest)
+    ags <- get_ags(unit)
 
-    sexony:::do_join(dt, munis, ags, unit)
+    do_join(dt, munis, ags, unit)
     
     return(NULL)
 }
