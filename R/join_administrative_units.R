@@ -57,7 +57,9 @@ join_munis <- function(dt, units, dest) {
     return(NULL)
 }
 
-##' Helper function
+##' Helper function that performs the join of names of administrative
+##' units to migration statistics.
+##' 
 ##' @title join names of administrative units from shapefile
 ##' @param dt migration statistics data.table
 ##' @param units data.table administrative units
@@ -65,7 +67,7 @@ join_munis <- function(dt, units, dest) {
 ##' @param col column name of new column in migratin statistics. Holds
 ##'     the joined administrative units.
 ##' @import data.table
-##' @return
+##' @return NULL, dt is updated
 ##' @author Konstantin
 do_join <- function(dt, units, key, col) {
 
