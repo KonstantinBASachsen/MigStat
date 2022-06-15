@@ -1,4 +1,14 @@
-
+##' Get wins (in-migration) for regions
+##'
+##' This function returns the number of in-migrations for every region
+##' of the specified type in the data.table.
+##' @title Get wins per region
+##' @param dt data.table
+##' @param us "unit simple". One of the following strings: "st"
+##'     (federal_states), "di" (districts) or "mu" (municipalities).
+##' @return data.table with columns: unit, ags, flow
+##' @export get_wins
+##' @author Konstantin
 get_wins <- function(dt, us) {
 
     wins <- get_flow(dt, us, T)
@@ -7,13 +17,24 @@ get_wins <- function(dt, us) {
 }
 
 
+##' Get losses (out-migration) for regions
+##'
+##' This function returns the number of out-migrations for every region
+##' of the specified type in the data.table.
+##' @title Get losses per region
+##' @param dt data.table
+##' @param us "unit simple". One of the following strings: "st"
+##'     (federal_states), "di" (districts) or "mu" (municipalities).
+##' @return data.table with columns: unit, ags, flow
+##' @export get_losses
+##' @author Konstantin
 get_losses <- function(dt, us) {
 
     losses <- get_flow(dt, us, F)
 
-    return(losses)
-    
+    return(losses)    
 }
+
 
 get_flow <- function(dt, us, dest) {
 
@@ -30,5 +51,20 @@ get_flow <- function(dt, us, dest) {
     dt[, "flow" := NULL]
     
     return(flows)
+}
 
+
+join_flows <- function(shapes, flows) {
+
+    unit <- colnames(flows)[1]
+    ags <- get_ags(unit)
+    flows <- flows[complete.cases(flows)]
+    unit <- strsplit(unit, "_")[[1]][1]
+    shape <- shps[[unit]]
+    data.table::setkeyv(flows, ags)
+    data.table::setkeyv(shape, "AGS")
+ 
+    shape <- shape[flows, "flows" := i.flow]
+
+    return(shape)    
 }
