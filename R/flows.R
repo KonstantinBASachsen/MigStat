@@ -56,15 +56,19 @@ get_flow <- function(dt, us, dest) {
 
 join_flows <- function(shapes, flows) {
 
+    i.flow <- GF <- NULL
     unit <- colnames(flows)[1]
     ags <- get_ags(unit)
-    flows <- flows[complete.cases(flows)]
+    flows <- flows[stats::complete.cases(flows)]
     unit <- strsplit(unit, "_")[[1]][1]
-    shape <- shps[[unit]]
+    shape <- shapes[[unit]]
     data.table::setkeyv(flows, ags)
     data.table::setkeyv(shape, "AGS")
  
     shape <- shape[flows, "flows" := i.flow]
+    shape <- shape[GF == 4, ] ### other numbers hold differnt
+                              ### geometries, like without water I
+                              ### think I read in some documentation.
 
     return(shape)    
 }
