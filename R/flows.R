@@ -45,8 +45,9 @@ get_flow <- function(dt, us, dest) {
     
     unit <- get_unit(us, dest)
     ags <- get_ags(unit)
-    dt[, "flow" := .N, by = unit]
-    flows <- dt[, .SD[1], by = unit]
+    dtf <- dt
+    dtf[, "flow" := .N, by = ags]
+    flows <- dtf[, .SD[1], by = ags]
     flows <- flows[, .SD, .SDcols = c(unit, ags, "flow")]
     dt[, "flow" := NULL]
     
