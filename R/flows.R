@@ -72,3 +72,15 @@ join_flows <- function(shapes, flows) {
 
     return(shape)    
 }
+
+get_flows <- function(dt, us, rec_NA = TRUE) {
+
+    unit_o <- get_unit(us, FALSE)
+    unit_d <- get_unit(us, TRUE)
+    dtf <- dt
+    dtf[, "flow" := .N, by = .(unit_o, unit_d)]
+    dtf <- dtf[, .(unit_o, unit_d, flow)]
+    dtf[is.na(state_o), state_o := "NA"]
+
+    return(dtf)
+}
