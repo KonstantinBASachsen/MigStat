@@ -77,7 +77,8 @@ join_flows <- function(shapes, flows, key, unit) {
 
 get_flows <- function(dt, us, rec_NA = TRUE) {
 
-    ### This function gets bivariate flows
+### This function gets bivariate flows
+    
     unit_o <- get_unit(us, FALSE)
     unit_d <- get_unit(us, TRUE)
     dtf <- dt

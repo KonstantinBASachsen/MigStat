@@ -15,13 +15,13 @@
 join_administries <- function(dt, states, districts, municipalities) {
 
     dtj <- dt
-    dtj <- join_states(dt, states, T)
-    dtj <- join_districts(dt, districts, T)
-    dtj <- join_munis(dt, municipalities, T)
+    dtj <- join_states(dtj, states, T)
+    dtj <- join_districts(dtj, districts, T)
+    dtj <- join_munis(dtj, municipalities, T)
 
-    dtj <- join_states(dt, states, F)
-    dtj <- join_districts(dt, districts, F)
-    dtj <- join_munis(dt, municipalities, F)
+    dtj <- join_states(dtj, states, F)
+    dtj <- join_districts(dtj, districts, F)
+    dtj <- join_munis(dtj, municipalities, F)
 
     return(dtj)
 
@@ -63,7 +63,7 @@ join_munis <- function(dt, units, dest) {
 
 do_join <- function(dt, units, key, col) {
     ## performs full join
-    i.GEN <- NULL
+    i.GEN <- AGS <- NULL
     setkeyv(dt, key)
     setkeyv(units, "AGS")
     unique_keys <- unique(c(dt[, get(key)], units[, AGS]))
