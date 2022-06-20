@@ -61,12 +61,16 @@ join_munis <- function(dt, units, dest) {
 
 
 do_join <- function(dt, units, key, col) {
-
+    ## performs full join
     i.GEN <- NULL
     setkeyv(dt, key)
     setkeyv(units, "AGS")
+    unique_keys <- unique(c(dt[, get(key)], units[, AGS]))
+    dtu <- dt[unique_keys]
+    setkeyv(dtu, key)
+    dtu[units, (col) := i.GEN]
 
-    dt[units, (col) := i.GEN]
+    return(dtu)
 
 }
 

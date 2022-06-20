@@ -55,15 +55,15 @@ get_flow <- function(dt, us, dest) {
 }
 
 
-join_flows <- function(shapes, flows) {
+join_flows <- function(shapes, flows, key, unit) {
 
     i.flow <- GF <- NULL
-    unit <- colnames(flows)[1]
-    ags <- get_ags(unit)
+    ## unit <- colnames(flows)[unit_pos]
+    ## ags <- get_ags(unit)
     flows <- flows[stats::complete.cases(flows)]
-    unit <- strsplit(unit, "_")[[1]][1]
+##    unit <- strsplit(unit, "_")[[1]][1]
     shape <- shapes[[unit]]
-    data.table::setkeyv(flows, ags)
+    data.table::setkeyv(flows, key)
     data.table::setkeyv(shape, "AGS")
  
     shape <- shape[flows, "flows" := i.flow]
@@ -74,8 +74,10 @@ join_flows <- function(shapes, flows) {
     return(shape)    
 }
 
+
 get_flows <- function(dt, us, rec_NA = TRUE) {
 
+    ### This function gets bivariate flows
     unit_o <- get_unit(us, FALSE)
     unit_d <- get_unit(us, TRUE)
     dtf <- dt
