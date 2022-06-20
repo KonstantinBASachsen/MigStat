@@ -4,11 +4,10 @@ example_path <- "~/network/Rohdaten/Wanderungsdaten FDZ/Dokumente StaLa/WandZuzu
 dt <- read_example(example_path)
 shapes <- read_shapes(map_path)
 
-join_administries(dt, shapes$states, shapes$districts, shapes$munis)
-
+dt <- join_administries(dt, shapes$state, shapes$district, shapes$muni)
 
 losses <- sexony:::get_flow(dt, "di", F)
-expect_equal(losses[is.na(district_o), flow], 34)
+expect_equal(sum(losses[is.na(district_o) & !is.na(EF03U4), flow]), 34)
 
 wins <- sexony:::get_flow(dt, "mu", T)
 expect_equal(wins[muni_d == "München", flow], 8)
