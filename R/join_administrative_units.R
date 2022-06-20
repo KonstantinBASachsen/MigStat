@@ -14,15 +14,16 @@
 ##' @author Konstantin
 join_administries <- function(dt, states, districts, municipalities) {
 
-    join_states(dt, states, T)
-    join_districts(dt, districts, T)
-    join_munis(dt, municipalities, T)
+    dtj <- dt
+    dtj <- join_states(dt, states, T)
+    dtj <- join_districts(dt, districts, T)
+    dtj <- join_munis(dt, municipalities, T)
 
-    join_states(dt, states, F)
-    join_districts(dt, districts, F)
-    join_munis(dt, municipalities, F)
+    dtj <- join_states(dt, states, F)
+    dtj <- join_districts(dt, districts, F)
+    dtj <- join_munis(dt, municipalities, F)
 
-    return(NULL)
+    return(dtj)
 
 }
 
@@ -32,9 +33,9 @@ join_states <- function(dt, units, dest) {
     unit <- get_unit("st", dest)
     ags <- get_ags(unit)
     
-    do_join(dt, units, ags, unit)
+    dtj <- do_join(dt, units, ags, unit)
 
-    return(NULL)
+    return(dtj)
 }
 
 
@@ -43,9 +44,9 @@ join_districts <- function(dt, units, dest) {
     unit <- get_unit("di", dest)
     ags <- get_ags(unit)
 
-    do_join(dt, units, ags, unit)
+    dtj <- do_join(dt, units, ags, unit)
     
-    return(NULL)
+    return(dtj)
 }
 
 
@@ -54,9 +55,9 @@ join_munis <- function(dt, units, dest) {
     unit <- get_unit("mu", dest)
     ags <- get_ags(unit)
 
-    do_join(dt, units, ags, unit)
+    dtj <- do_join(dt, units, ags, unit)
     
-    return(NULL)
+    return(dtj)
 }
 
 
