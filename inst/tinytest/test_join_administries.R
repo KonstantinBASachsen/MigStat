@@ -5,8 +5,13 @@ example_path <- "~/network/Rohdaten/Wanderungsdaten FDZ/Dokumente StaLa/WandZuzu
 dt <- read_example(example_path)
 shapes <- read_shapes(map_path)
 
-join_administries(dt, shapes$states, shapes$districts, shapes$munis)
+dt <- join_administries(dt, shapes$state, shapes$district, shapes$muni)
 
-wanted_cols <- c("state_o", "district_d", "muni_o")
+units <- c(get_unit("st", T), get_unit("st", F), get_unit("di", T), get_unit("di", F),
+           get_unit("mu", T), get_unit("mu", F))
 
-expect_equal(sum(wanted_cols %in% colnames(dt)), length(wanted_cols))
+key <- get_ags(get_unit("st", F))
+expect_equal(length(unique(dt[, ..key][[1]])), 18)
+
+expect_equal(sum(units %in% colnames(dt)), length(units))
+
