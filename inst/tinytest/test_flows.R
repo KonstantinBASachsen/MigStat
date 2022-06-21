@@ -6,8 +6,8 @@ shapes <- read_shapes(map_path)
 
 dt <- join_administries(dt, shapes$state, shapes$district, shapes$muni)
 
-losses <- sexony:::get_flow(dt, "di", F)
+losses <- get_losses(dt, "di")
 expect_equal(sum(losses[is.na(district_o) & !is.na(EF03U4), flow]), 34)
 
-wins <- sexony:::get_flow(dt, "mu", T)
+wins <- get_wins(dt, "mu")
 expect_equal(wins[muni_d == "München", flow], 8)
