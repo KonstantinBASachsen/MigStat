@@ -23,7 +23,6 @@ join_administries <- function(dt, states, districts, municipalities, full) {
     dtj <- join_munis(dtj, municipalities, full)
 
     return(dtj)
-
 }
 
 
