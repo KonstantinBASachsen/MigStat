@@ -66,15 +66,15 @@ join_units <- function(dt, us, to_join, dest, full) {
 do_join <- function(dt, to_join, key, col, full = FALSE) {
     ## performs full join
     i.GEN <- AGS <- NULL
-    setkeyv(dt, key)
-    setkeyv(to_join, "AGS")
     if(full == TRUE) {
+        setkeyv(dt, key)
         unique_keys <- unique(c(dt[, get(key)], to_join[, AGS]))
         dtu <- dt[unique_keys]
     } else {
         dtu <- dt
     }
     setkeyv(dtu, key)
+    setkeyv(to_join, "AGS")
     dtu[to_join, (col) := i.GEN]
 
     return(dtu)
