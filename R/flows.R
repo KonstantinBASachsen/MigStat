@@ -104,6 +104,7 @@ get_flows <- function(dt, us, simplify = TRUE) {
     dtf[, "flow" := .N, by = c(ags_o, ags_d)]
     if (simplify == TRUE) {
         dtf <- dtf[, .SD, .SDcols = c(ags_o, ags_d, unit_o, unit_d, "flow")]
+        dtf <- dtf[, .SD[1], .SDcols = c(ags_o, ags_d, unit_o, unit_d, "flow")]
     }
     return(dtf)
 }
