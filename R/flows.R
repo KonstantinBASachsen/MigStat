@@ -78,6 +78,22 @@ join_flows <- function(shapes, flows, key, unit) {
 }
 
 
+##' Computes flows between given regions.
+##'
+##' Computes all flows between given regions (bivariate
+##' flows). Currently only supportes flows between regions of the same
+##' type.
+##' @title Flows between regions
+##' @param dt data.table
+##' @param us unit simple, one of the following: c("st", "di", "mu")
+##' @param simplify If true a simplified data.table is return with the
+##'     following columns only: ags (allgemeiner Gemeindeschlüssel,
+##'     unique numeric identifier of region) of origin and
+##'     destination, unit of origin and destination and flow.
+##' @return data.table
+##' @import data.table
+##' @export get_flows
+##' @author Konstantin
 get_flows <- function(dt, us, simplify = TRUE) {
 
     unit_o <- get_unit(us, FALSE)
