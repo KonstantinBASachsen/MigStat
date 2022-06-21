@@ -78,16 +78,16 @@ join_flows <- function(shapes, flows, key, unit) {
 }
 
 
-get_flows <- function(dt, us) {
+get_flows <- function(dt, us, simplify = TRUE) {
 
-### This function gets bivariate flows
-    flow <- . <- NULL
     unit_o <- get_unit(us, FALSE)
     unit_d <- get_unit(us, TRUE)
+    ags_o <- get_ags(unit_o)
+    ags_d <- get_ags(unit_d)
     dtf <- dt
-    dtf[, "flow" := .N, by = .(unit_o, unit_d)]
-    dtf <- dtf[, .(unit_o, unit_d, flow)]
-##    dtf[is.na(state_o), state_o := "NA"]
-
+    dtf[, "flow" := .N, by = c(ags_o, ags_d)]
+    if (simplify == TRUE) {
+        dtf <- dtf[, .SD, .SDcols = c(ags_o, ags_d, unit_o, unit_d, "flow")]
+    }
     return(dtf)
 }
