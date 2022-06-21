@@ -8,6 +8,9 @@
 ##' @param states data.table federal states
 ##' @param districts data.table districts
 ##' @param municipalities data.table municipalities
+##' @param full If true, a full join is performed. This means that all
+##'     unit names are joined to the data.table, even if no flow is
+##'     present for those units. This is useful for plotting.
 ##' @return joined data.table with names of administrative regions
 ##' @import data.table
 ##' @export join_administries
