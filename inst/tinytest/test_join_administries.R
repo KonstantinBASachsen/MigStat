@@ -5,7 +5,7 @@ example_path <- "~/network/Rohdaten/Wanderungsdaten FDZ/Dokumente StaLa/WandZuzu
 dt <- read_example(example_path)
 shapes <- read_shapes(map_path)
 
-dt <- join_administries(dt, shapes$state, shapes$district, shapes$muni)
+dt <- join_administries(dt, shapes$state, shapes$district, shapes$muni, full = TRUE)
 
 units <- c(get_unit("st", T), get_unit("st", F), get_unit("di", T), get_unit("di", F),
            get_unit("mu", T), get_unit("mu", F))

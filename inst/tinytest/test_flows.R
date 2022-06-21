@@ -4,7 +4,7 @@ example_path <- "~/network/Rohdaten/Wanderungsdaten FDZ/Dokumente StaLa/WandZuzu
 dt <- read_example(example_path)
 shapes <- read_shapes(map_path)
 
-dt <- join_administries(dt, shapes$state, shapes$district, shapes$muni)
+dt <- join_administries(dt, shapes$state, shapes$district, shapes$muni, full = TRUE)
 
 losses <- get_losses(dt, "di")
 expect_equal(sum(losses[is.na(district_o) & !is.na(EF03U4), flow]), 34)
