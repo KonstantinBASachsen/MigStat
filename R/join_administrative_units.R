@@ -8,7 +8,7 @@
 ##' @param states data.table federal states
 ##' @param districts data.table districts
 ##' @param municipalities data.table municipalities
-##' @return NULL, updates dt instead
+##' @return joined data.table with names of administrative regions
 ##' @import data.table
 ##' @export join_administries
 ##' @author Konstantin

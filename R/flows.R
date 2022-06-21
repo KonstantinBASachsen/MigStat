@@ -56,7 +56,10 @@ get_flow <- function(dt, us, dest) {
 
 
 join_flows <- function(shapes, flows, key, unit) {
-
+    ### do I still need this function? I wrote it because I wanted to
+    ### retain all the regions with no flows for plotting but
+    ### join_administries now does a full join so all regions with no
+    ### flows are kept
     i.flow <- GF <- NULL
     ## unit <- colnames(flows)[unit_pos]
     ## ags <- get_ags(unit)
