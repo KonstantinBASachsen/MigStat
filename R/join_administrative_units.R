@@ -15,61 +15,61 @@
 join_administries <- function(dt, states, districts, municipalities) {
 
     dtj <- dt
-    dtj <- join_states(dtj, states, T)
-    dtj <- join_districts(dtj, districts, T)
-    dtj <- join_munis(dtj, municipalities, T)
-
-    dtj <- join_states(dtj, states, F)
-    dtj <- join_districts(dtj, districts, F)
-    dtj <- join_munis(dtj, municipalities, F)
+    dtj <- join_states(dtj, states)
+    dtj <- join_districts(dtj, districts)
+    dtj <- join_munis(dtj, municipalities)
 
     return(dtj)
 
 }
 
 
-join_states <- function(dt, units, dest) {
+join_states <- function(dt, to_join) {
 
-    unit <- get_unit("st", dest)
-    ags <- get_ags(unit)
-    
-    dtj <- do_join(dt, units, ags, unit)
+    dtj <- join_units(dt, us = "st", to_join = to_join, dest = TRUE)
+    dtj <- join_units(dtj, us = "st", to_join = to_join, dest = FALSE)
 
     return(dtj)
 }
 
 
-join_districts <- function(dt, units, dest) {
+join_districts <- function(dt, to_join) {
 
-    unit <- get_unit("di", dest)
-    ags <- get_ags(unit)
+    dtj <- join_units(dt, us = "di", to_join = to_join, dest = TRUE)
+    dtj <- join_units(dtj, us = "di", to_join = to_join, dest = FALSE)
 
-    dtj <- do_join(dt, units, ags, unit)
-    
     return(dtj)
 }
 
 
-join_munis <- function(dt, units, dest) {
+join_munis <- function(dt, to_join) {
 
-    unit <- get_unit("mu", dest)
-    ags <- get_ags(unit)
-
-    dtj <- do_join(dt, units, ags, unit)
+    dtj <- join_units(dt, us = "mu", to_join = to_join, dest = TRUE)
+    dtj <- join_units(dtj, us = "mu", to_join = to_join, dest = FALSE)
     
     return(dtj)
 }
 
+join_units <- function(dt, us, to_join, dest) {
 
-do_join <- function(dt, units, key, col) {
+    unit <- get_unit(us, dest)
+    ags <- get_ags(unit)
+
+    dtj <- do_join(dt, to_join, ags, unit)
+    
+    return(dtj)
+
+}
+
+do_join <- function(dt, to_join, key, col) {
     ## performs full join
     i.GEN <- AGS <- NULL
     setkeyv(dt, key)
-    setkeyv(units, "AGS")
-    unique_keys <- unique(c(dt[, get(key)], units[, AGS]))
+    setkeyv(to_join, "AGS")
+    unique_keys <- unique(c(dt[, get(key)], to_join[, AGS]))
     dtu <- dt[unique_keys]
     setkeyv(dtu, key)
-    dtu[units, (col) := i.GEN]
+    dtu[to_join, (col) := i.GEN]
 
     return(dtu)
 
