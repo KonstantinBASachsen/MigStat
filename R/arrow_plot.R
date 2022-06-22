@@ -16,6 +16,11 @@ origin_as_row <- function(dt, o_ags, name) {
 ### be found among the destinations. This is because it might be of
 ### different type. For example if we consider moves from one
 ### municipality to all states
+###
+### It adds a new row with the name of the origin to the names of the
+### destination and the ags of origin to the ags of destination. Seems
+### a little weird but then one column can be used to join names or
+### geoms
 
     ags <- dt[, ..o_ags][[1]][1]
     new_row <- t(c(NA, NA, name, ags, NA))
@@ -90,4 +95,16 @@ na_flows_to_0 <- function(dt) {
     dtf <- dtf[is.na(flow), "flow" := 0]
 
     return(dtf)
+}
+
+arrow_plot <- function(dt, o_idx, dtarrow) {
+
+    plot <- ggplot(sf::st_set_geometry(dtf, dtf$geom)) +
+        geom_sf() +
+        geom_curve(data = dtarrow,
+                   aes(x = centers[[o_idx]][1],
+                       y = centers[[o_idx]][2], xend = xend,
+                       yend = yend, group = place, size = flow),
+                   colour = "red", angle = 0, arrow = arrow())
+    return(plot)
 }
