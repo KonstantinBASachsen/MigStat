@@ -65,3 +65,29 @@ join_geom <- function(dt, units, o_us, d_us) {
 
     return(dtj)
 }
+
+arrow_end_points <- function(dt, rm_centers = TRUE) {
+
+    ret_el <- function(l, idx) { el <- l[idx]; return(el) }
+
+    dta <- dt
+    dta$centers <- sf::st_centroid(dta$geom)
+    dta$xend <- sapply(dta$centers, function(x) ret_el(x, 1))
+    dta$yend <- sapply(dta$centers, function(x) ret_el(x, 2))
+    dta[dest == TRUE, "xend" := xend + 1]
+    dta[dest == TRUE, "yend" := yend + 1]
+    if(rm_centers == TRUE) {
+        dta[, "centers" := NULL]
+    }
+    
+    return(dta)
+}
+
+
+na_flows_to_0 <- function(dt) {
+
+    dtf <- data.table::copy(dt)
+    dtf <- dtf[is.na(flow), "flow" := 0]
+
+    return(dtf)
+}
