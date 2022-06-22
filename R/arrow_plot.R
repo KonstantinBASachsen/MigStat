@@ -52,8 +52,9 @@ simplify_dt <- function(dt) {
 
 add_dest <- function(dt, ags) {
 
-    dtd <- dt[, "dest" := fifelse(key == ags, TRUE, FALSE)]
-
+    dtd <- dt[, "dest" := fifelse(key == ags & !is.na(flow), TRUE, FALSE)]
+    ## NA on flow is checked because currently
+    ## add_destination_with_0_flows adds a
     return(dtd)
 }
 
