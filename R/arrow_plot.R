@@ -1,6 +1,8 @@
 
 where_to <- function(dt, o_col, o_name, d_col) {
 
+    flow <- NULL
+    
     o_ags <- get_ags(o_col)
     d_ags <- get_ags(d_col)
     dtf <- dt[, .SD, .SDcols = c(o_col, o_ags, d_col, d_ags)]
@@ -21,10 +23,10 @@ origin_as_row <- function(dt, o_ags, name) {
 ### destination and the ags of origin to the ags of destination. Seems
 ### a little weird but then one column can be used to join names or
 ### geoms
-
+    ..o_ags <- NULL
     ags <- dt[, ..o_ags][[1]][1]
     new_row <- t(c(NA, NA, name, ags, NA))
-    colnames(new_row) <- colnames(dtf)
+    colnames(new_row) <- colnames(dt)
     dtr <- rbind(dt,  new_row)
 
     return(dtr)
@@ -37,7 +39,7 @@ add_destinations_with_0_flows <- function(dt, d_us, units) {
     
     unit <- get_unit(us = d_us, dest = TRUE)
     unit <- strsplit(unit, "_")[[1]][1]
-    dtj <- join_units(dtf, d_us, shps[[unit]], dest = TRUE, full = TRUE)
+    dtj <- join_units(dt, d_us, units[[unit]], dest = TRUE, full = TRUE)
 
     return(dtj)
 }
@@ -52,6 +54,8 @@ simplify_dt <- function(dt) {
 
 add_dest <- function(dt, ags) {
 
+    flow <- NULL
+    
     dtd <- dt[, "dest" := fifelse(key == ags & !is.na(flow), TRUE, FALSE)]
     ## NA on flow is checked because currently
     ## add_destination_with_0_flows adds a
@@ -60,20 +64,23 @@ add_dest <- function(dt, ags) {
 
 join_geom <- function(dt, units, o_us, d_us) {
 
+    GF <- i.geometry <- . <- AGS <- NULL
     ### add test with sum(sapply(dtf$geom, is.null))
     o_unit <- get_unit(us = o_us, dest = FALSE)
     o_unit <- strsplit(o_unit, "_")[[1]][1]
     d_unit <- get_unit(us = d_us, dest = TRUE)
     d_unit <- strsplit(d_unit, "_")[[1]][1]
    
-    dtj <- dt[shps[[d_unit]][GF == 4, ], "geom" := i.geometry, on = .(key = AGS)]
-    dtj <- dtj[shps[[o_unit]][GF == 4, ], "geom" := i.geometry, on = .(key = AGS)]
+    dtj <- dt[units[[d_unit]][GF == 4, ], "geom" := i.geometry, on = .(key = AGS)]
+    dtj <- dtj[units[[o_unit]][GF == 4, ], "geom" := i.geometry, on = .(key = AGS)]
 
     return(dtj)
 }
 
 arrow_end_points <- function(dt, rm_centers = TRUE) {
 
+    dest <- xend <- yend <- NULL
+    
     ret_el <- function(l, idx) { el <- l[idx]; return(el) }
 
     dta <- dt
@@ -92,6 +99,8 @@ arrow_end_points <- function(dt, rm_centers = TRUE) {
 
 na_flows_to_0 <- function(dt) {
 
+    flow <- NULL
+    
     dtf <- data.table::copy(dt)
     dtf <- dtf[is.na(flow), "flow" := 0]
 
@@ -100,12 +109,14 @@ na_flows_to_0 <- function(dt) {
 
 arrow_plot <- function(dt, o_idx, dtarrow) {
 
-    plot <- ggplot(sf::st_set_geometry(dtf, dtf$geom)) +
-        geom_sf() +
-        geom_curve(data = dtarrow,
-                   aes(x = centers[[o_idx]][1],
+    centers <- xend <- yend <- place <- flow <- NULL
+    
+    plot <- ggplot2::ggplot(sf::st_set_geometry(dt, dt$geom)) +
+        ggplot2::geom_sf() +
+        ggplot2::geom_curve(data = dtarrow,
+                   ggplot2::aes(x = centers[[o_idx]][1],
                        y = centers[[o_idx]][2], xend = xend,
                        yend = yend, group = place, size = flow),
-                   colour = "red", angle = 0, arrow = arrow())
+                   colour = "red", angle = 0, arrow = ggplot2::arrow())
     return(plot)
 }
