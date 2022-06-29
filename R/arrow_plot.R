@@ -55,10 +55,27 @@ simplify_dt <- function(dt) {
 add_dest <- function(dt, ags) {
 
     flow <- NULL
+
+    ## We add origin to the same column as destination, this we then
+    ## call "key". If origin is also a destination, that is, some
+    ## people who move from Saxony move to Saxony, the region appears
+    ## twice. Once as destination, once as origin. In this case we
+    ## want to add dest == TRUE to the row which is the origin, that
+    ## is, flow == NA.
+
+    ## If on the other hand origin is not a destination, there is only
+    ## one row and we can set dest == TRUE
+
+    ## I just realized that it it should be named origin not dest
+    ## because we set it to FALSE for all regions that are not origin
+
+    if (nrow(dt[key == ags]) > 1) {
+        dtd <- dt[, "dest" := fifelse(key == ags & !is.na(flow), TRUE, FALSE)]
+    } else {
+        dtd <- dt[, "dest" := fifelse(key == ags, TRUE, FALSE)]
+    }
     
-    dtd <- dt[, "dest" := fifelse(key == ags & !is.na(flow), TRUE, FALSE)]
-    ## NA on flow is checked because currently
-    ## add_destination_with_0_flows adds a
+
     return(dtd)
 }
 
