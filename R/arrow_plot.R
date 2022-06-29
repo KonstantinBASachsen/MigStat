@@ -1,3 +1,29 @@
+get_arrow_data <- function(dt, shapes, name, o_us, d_us) {
+
+    ## Wrapper for all the functions below that are used to create a
+    ## suitable data.table to draw an arrow plot from
+    
+    ## check is name is found would be nice
+    o_col <- get_unit(o_us, dest = FALSE) ## from R/utils.R
+    d_col <- get_unit(d_us, dest = TRUE) ## from R/utils.R
+    o_ags <- get_ags(o_col)
+    d_ags <- get_ags(d_col)
+    ags <- dt[get(o_col) == name, ..o_ags][[1]][1]
+
+    dtf <- where_to(dt, o_col, name, d_col = d_col)
+    dtf <- origin_as_row(dtf, o_ags, name)
+    dtf <- add_destinations_with_0_flows(dtf, d_us, shapes)
+    dtf <- simplify_dt(dtf)
+    dtf <- add_dest(dtf, ags)
+    dtf <- join_geom(dtf, shapes, o_us, d_us)
+    dtf <- arrow_end_points(dtf, rm_centers = FALSE)
+    dtf <- na_flows_to_0(dtf)
+
+    dtf[, "flow" := as.numeric(flow)]
+
+    return(dtf)
+
+}
 
 where_to <- function(dt, o_col, o_name, d_col) {
 
