@@ -12,4 +12,5 @@ RoxygenNote: 7.2.0
 Imports:
 	data.table,
 	sf,
-	foreign
+	foreign,
+	ggplot2
