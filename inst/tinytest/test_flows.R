@@ -1,4 +1,4 @@
-map_path <- "/home/konstantin/Documents/sexony/inst/extdata/vg250_3112.utm32s.shape.ebenen/vg250_ebenen"
+map_path <- "/home/konstantin/Documents/project/Diss/inst/extdata/vg250_3112.utm32s.shape.ebenen/vg250_ebenen"
 example_path <- "~/network/Rohdaten/Wanderungsdaten FDZ/Dokumente StaLa/WandZuzug_dummy_2010-2013_4480-2021.sav"
 
 dt <- read_example(example_path)
