@@ -69,8 +69,8 @@ o_us <- "st" # unit of origin region, one of the following: st: state,
              # di: district, mu: municipality
 d_us <- "st" # units of destination. 
 
-dtf <- get_arrow_data(dt = dt, shapes = shps, name = "Bayern (Bodensee)",
-                      o_us = "st", d_us = "mu")
+dtf <- get_arrow_data(dt = dt, shapes = shps, name = name,
+                      o_us = o_us, d_us = d_us)
 
 o <- which(dtf$dest == TRUE) ## index of origin region (so it should
                              ## read dtf$origin == TRUE). Is to be changed
