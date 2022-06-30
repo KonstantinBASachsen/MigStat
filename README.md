@@ -12,7 +12,10 @@ The goal of MigStat is to ease working with Migration Statistics
 -   create maps with arrows to indicate destination and size of
     migration flows
 -   calculate migration wins and losses for regions
--   join other data sets based on the ags
+-   calculate bivariate flows (“Umzüge”) to create [Circular Migration
+    Flow
+    Plots](https://www.r-bloggers.com/2014/03/circular-migration-flow-plots-in-r/)
+-   join names of administrative units from official shape files
 
 ## Installation
 
@@ -24,40 +27,63 @@ You can install the development version of MigStat from
 devtools::install_github("KonstantinBASachsen/MigStat")
 ```
 
-## Example
+## Examples
 
-This is a basic example which shows you how to solve a common problem:
+Currently the examples assume the user has access to the example
+Migration Statistics (Beispieldaten der Wanderungsstatistik). So you can
+not actually run the examples. It is merely intended to show the
+workings.
+
+### Example load data and join administrative units
 
 ``` r
+
 library(MigStat)
 ## basic example code
+map_path <- "Path to shape files"
+example_path <- "path to example data Wanderungsstatistik"
+
+dt <- read_example(example_path)
+shps <- read_shapes(map_path) # read shapefiles. Assumes data is
+                              # organized in levels. Can be downloaded
+                              # [here](https://daten.gdz.bkg.bund.de/produkte/vg/vg250_ebenen_1231/2013/)
+
+dtj <- join_administries(dt, shps$state, shps$district, shps$muni, full = FALSE) ### join "official" names
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+### Create circular migration flow plot
 
 ``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
+
+dtf <- get_flows(dtj, "st", simplify = TRUE)
+dtf <- dtf[complete.cases(dtf)]
+mig_chord(dtf[, 3:5])
 ```
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this. You could also
-use GitHub Actions to re-render `README.Rmd` every time you push. An
-example workflow can be found here:
-<https://github.com/r-lib/actions/tree/v1/examples>.
+### Create Arrow Plot
 
-You can also embed plots, for example:
+``` r
 
-<img src="man/figures/README-pressure-1.png" width="100%" />
+name <- "Baden-Württemberg" ## name of origin region
+o_us <- "st" # unit of origin region, one of the following: st: state,
+             # di: district, mu: municipality
+d_us <- "st" # units of destination. 
 
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
+dtf <- get_arrow_data(dt = dt, shapes = shps, name = "Bayern (Bodensee)",
+                      o_us = "st", d_us = "mu")
 
-<!--chapter:end:README.Rmd-->
+o <- which(dtf$dest == TRUE) ## index of origin region (so it should
+                             ## read dtf$origin == TRUE). Is to be changed
+
+real_flow <- which(dtf$flow > 0) ## only draw arrows if there is an actual flow
+
+dtarrow <- dtf[unique(c(o, real_flow))] ## pick origin and
+                                        ## destinations with actual
+                                        ## flow
+
+o <- which(dtarrow$dest == TRUE) ## index of origin region (so it
+                             ## should read dtf$origin == TRUE). Is to
+                             ## be changed
+
+arrow_plot(dtf, o, dtarrow) ## draw plot
+```
