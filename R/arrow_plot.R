@@ -1,9 +1,25 @@
+##' This function creates a data.table from the Migration Statistics
+##' that can be used to draw an arrow plot from. 
+##'
+##' This function operates on a Migration Statistics data table and
+##' needs shapefiles that hold the corresponding geometry.
+##' @title Generate data for arrow-plot
+##' @param dt Migration Statistics data.table
+##' @param shapes list of three data.tables. Each table holds the
+##'     shapefiles of one of the following levels: states, districts,
+##'     municipalities.
+##' @param name character string naming the origin unit 
+##' @param o_us level of origin unit, either st, di or mu
+##' @param d_us level of destination units, either st, di or mu
+##' @return data.table for drawing arrow-plot
+##' @export get_arrow_data
+##' @author Konstantin
 get_arrow_data <- function(dt, shapes, name, o_us, d_us) {
 
     ## Wrapper for all the functions below that are used to create a
     ## suitable data.table to draw an arrow plot from
     
-    ## check is name is found would be nice
+    ## check if name is found would be nice
 
     ..o_ags <- flow <- NULL
     
