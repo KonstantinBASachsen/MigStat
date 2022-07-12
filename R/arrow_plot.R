@@ -169,8 +169,32 @@ na_flows_to_0 <- function(dt) {
     return(dtf)
 }
 
+
+##' This function draws an arrow plot that draws arrows from origin to
+##' destinations. The size of the arrow corresponds to the size of the flow
+##'
+##' This function takes the dt from get_arrow_data to draw the base
+##' map. Another data.table, dtarrow, is needed to draw the actual
+##' arrows. Basically, dtarrow is a subset of dt that only contains
+##' the rows where an arrow is to be drawn. This might special
+##' destinations that the researcher cares about or only destinations
+##' where the flow is of a certain size, to not clutter the plot too
+##' much. Also, the origin has to be included in dtarrow.
+##' 
+##' @title Draw nice arrrow plot
+##' @param dt data.table from get_arrow_data. Holds all the flows that
+##'     could be drawn and all the geometry information.
+##' @param o_idx row number of origin region
+##' @param dtarrow Subset of dt that only contains origin and the
+##'     destinations where arrows are to be drawn.
+##' @return plot
+##' @export arrow_plot
+##' @author Konstantin
 arrow_plot <- function(dt, o_idx, dtarrow) {
 
+    ### o_idx I can check from the dt, where dest == TRUE, no need to
+    ### make it an argument, I think?
+    
     centers <- xend <- yend <- place <- flow <- NULL
     
     plot <- ggplot2::ggplot(sf::st_set_geometry(dt, dt$geom)) +
