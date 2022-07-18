@@ -27,6 +27,10 @@ get_arrow_data <- function(dt, shapes, name, o_us, d_us) {
     d_col <- get_unit(d_us, dest = TRUE) ## from R/utils.R
     o_ags <- get_ags(o_col)
     d_ags <- get_ags(d_col)
+
+    stopifnot("region name is not found in data, check spelling and of o_us refers to the right regions"
+    = name %in% unique(dt[, ..o_col][[1]]))
+    
     ags <- dt[get(o_col) == name, ..o_ags][[1]][1]
 
     dtf <- where_to(dt, o_col, name, d_col = d_col)
@@ -105,14 +109,11 @@ add_origin <- function(dt, ags) {
     ## call "key". If origin is also a destination, that is, some
     ## people who move from Saxony move to Saxony, the region appears
     ## twice. Once as destination, once as origin. In this case we
-    ## want to add dest == TRUE to the row which is the origin, that
+    ## want to add origin == TRUE to the row which is the origin, that
     ## is, flow == NA.
 
     ## If on the other hand origin is not a destination, there is only
     ## one row and we can set dest == TRUE
-
-    ## I just realized that it it should be named origin not dest
-    ## because we set it to FALSE for all regions that are not origin
 
     if (nrow(dt[key == ags]) > 1) {
         dtd <- dt[, "origin" := fifelse(key == ags & !is.na(flow), TRUE, FALSE)]
