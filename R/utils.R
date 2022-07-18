@@ -40,3 +40,19 @@ get_ags <- function(unit) {
     return(ags_col)
     
 }
+
+##' normalize() adds two numbers and returns the fraction of the first.
+##'
+##' This function simply adds two numbers and returns the fraction of
+##' the first number of the sum.
+##' @title return fraction of first number of sum
+##' @param x first scalar
+##' @param y second scalar
+##' @return numeric
+##' @export normalize
+##' @author Konstantin
+normalize <- function(x, y) {
+
+    n <- x / sum(x,y)
+    return(n)
+}
