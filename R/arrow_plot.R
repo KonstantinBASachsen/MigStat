@@ -141,7 +141,7 @@ join_geom <- function(dt, units, o_us, d_us) {
 
 arrow_end_points <- function(dt, rm_centers = TRUE) {
 
-    dest <- xend <- yend <- NULL
+    origin <- xend <- yend <- NULL
     
     ret_el <- function(l, idx) { el <- l[idx]; return(el) }
 
