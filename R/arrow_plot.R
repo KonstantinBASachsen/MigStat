@@ -21,7 +21,7 @@ get_arrow_data <- function(dt, shapes, name, o_us, d_us) {
     
     ## check if name is found would be nice
 
-    ..o_ags <- flow <- NULL
+    ..o_col <- ..o_ags <- flow <- NULL
     
     o_col <- get_unit(o_us, dest = FALSE) ## from R/utils.R
     d_col <- get_unit(d_us, dest = TRUE) ## from R/utils.R
