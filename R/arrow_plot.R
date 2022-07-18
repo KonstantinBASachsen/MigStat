@@ -263,7 +263,7 @@ add_ratios <- function(dt, ratios) {
     stopifnot("vector of ratios must be of same length as there are rows in data.table"
     = length(ratios) == nrow(dt))
     r <- na.omit(ratios)
-    stopifnot("all entries of ratios must be in [0,1]" = sum(c(r > 1),
+    stopifnot("all entries of ratios must be either NA or numeric and, if numeric,  in [0,1]" = sum(c(r > 1),
     c(r < 0)) == 0)
     
     dtr <- copy(dt)
