@@ -206,3 +206,38 @@ arrow_plot <- function(dt, o_idx, dtarrow) {
                    colour = "red", angle = 0, arrow = ggplot2::arrow())
     return(plot)
 }
+
+##' geom_splitflow() adds curved arrows to an arrowplot based on the
+##' ratio of the split in the data.
+##'
+##' geom_splitflow() looks into the data.table for the columns
+##' "ratio1" and "ratio2". These are taken to draw a curve based on
+##' the same coordinates that arrow_plot() uses. The size of the curve
+##' is ratio * flow.
+##' @title Add splitted flow arrow
+##' @param dtarrow The data.table with the data used for plotting the
+##'     curves.
+##' @param flow Either 1 or 2. If 1, a curve is drawn that uses column
+##'     "ratio1", if 2, geom_splitflow() uses "ratio2" to determine
+##'     the size of the flow. Colour and curvature are also based on
+##'     flow.
+##' @return ggplot object
+##' @export geom_splitflow
+##' @author Konstantin
+geom_splitflow <- function(dtarrow, flow) {
+
+    centers <- xend <- yend <- NULL
+    
+    o_idx <- which(dtarrow$origin == TRUE)
+    m <- ifelse(flow == 1, "ratio1", "ratio2")
+    c <- ifelse(flow == 1, 0.2, - 0.2)
+    colour <- ifelse(flow == 1, "blue", "green")
+    dtplot <- copy(dtarrow)
+    dtplot[, "flow" := get(m) * flow]
+    dtplot[, flow]
+    ggplot2::geom_curve(data = dtplot,
+               ggplot2::aes(x = centers[[o_idx]][1], y = centers[[o_idx]][2],
+                   xend = xend, yend = yend, size = flow),
+               colour = colour, curvature = c, arrow = ggplot2::arrow()) 
+
+}
