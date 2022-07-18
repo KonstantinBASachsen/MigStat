@@ -27,9 +27,9 @@ get_arrow_data <- function(dt, shapes, name, o_us, d_us) {
     d_col <- get_unit(d_us, dest = TRUE) ## from R/utils.R
     o_ags <- get_ags(o_col)
     d_ags <- get_ags(d_col)
-
-    stopifnot("region name is not found in data, check spelling and of o_us refers to the right regions"
-    = name %in% unique(dt[, ..o_col][[1]]))
+    errormessage <- "region name is not found in data, check spelling and of o_us refers to the right regions"
+    
+    stopifnot(errormessage  = name %in% unique(dt[, ..o_col][[1]]))
     
     ags <- dt[get(o_col) == name, ..o_ags][[1]][1]
 
