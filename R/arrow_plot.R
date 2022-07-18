@@ -33,7 +33,7 @@ get_arrow_data <- function(dt, shapes, name, o_us, d_us) {
     dtf <- origin_as_row(dtf, o_ags, name)
     dtf <- add_destinations_with_0_flows(dtf, d_us, shapes)
     dtf <- simplify_dt(dtf)
-    dtf <- add_dest(dtf, ags)
+    dtf <- add_origin(dtf, ags)
     dtf <- join_geom(dtf, shapes, o_us, d_us)
     dtf <- arrow_end_points(dtf, rm_centers = FALSE)
     dtf <- na_flows_to_0(dtf)
@@ -97,7 +97,7 @@ simplify_dt <- function(dt) {
     return(dts)
 }
 
-add_dest <- function(dt, ags) {
+add_origin <- function(dt, ags) {
 
     flow <- NULL
 
@@ -115,9 +115,9 @@ add_dest <- function(dt, ags) {
     ## because we set it to FALSE for all regions that are not origin
 
     if (nrow(dt[key == ags]) > 1) {
-        dtd <- dt[, "dest" := fifelse(key == ags & !is.na(flow), TRUE, FALSE)]
+        dtd <- dt[, "origin" := fifelse(key == ags & !is.na(flow), TRUE, FALSE)]
     } else {
-        dtd <- dt[, "dest" := fifelse(key == ags, TRUE, FALSE)]
+        dtd <- dt[, "origin" := fifelse(key == ags, TRUE, FALSE)]
     }
     
 
@@ -149,8 +149,8 @@ arrow_end_points <- function(dt, rm_centers = TRUE) {
     dta$centers <- sf::st_centroid(dta$geom)
     dta$xend <- sapply(dta$centers, function(x) ret_el(x, 1))
     dta$yend <- sapply(dta$centers, function(x) ret_el(x, 2))
-    dta[dest == TRUE, "xend" := xend + 1]
-    dta[dest == TRUE, "yend" := yend + 1]
+    dta[origin == TRUE, "xend" := xend + 1]
+    dta[origin == TRUE, "yend" := yend + 1]
     if(rm_centers == TRUE) {
         dta[, "centers" := NULL]
     }
