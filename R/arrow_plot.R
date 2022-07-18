@@ -27,9 +27,9 @@ get_arrow_data <- function(dt, shapes, name, o_us, d_us) {
     d_col <- get_unit(d_us, dest = TRUE) ## from R/utils.R
     o_ags <- get_ags(o_col)
     d_ags <- get_ags(d_col)
-    errormessage <- "region name is not found in data, check spelling and of o_us refers to the right regions"
     
-    stopifnot(errormessage  = name %in% unique(dt[, ..o_col][[1]]))
+    
+    stopifnot("region name is not found in data, check spelling and of o_us refers to the right regions"  = name %in% unique(dt[, ..o_col][[1]]))
     
     ags <- dt[get(o_col) == name, ..o_ags][[1]][1]
 
@@ -242,3 +242,40 @@ geom_splitflow <- function(dtarrow, flow) {
                colour = colour, curvature = c, arrow = ggplot2::arrow()) 
 
 }
+
+##' add_ratios() takes a vector of ratios and adds the vector and 1
+##' vector to a data.table. 
+##'
+##' add_ratios() takes a vector of ratios and adds the vector and 1
+##' vector to a data.table. The resulting columns are named ratio1 and
+##' ratio2. These columns can be used by geom_splitflow() to split the
+##' flow and add the splitted flows to the arrow_plot. The all entries
+##' of the vector of ratios are supposed to be in [0,1], or to be NA.
+##' @title add ratios of splitted flows to data.table()
+##' @param dt data.table where the ratios are added
+##' @param ratios numeric vector of ratios, can have NA's in it.
+##' @return data.table that is the same as dt but with two columns
+##'     added: ratio1 and ratio2.
+##' @export add_ratios
+##' @author Konstantin
+add_ratios <- function(dt, ratios) {
+
+    stopifnot("vector of ratios must be of same length as there are rows in data.table"
+    = length(ratios) == nrow(dt))
+    r <- na.omit(ratios)
+    stopifnot("all entries of ratios must be in [0,1]" = sum(c(r > 1),
+    c(r < 0)) == 0)
+    
+    dtr <- copy(dt)
+    dtr[, "ratio1" := NA]
+    dtr[, "ratio2" := NA]
+    dtr[, "ratio1" := ratios]
+    dtr[, "ratio2" := 1 - ratios]
+
+    return(dtr)
+    
+}
+
+
+
+
