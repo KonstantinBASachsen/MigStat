@@ -250,7 +250,8 @@ geom_splitflow <- function(dtarrow, flow) {
 ##' vector to a data.table. The resulting columns are named ratio1 and
 ##' ratio2. These columns can be used by geom_splitflow() to split the
 ##' flow and add the splitted flows to the arrow_plot. The all entries
-##' of the vector of ratios are supposed to be in [0,1], or to be NA.
+##' of the vector of ratios are supposed to be in the \[0, 1 \], or to
+##' be NA.
 ##' @title add ratios of splitted flows to data.table()
 ##' @param dt data.table where the ratios are added
 ##' @param ratios numeric vector of ratios, can have NA's in it.
@@ -262,7 +263,7 @@ add_ratios <- function(dt, ratios) {
 
     stopifnot("vector of ratios must be of same length as there are rows in data.table"
     = length(ratios) == nrow(dt))
-    r <- na.omit(ratios)
+    r <- stats::na.omit(ratios)
     stopifnot("all entries of ratios must be either NA or numeric and, if numeric,  in [0,1]" = sum(c(r > 1),
     c(r < 0)) == 0)
     
