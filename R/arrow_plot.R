@@ -23,10 +23,10 @@ get_arrow_data <- function(dt, shapes, name, o_us, d_us) {
 
     ..o_col <- ..o_ags <- flow <- NULL
     
-    o_col <- get_unit(o_us, dest = FALSE) ## from R/utils.R
-    d_col <- get_unit(d_us, dest = TRUE) ## from R/utils.R
-    o_ags <- get_ags(o_col)
-    d_ags <- get_ags(d_col)
+    o_col <- get_unitcol(o_us, dest = FALSE) ## from R/utils.R
+    d_col <- get_unitcol(d_us, dest = TRUE) ## from R/utils.R
+    o_ags <- get_agscol(o_col)
+    d_ags <- get_agscol(d_col)
     
     
     stopifnot("region name is not found in data, check spelling and of o_us refers to the right regions"  = name %in% unique(dt[, ..o_col][[1]]))
@@ -52,8 +52,8 @@ where_to <- function(dt, o_col, o_name, d_col) {
 
     flow <- NULL
     
-    o_ags <- get_ags(o_col)
-    d_ags <- get_ags(d_col)
+    o_ags <- get_agscol(o_col)
+    d_ags <- get_agscol(d_col)
     dtf <- dt[, .SD, .SDcols = c(o_col, o_ags, d_col, d_ags)]
     dtf <- dtf[get(o_col) == o_name, "flow" := .N, by = d_col]
     dtf <- dtf[!is.na(flow), ]
@@ -86,7 +86,7 @@ add_destinations_with_0_flows <- function(dt, d_us, units) {
 ### maybe I can omit this and later perform a full join that joins the
 ### missing unit names and geometries
     
-    unit <- get_unit(us = d_us, dest = TRUE)
+    unit <- get_unitcol(us = d_us, dest = TRUE)
     unit <- strsplit(unit, "_")[[1]][1]
     dtj <- join_units(dt, d_us, units[[unit]], dest = TRUE, full = TRUE)
 
@@ -129,9 +129,9 @@ join_geom <- function(dt, units, o_us, d_us) {
 
     GF <- i.geometry <- . <- AGS <- NULL
     ### add test with sum(sapply(dtf$geom, is.null))
-    o_unit <- get_unit(us = o_us, dest = FALSE)
+    o_unit <- get_unitcol(us = o_us, dest = FALSE)
     o_unit <- strsplit(o_unit, "_")[[1]][1]
-    d_unit <- get_unit(us = d_us, dest = TRUE)
+    d_unit <- get_unitcol(us = d_us, dest = TRUE)
     d_unit <- strsplit(d_unit, "_")[[1]][1]
    
     dtj <- dt[units[[d_unit]][GF == 4, ], "geom" := i.geometry, on = .(key = AGS)]

@@ -43,8 +43,8 @@ get_flow <- function(dt, us, dest) {
 ### T, then destinations are considered, that is: wins. If dest = F,
 ### then origins are considered, that is, losses
     
-    unit <- get_unit(us, dest)
-    ags <- get_ags(unit)
+    unit <- get_unitcol(us, dest)
+    ags <- get_agscol(unit)
     dtf <- dt
     dtf[, "flow" := .N, by = ags]
     flows <- dtf[, .SD[1], by = ags]
@@ -62,7 +62,7 @@ get_flow <- function(dt, us, dest) {
 ##     ### flows are kept
 ##     i.flow <- GF <- NULL
 ##     ## unit <- colnames(flows)[unit_pos]
-##     ## ags <- get_ags(unit)
+##     ## ags <- get_agscol(unit)
 ##     flows <- flows[stats::complete.cases(flows)]
 ## ##    unit <- strsplit(unit, "_")[[1]][1]
 ##     shape <- shapes[[unit]]
@@ -96,10 +96,10 @@ get_flow <- function(dt, us, dest) {
 ##' @author Konstantin
 get_flows <- function(dt, us, simplify = TRUE) {
 
-    unit_o <- get_unit(us, FALSE)
-    unit_d <- get_unit(us, TRUE)
-    ags_o <- get_ags(unit_o)
-    ags_d <- get_ags(unit_d)
+    unit_o <- get_unitcol(us, FALSE)
+    unit_d <- get_unitcol(us, TRUE)
+    ags_o <- get_agscol(unit_o)
+    ags_d <- get_agscol(unit_d)
     dtf <- dt
     dtf[, "flow" := .N, by = c(ags_o, ags_d)]
     if (simplify == TRUE) {

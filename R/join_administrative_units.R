@@ -54,8 +54,8 @@ join_munis <- function(dt, to_join, full) {
 
 join_units <- function(dt, us, to_join, dest, full) {
 
-    unit <- get_unit(us, dest)
-    ags <- get_ags(unit)
+    unit <- get_unitcol(us, dest)
+    ags <- get_agscol(unit)
 
     dtj <- do_join(dt, to_join, ags, unit, full)
     

@@ -1,5 +1,5 @@
 
-get_unit <- function(us, dest) {
+get_unitcol <- function(us, dest) {
 
     ### This function allows me to say which administrative region I
     ### am interested in and if I care about in or outmigration and it
@@ -17,7 +17,7 @@ get_unit <- function(us, dest) {
     return(unit)
 }
 
-get_ags <- function(unit) {
+get_agscol<- function(unit) {
 
     ### this function returns the column holding the ags for thei
     ### interesting region and type of migration
