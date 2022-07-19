@@ -1,5 +1,9 @@
-add_move <- function(dt, shps, name_o, name_d, us_o, us_d, n) {
 
+new_move <- function(dt, shps, name_o, name_d, us_o, us_d, n, ret_df = FALSE) {
+
+    ### add test für BaWü, because there more than one ags is returned
+### from shapefile
+    #### if there is a NA function breaks
     GEN <- AGS <- NULL
 
     n_rows <- nrow(dt)
@@ -18,11 +22,17 @@ add_move <- function(dt, shps, name_o, name_d, us_o, us_d, n) {
 
     new_cols <- c(unit_ocol, unit_dcol, ags_ocol, ags_dcol)
     new_values <- c(name_o, name_d, ags_o, ags_d)
+    ## stopifnot(print(sprintf("Something went wrong with the new values %s", paste(new_values, collapse = " "))) =
+    ##               length(new_values) == 4)
+    stopifnot("something went wrong with the new values" = length(new_values) == 4)
+
     new_row <- as.data.table(t(rep(NA, ncol(dt))))
     colnames(new_row) <- colnames(dt)
     new_row[, (new_cols) := as.list(new_values)]
     new_row <- new_row[rep(1, n)]
-    dtnew <- rbind(dt, new_row)
+
+    if(ret_df == TRUE) { dtnew <- rbind(dt, new_row) }
+    else{dtnew <- new_row}
 
     return(dtnew)
 }
