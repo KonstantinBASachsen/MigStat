@@ -12,6 +12,8 @@ add_move <- function(dt, shps, name_o, name_d, us_o, us_d, n) {
     ags_ocol <- get_agscol(unit_ocol)
     ags_dcol <- get_agscol(unit_dcol)
 
+    stopifnot("Ensure that columns that are joined are already in data.table"
+    = c(unit_ocol, unit_dcol) %in% colnames(dt))
     new_cols <- c(unit_ocol, unit_dcol, ags_ocol, ags_dcol)
     new_values <- c(name_o, name_d, ags_o, ags_d)
 
