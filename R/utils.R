@@ -4,13 +4,10 @@ get_unitcol <- function(us, dest) {
     ### This function allows me to say which administrative region I
     ### am interested in and if I care about in or outmigration and it
     ### returns the column name
-    
-    stopifnot(us %in% c("st", "di", "mu"))
+    stopifnot(us %in% c("st", "di", "mu"))    
     stopifnot(is.logical(dest))
-    
-    if(us == "st") {unit <- "state"}
-    if(us == "di") {unit <- "district"}
-    if(us == "mu") {unit <- "muni"}
+    unit <- get_shpunit(us)
+
     if (dest == TRUE) {unit <- paste0(unit, "_d")}
     if (dest == FALSE) {unit <- paste0(unit, "_o")}
 
@@ -38,6 +35,16 @@ get_agscol<- function(unit) {
     ags_col <- paste0("EF", type_num, "U", unit_num)
 
     return(ags_col)
+    
+}
+
+get_shpunit <- function(us) {
+
+    if(us == "st") {unit <- "state"}
+    if(us == "di") {unit <- "district"}
+    if(us == "mu") {unit <- "muni"}
+
+    return(unit)
     
 }
 
