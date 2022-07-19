@@ -4,7 +4,7 @@ new_move <- function(dt, shps, name_o, name_d, us_o, us_d, n, ret_df = FALSE) {
     ### add test für BaWü, because there more than one ags is returned
 ### from shapefile
     #### if there is a NA function breaks
-    GEN <- AGS <- NULL
+    GEN <- AGS <- GF <- NULL
 
     n_rows <- nrow(dt)
     unit_o <- get_shpunit(us_o)
