@@ -1,3 +1,20 @@
+sample_move <- function(dt, shps, us_o, us_d) {
+
+    unit_o <- get_shpunit(us_o)
+    unit_d <- get_shpunit(us_d)
+    samplespace_o <- unique(shps[[unit_o]][GF == 4, GEN])
+    samplespace_d <- unique(shps[[unit_d]][GF == 4, GEN])
+    sample_o <- round(runif(1, 1, length(samplespace_o)), 0)
+    name_o <- samplespace_o[sample_o]
+    sample_d <- round(runif(1, 1, length(samplespace_d)), 0)
+    name_d <- samplespace_d[sample_d]
+    sample <- list()
+    sample$o <- name_o
+    sample$d <- name_d
+
+    return(sample)
+
+}
 
 new_move <- function(dt, shps, name_o, name_d, us_o, us_d, n, ret_df = FALSE) {
 
