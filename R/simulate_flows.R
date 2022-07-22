@@ -1,3 +1,24 @@
+##' Create n new moves randomly chosen from origin to
+##' destination. Sampled from the uniform distribution. This means,
+##' every origin-destination pair has the same probability.
+##'
+##' The n new moves are returned as a data.table with n rows. The
+##' table has the same structure as the migration statistics.
+##' 
+##' @title n moves from uniformly chosen pair of origin and
+##'     destination.
+##' @param dt data.table which structure (colnames) is to be
+##'     maintained.
+##' @param shps The shapfile holding the regions from which a sample
+##'     is taken. Sample is taken from the AGS keys.
+##' @param us_o One of: "st", "di", "mu", regional level of randomly
+##'     sampled origin.
+##' @param us_d One of: "st", "di", "mu", regional level of randomly
+##'     sampled destination.
+##' @param n Number of samples
+##' @return data.table of sampled rows
+##' @export n_new_rows
+##' @author Konstantin
 n_new_rows <- function(dt, shps, us_o, us_d, n) {
 
     l <- lapply(1:n, function(x)  new_row(dt, shps, sample_move(dt, shps, us_o, us_d)))
@@ -19,7 +40,9 @@ new_row <- function(dt, shps, sample_list) {
     ### Also when sampling by name sometimes one name has two rows in
     ### the shapefile and with that two AGS keys. Thus it can not be
     ### joined. Seems a better idea to sample by AGS and not by name
-    ### because AGS is unique.
+### because AGS is unique.
+
+    ### I do not need to pass dt, colnames are sufficient
     GF <- AGS <- GEN <- NULL
     
     s <- sample_list
