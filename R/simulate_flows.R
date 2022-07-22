@@ -21,6 +21,11 @@
 ##' @author Konstantin
 n_new_rows <- function(dt, shps, us_o, us_d, n) {
 
+    ### This function is not vectorized. Drawing samples takes too
+    ### long. To vectorize, sample_move needs to be vectorized. I
+    ### think this I will only approach if I am really sure I need
+    ### this often enough.
+    
     l <- lapply(1:n, function(x)  new_row(dt, shps, sample_move(dt, shps, us_o, us_d)))
     l <- data.table::rbindlist(l)
     
