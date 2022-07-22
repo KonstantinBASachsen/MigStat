@@ -2,15 +2,15 @@ sample_move <- function(dt, shps, us_o, us_d) {
 
     unit_o <- get_shpunit(us_o)
     unit_d <- get_shpunit(us_d)
-    samplespace_o <- unique(shps[[unit_o]][GF == 4, GEN])
-    samplespace_d <- unique(shps[[unit_d]][GF == 4, GEN])
+    samplespace_o <- unique(shps[[unit_o]][GF == 4, AGS])
+    samplespace_d <- unique(shps[[unit_d]][GF == 4, AGS])
     sample_o <- round(runif(1, 1, length(samplespace_o)), 0)
-    name_o <- samplespace_o[sample_o]
+    ags_o <- samplespace_o[sample_o]
     sample_d <- round(runif(1, 1, length(samplespace_d)), 0)
-    name_d <- samplespace_d[sample_d]
+    ags_d <- samplespace_d[sample_d]
     sample <- list()
-    sample$name_o <- name_o
-    sample$name_d <- name_d
+    sample$ags_o <- ags_o
+    sample$ags_d <- ags_d
     sample$us_o <- us_o
     sample$us_d <- us_d
 
@@ -36,8 +36,8 @@ new_row <- function(dt, shps, sample_list) {
     s <- sample_list
     unit_o <- get_shpunit(s$us_o)
     unit_d <- get_shpunit(s$us_d)
-    ags_o <- shps[[unit_o]][GF == 4 & GEN == s$name_o, AGS]
-    ags_d <- shps[[unit_d]][GF == 4 & GEN == s$name_d, AGS]
+    name_o <- shps[[unit_o]][GF == 4 & AGS == s$ags_o, GEN]
+    name_d <- shps[[unit_d]][GF == 4 & AGS == s$ags_d, GEN]
     unit_ocol <- get_unitcol(s$us_o, dest = FALSE)
     unit_dcol <- get_unitcol(s$us_d, dest = TRUE)
     ags_ocol <- get_agscol(unit_ocol)
@@ -45,11 +45,9 @@ new_row <- function(dt, shps, sample_list) {
 
 
     new_cols <- c(unit_ocol, unit_dcol, ags_ocol, ags_dcol)
-    new_values <- c(s$name_o, s$name_d, ags_o, ags_d)
+    new_values <- c(name_o, name_d, s$ags_o, s$ags_d)
     ## stopifnot(print(sprintf("Something went wrong with the new values %s", paste(new_values, collapse = " "))) =
     ##               length(new_values) == 4)
-    print(ags_o)
-    print(ags_d)
     stopifnot("something went wrong with the new values" = length(new_values) == 4)
 
     new_row <- as.data.table(t(rep(NA, ncol(dt))))
