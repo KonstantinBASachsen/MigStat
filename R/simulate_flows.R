@@ -18,7 +18,7 @@ sample_move <- function(dt, shps, us_o, us_d) {
 
 }
 
-row_from_sample <- function(dt, shps, sample_list) {
+new_row <- function(dt, shps, sample_list) {
 
 ### creates a data.table with one row and columns corresponding to the
 ### original data.table. All values are NA, except the name of origin
@@ -27,7 +27,11 @@ row_from_sample <- function(dt, shps, sample_list) {
     
     ### add test für BaWü, because there more than one ags is returned
 ### from shapefile
-    #### if there is a NA function breaks
+#### if there is a NA function breaks
+    ### Also when sampling by name sometimes one name has two rows in
+    ### the shapefile and with that two AGS keys. Thus it can not be
+    ### joined. Seems a better idea to sample by AGS and not by name
+    ### because AGS is unique.
 
     s <- sample_list
     unit_o <- get_shpunit(s$us_o)
@@ -44,6 +48,8 @@ row_from_sample <- function(dt, shps, sample_list) {
     new_values <- c(s$name_o, s$name_d, ags_o, ags_d)
     ## stopifnot(print(sprintf("Something went wrong with the new values %s", paste(new_values, collapse = " "))) =
     ##               length(new_values) == 4)
+    print(ags_o)
+    print(ags_d)
     stopifnot("something went wrong with the new values" = length(new_values) == 4)
 
     new_row <- as.data.table(t(rep(NA, ncol(dt))))
