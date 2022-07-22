@@ -20,7 +20,8 @@ new_row <- function(dt, shps, sample_list) {
     ### the shapefile and with that two AGS keys. Thus it can not be
     ### joined. Seems a better idea to sample by AGS and not by name
     ### because AGS is unique.
-
+    GF <- AGS <- GEN <- NULL
+    
     s <- sample_list
     unit_o <- get_shpunit(s$us_o)
     unit_d <- get_shpunit(s$us_d)
@@ -47,13 +48,15 @@ new_row <- function(dt, shps, sample_list) {
 
 sample_move <- function(dt, shps, us_o, us_d) {
 
+    GF <- AGS <- NULL
+    
     unit_o <- get_shpunit(us_o)
     unit_d <- get_shpunit(us_d)
     samplespace_o <- unique(shps[[unit_o]][GF == 4, AGS])
     samplespace_d <- unique(shps[[unit_d]][GF == 4, AGS])
-    sample_o <- round(runif(1, 1, length(samplespace_o)), 0)
+    sample_o <- round(stats::runif(1, 1, length(samplespace_o)), 0)
     ags_o <- samplespace_o[sample_o]
-    sample_d <- round(runif(1, 1, length(samplespace_d)), 0)
+    sample_d <- round(stats::runif(1, 1, length(samplespace_d)), 0)
     ags_d <- samplespace_d[sample_d]
     sample <- list()
     sample$ags_o <- ags_o
