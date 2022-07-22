@@ -1,21 +1,9 @@
-sample_move <- function(dt, shps, us_o, us_d) {
+n_new_rows <- function(dt, shps, us_o, us_d, n) {
 
-    unit_o <- get_shpunit(us_o)
-    unit_d <- get_shpunit(us_d)
-    samplespace_o <- unique(shps[[unit_o]][GF == 4, AGS])
-    samplespace_d <- unique(shps[[unit_d]][GF == 4, AGS])
-    sample_o <- round(runif(1, 1, length(samplespace_o)), 0)
-    ags_o <- samplespace_o[sample_o]
-    sample_d <- round(runif(1, 1, length(samplespace_d)), 0)
-    ags_d <- samplespace_d[sample_d]
-    sample <- list()
-    sample$ags_o <- ags_o
-    sample$ags_d <- ags_d
-    sample$us_o <- us_o
-    sample$us_d <- us_d
-
-    return(sample)
-
+    l <- lapply(1:n, function(x)  new_row(dt, shps, sample_move(dt, shps, us_o, us_d)))
+    l <- data.table::rbindlist(l)
+    
+    return(l)
 }
 
 new_row <- function(dt, shps, sample_list) {
@@ -55,5 +43,25 @@ new_row <- function(dt, shps, sample_list) {
     new_row[, (new_cols) := as.list(new_values)]
 
     return(new_row)
+}
+
+sample_move <- function(dt, shps, us_o, us_d) {
+
+    unit_o <- get_shpunit(us_o)
+    unit_d <- get_shpunit(us_d)
+    samplespace_o <- unique(shps[[unit_o]][GF == 4, AGS])
+    samplespace_d <- unique(shps[[unit_d]][GF == 4, AGS])
+    sample_o <- round(runif(1, 1, length(samplespace_o)), 0)
+    ags_o <- samplespace_o[sample_o]
+    sample_d <- round(runif(1, 1, length(samplespace_d)), 0)
+    ags_d <- samplespace_d[sample_d]
+    sample <- list()
+    sample$ags_o <- ags_o
+    sample$ags_d <- ags_d
+    sample$us_o <- us_o
+    sample$us_d <- us_d
+
+    return(sample)
+
 }
 
