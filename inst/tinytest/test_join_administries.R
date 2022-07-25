@@ -5,10 +5,10 @@ units <- c(get_unitcol("st", T), get_unitcol("st", F), get_unitcol("di", T), get
            get_unitcol("mu", T), get_unitcol("mu", F))
 
 
-dt <- join_administries(ex_dat$mig, shapes$state, shapes$district, shapes$muni, full = FALSE)
+dt <- join_administries(ex_dat$mig, shps$state, shps$district, shps$muni, full = FALSE)
 expect_equal(nrow(dt), 200) ## if no full join, no rows are added
 
-dt <- join_administries(dt, shapes$state, shapes$district, shapes$muni, full = TRUE)
+dt <- join_administries(dt, shps$state, shps$district, shps$muni, full = TRUE)
 key <- get_agscol(get_unitcol("st", F))
 expect_equal(length(unique(dt[, ..key][[1]])), 18)
 
