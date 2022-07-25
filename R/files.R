@@ -2,7 +2,7 @@ read_examples <- function(mig_path, shp_path) {
 
     dt <- read_migex(mig_path)
     shps <- read_shapes(shp_path) #
-    data <- list(dt, shps)
+    data <- list("mig" = dt, "shps" = shps)
 
     return(data)
     
