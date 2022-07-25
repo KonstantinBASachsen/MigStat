@@ -1,3 +1,22 @@
+read_examples <- function(mig_path, shp_path) {
+
+    dt <- read_migex(mig_path)
+    shps <- read_shapes(shp_path) #
+    data <- list(dt, shps)
+
+    return(data)
+    
+}
+
+read_migex <- function(file) {
+
+    df <- foreign::read.spss(file, to.data.frame = TRUE)
+    dt <- data.table::setDT(df)
+    
+    return(dt)
+    
+}
+
 ##' Read shape files from path as data.tables
 ##'
 ##' This function reads shapefiles from path. It reads those that
@@ -9,7 +28,6 @@
 ##' @return list with data.tables as named elements
 ##' @import data.table
 ##' sf
-##' @export read_shapes
 ##' @author Konstantin
 read_shapes <- function(path) {
 
@@ -31,19 +49,4 @@ read_shapes <- function(path) {
     return(shapes)    
     }
 
-##' Reads the example migration statistics
-##'
-##' Reads the example migration statistics and returns a data.table
-##' @title Read example migration statistics
-##' @param file file path of data
-##' @return data.table
-##' @export read_example
-##' @author Konstantin
-read_example <- function(file) {
 
-    df <- foreign::read.spss(file, to.data.frame = TRUE)
-    dt <- data.table::setDT(df)
-    
-    return(dt)
-    
-}
