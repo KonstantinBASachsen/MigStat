@@ -42,10 +42,6 @@ new_row <- function(dt, shps, sample_list) {
     ### add test für BaWü, because there more than one ags is returned
 ### from shapefile
 #### if there is a NA function breaks
-    ### Also when sampling by name sometimes one name has two rows in
-    ### the shapefile and with that two AGS keys. Thus it can not be
-    ### joined. Seems a better idea to sample by AGS and not by name
-### because AGS is unique.
 
     ### I do not need to pass dt, colnames are sufficient
     GF <- AGS <- GEN <- NULL
