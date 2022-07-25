@@ -1,10 +1,7 @@
 
-map_path <- "/home/konstantin/Documents/sexony/inst/extdata/vg250_3112.utm32s.shape.ebenen/vg250_ebenen"
-example_path <- "~/network/Rohdaten/Wanderungsdaten FDZ/Dokumente StaLa/WandZuzug_dummy_2010-2013_4480-2021.sav"
-
-dt <- read_example(example_path)
-shps <- read_shapes(map_path) # 
-dtj <- join_administries(dt, shps$state, shps$district, shps$muni, full = FALSE) ### join "official" names
+ex_dat <- read_examples()
+shps <- ex_dat$shps
+dtj <- join_administries(ex_dat$mig, shps$state, shps$district, shps$muni, full = FALSE) ### join "official" names
 
 name <- "Berlin"
 dtf <- get_arrow_data(dt = dtj, shapes = shps, name = name, o_us = "di",
