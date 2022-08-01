@@ -1,5 +1,9 @@
-join_distances <- function(dt_flow, dt_dist, us) {
-
+join_distances <- function(dt_flow, dt_dist, us, full = TRUE) {
+    ### add join = FULL argument. Otherwise makes not much sense to
+    ### compute all pairwise distances but only use non zero
+    ### then. Best would be one function, that checks if all distances
+    ### are required and only computes pairwise distances if non zero
+    ### flows or full = TRUE
     od <- i.distance <- NULL
     
     dcol <- get_agscol(get_unitcol(us, dest = TRUE))
