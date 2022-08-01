@@ -1,4 +1,7 @@
 join_distances <- function(dt_flow, dt_dist, us) {
+
+    od <- i.distance <- NULL
+    
     dcol <- get_agscol(get_unitcol(us, dest = TRUE))
     ocol <- get_agscol(get_unitcol(us, dest = FALSE))
     flow_dist <- copy(dt_flow)
@@ -15,6 +18,8 @@ join_distances <- function(dt_flow, dt_dist, us) {
 
 get_distances <- function(shps, us) {
 
+    EWZ <- geometry <- centers <- AGS <- i.GEN <- . <- destination <-
+        origin <- od <- i.distance <- NULL
     ### computes pair wise distances between all units of type
     ### "us". Maybe I only need it for pairs with non zero flows?
     shp <- shps[[get_shpunit(us)]]
