@@ -1,0 +1,41 @@
+join_distances <- function(dt_flow, dt_dist, us) {
+    dcol <- get_agscol(get_unitcol(us, dest = TRUE))
+    ocol <- get_agscol(get_unitcol(us, dest = FALSE))
+    flow_dist <- copy(dt_flow)
+    flow_dist <- flow_dist[, "od" := paste(get(dcol), get(ocol), sep = "_")]
+    setkey(dt_dist, od)
+    setkey(flow_dist, od)
+    flow_dist <- flow_dist[dt_dist, "distance" := i.distance]
+    flow_dist[, "od" := NULL]
+
+    return(flow_dist)
+
+}
+
+
+get_distances <- function(shps, us) {
+
+    ### computes pair wise distances between all units of type
+    ### "us". Maybe I only need it for pairs with non zero flows?
+    shp <- shps[[get_shpunit(us)]]
+    shp <- shp[EWZ != 0]
+    shp[, "centers" := st_centroid(geometry)]
+    distances <- round(st_distance(shp[, centers] / 1000), 0) 
+    keys <- shp[, AGS]
+    colnames(distances) <- keys
+    rownames(distances) <- keys
+
+    distances <- setDT(data.frame(distances, check.names = FALSE))
+    distances$destinations <- colnames(distances)
+    dist_pairs <- melt(distances, id.vars = "destinations")
+    colnames(dist_pairs) <- c("destination", "origin", "distance")
+    dist_pairs[shp, "o_name" := i.GEN, on = .(origin = AGS)]
+    dist_pairs[shp, "d_name" := i.GEN, on = .(destination = AGS)]
+
+    dist_pairs[, "od" := paste(destination, origin, sep = "_")]
+
+    return(dist_pairs)
+
+}
+
+
