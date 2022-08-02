@@ -31,7 +31,7 @@ get_distances <- function(shps, us) {
         origin <- od <- i.distance <- NULL
     ### computes pair wise distances between all units of type
     ### "us". Maybe I only need it for pairs with non zero flows?
-    shp <- shps[[get_shpunit(us)]]
+    shp <- shps[[get_shp_unit(us)]]
     shp <- shp[EWZ != 0]
     shp[, "centers" := st_centroid(geometry)]
     distances <- round(st_distance(shp[, centers] / 1000), 0) 

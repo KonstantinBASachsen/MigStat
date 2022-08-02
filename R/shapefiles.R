@@ -1,5 +1,6 @@
 get_shp_region <- function(shps, us, drop_gf) {
-    shp <- shps[[get_shpunit(us)]]
+    GF <- NULL
+    shp <- shps[[get_shp_unit(us)]]
     if (drop_gf ==  TRUE) {
         shp <- shp[GF == 4]
     }

@@ -47,8 +47,8 @@ new_row <- function(dt, shps, sample_list) {
     GF <- AGS <- GEN <- NULL
     
     s <- sample_list
-    unit_o <- get_shpunit(s$us_o)
-    unit_d <- get_shpunit(s$us_d)
+    unit_o <- get_shp_unit(s$us_o)
+    unit_d <- get_shp_unit(s$us_d)
     name_o <- shps[[unit_o]][GF == 4 & AGS == s$ags_o, GEN]
     name_d <- shps[[unit_d]][GF == 4 & AGS == s$ags_d, GEN]
     unit_ocol <- get_unitcol(s$us_o, dest = FALSE)
@@ -74,8 +74,8 @@ sample_move <- function(dt, shps, us_o, us_d) {
 
     GF <- AGS <- NULL
     
-    unit_o <- get_shpunit(us_o)
-    unit_d <- get_shpunit(us_d)
+    unit_o <- get_shp_unit(us_o)
+    unit_d <- get_shp_unit(us_d)
     samplespace_o <- unique(shps[[unit_o]][GF == 4, AGS])
     samplespace_d <- unique(shps[[unit_d]][GF == 4, AGS])
     sample_o <- round(stats::runif(1, 1, length(samplespace_o)), 0)

@@ -6,7 +6,7 @@ get_unitcol <- function(us, dest) {
     ### returns the column name
     stopifnot(us %in% c("st", "di", "mu"))    
     stopifnot(is.logical(dest))
-    unit <- get_shpunit(us)
+    unit <- get_shp_unit(us)
 
     if (dest == TRUE) {unit <- paste0(unit, "_d")}
     if (dest == FALSE) {unit <- paste0(unit, "_o")}
