@@ -17,7 +17,7 @@ join_distances <- function(dt_flow, dt_dist, us, full = TRUE) {
     } 
     setkey(dt_dist, od)
     setkey(flow_dist, od)
-    flow_dist <- flow_dist[dt_dist, "distance" := i.distance]
+    flow_dist <- dt_dist[flow_dist, "flow" := i.flow]
     flow_dist[, "od" := NULL]
 
     return(flow_dist)
