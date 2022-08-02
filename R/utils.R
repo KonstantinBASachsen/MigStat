@@ -70,7 +70,7 @@ search_vec <- function(phrase, vec) {
     return(res)
 }
 
-keepcols <- function(dt, keep) {
+keep_cols <- function(dt, keep) {
     stopifnot(is.data.table(dt))
     dt_clean <- dt[, .SD, .SDcols = keep]
     return(dt_clean)
