@@ -38,16 +38,6 @@ get_agscol<- function(unit) {
     
 }
 
-get_shpunit <- function(us) {
-
-    if(us == "st") {unit <- "state"}
-    if(us == "di") {unit <- "district"}
-    if(us == "mu") {unit <- "muni"}
-
-    return(unit)
-    
-}
-
 ##' normalize() adds two numbers and returns the fraction of the first.
 ##'
 ##' This function simply adds two numbers and returns the fraction of
