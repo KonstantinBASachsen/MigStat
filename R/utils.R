@@ -63,3 +63,16 @@ normalize <- function(x, y) {
     n <- x / sum(x,y)
     return(n)
 }
+
+
+search_vec <- function(phrase, vec) {
+    res <- grep(phrase, vec, value = T)
+    return(res)
+}
+
+keepcols <- function(dt, keep) {
+    stopifnot(is.data.table(dt))
+    dt_clean <- dt[, .SD, .SDcols = keep]
+    return(dt_clean)
+
+}
