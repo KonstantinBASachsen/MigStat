@@ -8,3 +8,5 @@ expect_equal(sum(losses[is.na(district_o) & !is.na(EF03U4), flow]), 34)
 
 wins <- get_wins(dt, "mu")
 expect_equal(wins[muni_d == "München", flow], 8)
+
+### add test if sum flows after get_flows equals rows of data.table
