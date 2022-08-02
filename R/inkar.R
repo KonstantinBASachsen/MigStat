@@ -11,7 +11,7 @@ get_raumbezug <- function(us) {
     return(rb)
 }
 
-get_inkarrows <- function(inkar, vars, us, year) {
+get_inkar_rows <- function(inkar, vars, us, year) {
     Raumbezug <- Zeitbezug <- Indikator <- Kennziffer <- Wert <- NULL
     rb <- get_raumbezug(us)
     ink <- inkar[Raumbezug == rb & Zeitbezug == zb & Indikator %in% cols]
@@ -21,7 +21,7 @@ get_inkarrows <- function(inkar, vars, us, year) {
     return(ink)
 }
 
-join_inkarrows <- function(shp, ink) {
+join_inkar_rows <- function(shp, ink) {
     Kennziffer <- Indikator <- NULL
     setkeyv(shp, "AGS")
     setkeyv(ink, "Kennziffer")
