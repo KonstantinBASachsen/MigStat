@@ -4,7 +4,7 @@ join_distances <- function(dt_flow, dt_dist, us, full = TRUE) {
     ### then. Best would be one function, that checks if all distances
     ### are required and only computes pairwise distances if non zero
     ### flows or full = TRUE
-    od <- i.distance <- i.flow <- NULL
+    od <- i.distance <- i.flow <- origin <- destination <- NULL
     
     dcol <- get_agscol(get_unitcol(us, dest = TRUE))
     ocol <- get_agscol(get_unitcol(us, dest = FALSE))
