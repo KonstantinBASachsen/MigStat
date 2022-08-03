@@ -1,9 +1,44 @@
+##' get_flows() returns the sum of flows between every
+##' origin-destination pair. Also, the distances between the centroids
+##' of origin and destination are returned. od pairs without flow are
+##' added as well.
+##'
+##' The function needs two tables. One with the regional information
+##' and the other with the flows between those pairs.
+##'
+##' The first is based on a shapefile from the
+##' "Bundesamt für Karthographie und Geodäsie". This holds region
+##' identifier and geometry.
+##'
+##' The other holds the flows between regions. This is the migration
+##' statistics.
+##'
+##' Currently the function returnes all flows between the od pairs of
+##' a given type. The types are specified via the argument "us" and
+##' refer to federal states, districts or municipalities.
+##' 
+##' @title Origin-destination flows and distances from migration
+##'     statistics
+##' @param dt Migration Statistics data.table where every row is one
+##'     migration.
+##' @param shps The shapefile with three levels: federal states,
+##'     districts, municipalities.
+##' @param us "unit simple" between regions of which type are flows to
+##'     be computed? Takes one of the following strings:
+##'
+##' "st": federal states "di": districts "mu": municipalities
+##' @param na_to_0
+##' @return data.table with four columns: origin id, destination id,
+##'     distance, flow
+##' @import data.table
+##' @export get_flows
+##' @author Konstantin
 get_flows <- function(dt, shps, us, na_to_0 = TRUE) {
     flows <- get_flows_only(dt, us)
     dist <- get_distances(shps, us)
     flows <- join_distances(flows, dist, us, full = TRUE)
-    ### I think the next two lines are necessary to obtain the
-    ### data.structure needed for spflow
+    ### I think the next two lines I implemented to obtain the data
+    ### structure needed for spflow
     flows[, c("destination", "origin") := lapply(.SD, as.numeric), .SDcols = c("destination", "origin")]
     flows[, c("destination", "origin") := lapply(.SD, as.factor), .SDcols = c("destination", "origin")] 
     flows <- flows[, .SD, .SDcols = c("destination", "origin", "flow", "distance")]
@@ -11,6 +46,9 @@ get_flows <- function(dt, shps, us, na_to_0 = TRUE) {
         flows[is.na(flow), "flow" := 0]
     }
     return(flows)
+
+    ### probably the functions below do too much like adding columns I
+    ### dont use. Maybe copying data.tables is also too much
 }
 
 join_distances <- function(dt_flow, dt_dist, us, full = TRUE) {
