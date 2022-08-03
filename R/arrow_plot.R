@@ -14,25 +14,26 @@
 ##' @return data.table for drawing arrow-plot
 ##' @export get_arrow_data
 ##' @author Konstantin
-get_arrow_data <- function(dt, shapes, name, o_us, d_us) {
+get_arrow_data <- function(dt, shapes, ags, o_us, d_us) {
 
     ## Wrapper for all the functions below that are used to create a
     ## suitable data.table to draw an arrow plot from
     
     ## check if name is found would be nice
 
-    ..o_col <- ..o_ags <- flow <- NULL
+    ## ..o_col <- ..o_ags <- flow <- NULL
     
-    o_col <- get_unitcol(o_us, dest = FALSE) ## from R/utils.R
-    d_col <- get_unitcol(d_us, dest = TRUE) ## from R/utils.R
-    o_ags <- get_agscol(o_col)
-    d_ags <- get_agscol(d_col)
+    ## o_col <- get_unitcol(o_us, dest = FALSE) ## from R/utils.R
+    ## d_col <- get_unitcol(d_us, dest = TRUE) ## from R/utils.R
+    ## o_ags <- get_agscol(o_col)
+    ## d_ags <- get_agscol(d_col)
     
     
-    stopifnot("region name is not found in data, check spelling and of o_us refers to the right regions"  = name %in% unique(dt[, ..o_col][[1]]))
+    ## stopifnot("region name is not found in data, check spelling and of o_us refers to the right regions"  = name %in% unique(dt[, ..o_col][[1]]))
     
-    ags <- dt[get(o_col) == name, ..o_ags][[1]][1]
-
+    ## ags <- dt[get(o_col) == name, ..o_ags][[1]][1] #
+    o_col <- "origin"
+    d_col <- "destination"
     dtf <- where_to(dt, o_col, name, d_col = d_col)
     dtf <- origin_as_row(dtf, o_ags, name)
     dtf <- add_destinations_with_0_flows(dtf, d_us, shapes)
