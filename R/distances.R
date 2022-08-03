@@ -46,7 +46,7 @@ get_distances <- function(shps, us) {
     dist_pairs[shp, "o_name" := i.GEN, on = .(origin = AGS)]
     dist_pairs[shp, "d_name" := i.GEN, on = .(destination = AGS)]
 
-    dist_pairs[, "od" := paste(as.numeric(destination), as.numeric(origin), sep = "_")]
+    dist_pairs[, "od" := paste(destination, origin, sep = "_")]
 
     return(dist_pairs)
 
