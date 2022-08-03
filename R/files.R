@@ -48,10 +48,23 @@ read_shapes <- function(path) {
     return(shapes)    
     }
 
-
+##' Reads the inkar.csv dataset. Returns a data.table. Optionally
+##' converts the regional identiferi column, "Kennziffer", to
+##' character and adds leading 0's to one digit id's. This ensures
+##' that the data can be joined to shapefile and migration statistics.
+##'
+##' @title Read inkar data set as data.table
+##' @param path Path to inkar.csv
+##' @param leading_0 If TRUE, converts the regional identiferi column,
+##'     "Kennziffer", to character and adds leading 0's to one digit
+##'     id's. See details.
+##' @return data.table
+##' @import data.table
+##' @export read_inkar
+##' @author Konstantin
 read_inkar <- function(path, leading_0 = TRUE) {
     Kennziffer <- NULL
-    inkar <- data.table::fread(inkar_csv, dec = ",")
+    inkar <- data.table::fread(path, dec = ",")
 ### grap strings that start and end with [0-9] and add leading 0
 ### because in shapefiles and migration statistics the id is coded
 ### that way
