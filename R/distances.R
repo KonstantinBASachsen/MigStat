@@ -9,15 +9,17 @@ join_distances <- function(dt_flow, dt_dist, us, full = TRUE) {
     dcol <- get_agscol(get_unitcol(us, dest = TRUE))
     ocol <- get_agscol(get_unitcol(us, dest = FALSE))
     flow_dist <- copy(dt_flow)
+    distances <- copy(dt_dist)
+    distances <- distances[, "od" := paste(destination, origin, sep = "_")]
     flow_dist <- flow_dist[, "od" := paste(get(dcol), get(ocol), sep = "_")]
     if (full == TRUE) {
         setkeyv(flow_dist, "od")
-        unique_keys <- unique(c(flow_dist[, get("od")], dt_dist[, get("od")]))
+        unique_keys <- unique(c(flow_dist[, get("od")], distances[, get("od")]))
         flow_dist <- flow_dist[unique_keys]
     } 
-    setkey(dt_dist, od)
+    setkey(distances, od)
     setkey(flow_dist, od)
-    flow_dist <- dt_dist[flow_dist, "flow" := i.flow]
+    flow_dist <- distances[flow_dist, "flow" := i.flow]
     flow_dist[, "od" := NULL]
 
     return(flow_dist)
@@ -45,8 +47,6 @@ get_distances <- function(shps, us) {
     colnames(dist_pairs) <- c("destination", "origin", "distance")
     dist_pairs[shp, "o_name" := i.GEN, on = .(origin = AGS)]
     dist_pairs[shp, "d_name" := i.GEN, on = .(destination = AGS)]
-
-    dist_pairs[, "od" := paste(destination, origin, sep = "_")]
 
     return(dist_pairs)
 
