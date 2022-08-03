@@ -41,8 +41,8 @@ get_flows <- function(dt, shps, us, na_to_0 = TRUE) {
     flows <- join_distances(flows, dist, us, full = TRUE)
     ### I think the next two lines I implemented to obtain the data
     ### structure needed for spflow
-    flows[, c("destination", "origin") := lapply(.SD, as.numeric), .SDcols = c("destination", "origin")]
-    flows[, c("destination", "origin") := lapply(.SD, as.factor), .SDcols = c("destination", "origin")] 
+##    flows[, c("destination", "origin") := lapply(.SD, as.numeric), .SDcols = c("destination", "origin")]
+##    flows[, c("destination", "origin") := lapply(.SD, as.factor), .SDcols = c("destination", "origin")] 
     flows <- flows[, .SD, .SDcols = c("destination", "origin", "flow", "distance")]
     if (na_to_0 == TRUE) {
         flows[is.na(flow), "flow" := 0]
