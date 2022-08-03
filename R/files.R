@@ -12,7 +12,6 @@ read_migex <- function(file) {
 
     df <- foreign::read.spss(file, to.data.frame = TRUE)
     dt <- data.table::setDT(df)
-##    dt <- ags_to_num(dt)
     
     return(dt)
     
@@ -38,24 +37,13 @@ read_shapes <- function(path) {
 
     munis <- sf::read_sf(paste(path, muni_file, sep = "/"))
     munis <- data.table::setDT(munis)
-##    munis <- ags_to_num(munis)
 
     states <- sf::read_sf(paste(path, states_file, sep = "/"))
     states <- data.table::setDT(states)
-##    states <- ags_to_num(states)
 
     districts <- sf::read_sf(paste(path, districts_file, sep = "/"))
     districts <- data.table::setDT(districts)
-##    districts <- ags_to_num(districts)
-    
+
     shapes <- list("state" = states, "district" = districts, "muni" = munis)
-    ### should get these names from function because I use them in utils as well
     return(shapes)    
     }
-
-
-ags_to_num <- function(dt) {
-    AGS <- NULL
-    dt2 <- dt[, "AGS" := as.numeric(AGS)]
-    return(dt2)
-}
