@@ -1,6 +1,6 @@
 ##' Reads the example migration statistics data set and one
-##' shapefile. Mainly used to quickly load data for unit tests.
-##'
+##' shapefile. Mainly used to quickly load data for unit tests in a
+##' consistent manner.
 ##' 
 ##' @title Read example migration statistics and corresponding
 ##'     shapefile.
@@ -9,9 +9,7 @@
 ##' @return named list with example migration statistics as first
 ##'     element and shapefile as second.
 ##' @author Konstantin
-read_examples <- function(mig_path =
-"~/network/Rohdaten/Wanderungsdaten FDZ/Dokumente StaLa/WandZuzug_dummy_2010-2013_4480-2021.sav",
-shp_path = "/home/konstantin/Diss/inst/extdata/vg250-ew_3112.utm32s.shape.ebenen/vg250-ew_ebenen") {
+read_examples <- function(mig_path = def_p("mig"), shp_path = def_p("shp")) {
 
     dt <- read_migex(mig_path)
     shps <- read_shapes(shp_path) 
@@ -91,4 +89,17 @@ read_inkar <- function(path, leading_0 = TRUE) {
         message(sprintf(mes, old, new))
     }
     return(inkar)
+}
+
+
+def_p <- function(ds) {
+    mig_path <- "~/network/Rohdaten/Wanderungsdaten FDZ/Dokumente StaLa/WandZuzug_dummy_2010-2013_4480-2021.sav"
+    shp_path <-  "/home/konstantin/Diss/inst/extdata/vg250-ew_3112.utm32s.shape.ebenen/vg250-ew_ebenen"
+    if (ds == "mig") {
+        path  <- mig_path
+    }
+    if (ds == "shp") {
+        path <- shp_path
+    }
+    return(path)
 }
