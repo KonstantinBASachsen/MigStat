@@ -27,13 +27,15 @@
 ##'     be computed? Takes one of the following strings:
 ##'
 ##' "st": federal states "di": districts "mu": municipalities
-##' @param na_to_0
+##' @param na_to_0 logical, if TRUE, NA flows, that is, od_pairs where
+##'     no migration took place are set to 0.
 ##' @return data.table with four columns: origin id, destination id,
 ##'     distance, flow
 ##' @import data.table
 ##' @export get_flows
 ##' @author Konstantin
 get_flows <- function(dt, shps, us, na_to_0 = TRUE) {
+    flow <- NULL
     flows <- get_flows_only(dt, us)
     dist <- get_distances(shps, us)
     flows <- join_distances(flows, dist, us, full = TRUE)
