@@ -78,35 +78,3 @@ get_flow <- function(dt, us, dest) {
 ## }
 
 
-##' Computes flows between given regions.
-##'
-##' Computes all flows between given regions (bivariate
-##' flows). Currently only supportes flows between regions of the same
-##' type.
-##' @title Flows between regions
-##' @param dt data.table
-##' @param us unit simple, one of the following: c("st", "di", "mu")
-##' @param simplify If true a simplified data.table is return with the
-##'     following columns only: ags (allgemeiner Gemeindeschlüssel,
-##'     unique numeric identifier of region) of origin and
-##'     destination, unit of origin and destination and flow.
-##' @return data.table
-##' @import data.table
-##' @export get_flows
-##' @author Konstantin
-get_flows <- function(dt, us, simplify = TRUE) {
-
-    unit_o <- get_unitcol(us, FALSE)
-    unit_d <- get_unitcol(us, TRUE)
-    ags_o <- get_agscol(unit_o)
-    ags_d <- get_agscol(unit_d)
-    dtf <- copy(dt)
-    dtf[, "flow" := .N, by = c(ags_o, ags_d)]
-    if (simplify == TRUE) {
-        dtf <- dtf[, .SD, .SDcols = c(ags_o, ags_d, unit_o, unit_d, "flow")]
-        dtf <- dtf[, .SD[1], by = c(ags_o, ags_d)]
-    }
-#### should do this in a separate step    
-##    dtf <- dtf[, c(ags_o, ags_d) := lapply(.SD, as.numeric), .SDcols = c(ags_o, ags_d)]
-    return(dtf)
-}

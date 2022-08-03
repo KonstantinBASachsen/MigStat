@@ -1,3 +1,18 @@
+get_flows <- function(dt, shps, us, na_to_0 = TRUE) {
+    flows <- get_flows_only(dt, us)
+    dist <- get_distances(shps, us)
+    flows <- join_distances(flows, dist, us, full = TRUE)
+    ### I think the next two lines are necessary to obtain the
+    ### data.structure needed for spflow
+    flows[, c("destination", "origin") := lapply(.SD, as.numeric), .SDcols = c("destination", "origin")]
+    flows[, c("destination", "origin") := lapply(.SD, as.factor), .SDcols = c("destination", "origin")] 
+    flows <- flows[, .SD, .SDcols = c("destination", "origin", "flow", "distance")]
+    if (na_to_0 == TRUE) {
+        flows[is.na(flow), "flow" := 0]
+    }
+    return(flows)
+}
+
 join_distances <- function(dt_flow, dt_dist, us, full = TRUE) {
     ### add join = FULL argument. Otherwise makes not much sense to
     ### compute all pairwise distances but only use non zero
@@ -53,3 +68,19 @@ get_distances <- function(shps, us) {
 }
 
 
+get_flows_only <- function(dt, us, simplify = TRUE) {
+
+    unit_o <- get_unitcol(us, FALSE)
+    unit_d <- get_unitcol(us, TRUE)
+    ags_o <- get_agscol(unit_o)
+    ags_d <- get_agscol(unit_d)
+    dtf <- copy(dt)
+    dtf[, "flow" := .N, by = c(ags_o, ags_d)]
+    if (simplify == TRUE) {
+        dtf <- dtf[, .SD, .SDcols = c(ags_o, ags_d, unit_o, unit_d, "flow")]
+        dtf <- dtf[, .SD[1], by = c(ags_o, ags_d)]
+    }
+#### should do this in a separate step    
+##    dtf <- dtf[, c(ags_o, ags_d) := lapply(.SD, as.numeric), .SDcols = c(ags_o, ags_d)]
+    return(dtf)
+}
