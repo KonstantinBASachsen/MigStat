@@ -151,8 +151,8 @@ arrow_end_points <- function(dt, rm_centers = TRUE) {
     dta$centers <- sf::st_centroid(dta$geom)
     dta$xend <- sapply(dta$centers, function(x) ret_el(x, 1))
     dta$yend <- sapply(dta$centers, function(x) ret_el(x, 2))
-    dta[dest == FALSE, "xend" := xend + 1]
-    dta[dest == FALSE, "yend" := yend + 1]
+    dta[origin == TRUE, "xend" := xend + 1]
+    dta[origin == TRUE, "yend" := yend + 1]
     if(rm_centers == TRUE) {
         dta[, "centers" := NULL]
     }
