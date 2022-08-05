@@ -1,4 +1,3 @@
-
 join_distances <- function(dt_flow, dt_dist, us, full = TRUE) {
     ### add join = FULL argument. Otherwise makes not much sense to
     ### compute all pairwise distances but only use non zero
