@@ -147,7 +147,7 @@ geom_splitflow <- function(dtarrow, flow) {
 
     centers <- xend <- yend <- NULL
     
-    o_idx <- which(dtarrow$origin == TRUE)
+    o_idx <- which(dtarrow$o_region == TRUE)
     m <- ifelse(flow == 1, "ratio1", "ratio2")
     c <- ifelse(flow == 1, 0.2, - 0.2)
     colour <- ifelse(flow == 1, "blue", "green")
