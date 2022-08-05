@@ -65,3 +65,36 @@ get_raumbezug <- function(us) {
     return(rb)
 }
 
+##' Reads the inkar.csv dataset. Returns a data.table. Optionally
+##' converts the regional identiferi column, "Kennziffer", to
+##' character and adds leading 0's to one digit id's. This ensures
+##' that the data can be joined to shapefile and migration statistics.
+##'
+##' @title Read inkar data set as data.table
+##' @param path Path to inkar.csv
+##' @param leading_0 If TRUE, converts the regional identiferi column,
+##'     "Kennziffer", to character and adds leading 0's to one digit
+##'     id's. See details.
+##' @return data.table
+##' @import data.table
+##' @export read_inkar
+##' @author Konstantin
+read_inkar <- function(path, leading_0 = TRUE) {
+    Kennziffer <- NULL
+    inkar <- data.table::fread(path, dec = ",")
+### grap strings that start and end with [0-9] and add leading 0
+### because in shapefiles and migration statistics the id is coded
+### that way
+    if (leading_0 == TRUE) {
+        old <- typeof(inkar[, Kennziffer])
+        inkar[, "Kennziffer" := as.character(Kennziffer)]
+        inkar[, "Kennziffer" := gsub("(^[1-9]$)", "0\\1", Kennziffer)]
+        new <- typeof(inkar[, Kennziffer])
+        mes <- "Kennziffer from %s converted to %s and leading 0's added \n
+                to make sure joining to shapefile works"
+        message(sprintf(mes, old, new))
+    }
+    return(inkar)
+}
+
+
