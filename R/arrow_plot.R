@@ -4,146 +4,76 @@
 ##' This function operates on a Migration Statistics data table and
 ##' needs shapefiles that hold the corresponding geometry.
 ##' @title Generate data for arrow-plot
-##' @param dt Migration Statistics data.table
-##' @param shapes list of three data.tables. Each table holds the
-##'     shapefiles of one of the following levels: states, districts,
-##'     municipalities.
-##' @param name character string naming the origin unit 
-##' @param o_us level of origin unit, either st, di or mu
-##' @param d_us level of destination units, either st, di or mu
-##' @return data.table for drawing arrow-plot
+##' @param flows data.table of flows between regions. Result from
+##'     get_flows()
+##' @param shp data.table of shapefile of the same level as flows. So
+##'     if "flows" is about flows between states, then the correct
+##'     level of shp is also states.
+##' @param name character string naming the origin unit
+##' @param min_flow Minimum size of flows between origin and
+##'     destination for which arrows are drawn.
+##' @param ags Sometimes for one name are more than 1 ags key's in
+##'     shp. If this happens, get_arrow_data throws an error and asks
+##'     the user to specify the ags directly. 
+##' @return data.table for drawing arrow plot
 ##' @export get_arrow_data
 ##' @author Konstantin
-get_arrow_data <- function(dt, shapes, ags, o_us, d_us) {
+get_arrow_data <- function(flows, shp, name, min_flow = 0, ags = NULL) {
 
-    ## Wrapper for all the functions below that are used to create a
-    ## suitable data.table to draw an arrow plot from
+    origin <- place <- . <- flow <- o_region <- NULL
+    xend <- yend <- centers <- NULL
     
-    ## check if name is found would be nice
+    cols <- c("destination", "origin", "flow", "distance")
+    
+    stopifnot("expected columns not found. Please make sure 'flows' is result from get_flows()" = sum(cols == colnames(flows)) == length(cols))
+    if (is.null(ags)) {
+        ags <- get_ags(shp, name)
+        ags <- ags[1]
+    } 
+    dtarrow <- copy(flows)
+    dtarrow <- add_dest(dtarrow)
+    dtarrow <- dtarrow[origin == ags, c(1,3,5)]
+    colnames(dtarrow)[1] <- "place"
+    dtarrow[place == ags, "o_region" := TRUE]
+    ##flows <- add_o_row(flows, origin_as_row2(ags))
+    dtarrow <- join_geom(dtarrow, shp)
 
-    ## ..o_col <- ..o_ags <- flow <- NULL
+    dtarrow <- arrow_end_points(dtarrow, rm_centers = FALSE)
+    dtarrow <- dtarrow[, .(place, flow, o_region, xend, yend, centers)]
+    dtarrow <- dtarrow[flow > min_flow | o_region == TRUE]
+    return(dtarrow)
     
-    ## o_col <- get_unitcol(o_us, dest = FALSE) ## from R/utils.R
-    ## d_col <- get_unitcol(d_us, dest = TRUE) ## from R/utils.R
-    ## o_ags <- get_agscol(o_col)
-    ## d_ags <- get_agscol(d_col)
-    
-    
-    ## stopifnot("region name is not found in data, check spelling and of o_us refers to the right regions"  = name %in% unique(dt[, ..o_col][[1]]))
-    
-    ## ags <- dt[get(o_col) == name, ..o_ags][[1]][1] #
-    o_col <- "origin"
-    d_col <- "destination"
-    dtf <- where_to(dt, o_col, name, d_col = d_col)
-    dtf <- origin_as_row(dtf, o_ags, name)
-    dtf <- add_destinations_with_0_flows(dtf, d_us, shapes)
-    dtf <- simplify_dt(dtf)
-    dtf <- add_origin(dtf, ags)
-    dtf <- join_geom(dtf, shapes, o_us, d_us)
-    dtf <- arrow_end_points(dtf, rm_centers = FALSE)
-    dtf <- na_flows_to_0(dtf)
-
-    dtf[, "flow" := as.numeric(flow)]
-
-    return(dtf)
-
 }
 
-where_to <- function(dt, o_col, o_name, d_col) {
+get_ags <- function(shp, name) {
+    GEN <- AGS <- NULL
+    ags <- shp[GEN == name, AGS]
+    if (length(ags) > 1) {
+        stop(sprintf("More than one ags found to region: %s. Please specify ags directly.", name))}
+    return(ags)
+}
 
-    flow <- NULL
+
+add_dest <- function(flows) {
+    flows2 <- copy(flows)
+    flows2[, "o_region" := FALSE]
+    return(flows2)
+}
+
+join_geom <- function(flows, shp) {
+    i.geometry <- NULL
     
-##    o_ags <- get_agscol(o_col)
-##    d_ags <- get_agscol(d_col)
-    dtf <- dt[, .SD, .SDcols = c(o_col, d_col)]
-    dtf <- dtf[get(o_col) == o_name, "flow" := .N, by = d_col]
-    dtf <- dtf[!is.na(flow), ]
-    dtf <- dtf[, .SD[1], by = c(o_col, d_col)]
-    return(dtf)
-}
-
-origin_as_row <- function(dt, o_ags, name) {
-
-### This function is necessary because the origin can not necessarily
-### be found among the destinations. This is because it might be of
-### different type. For example if we consider moves from one
-### municipality to all states
-###
-### It adds a new row with the name of the origin to the names of the
-### destination and the ags of origin to the ags of destination. Seems
-### a little weird but then one column can be used to join names or
-### geoms
-    ## ..o_ags <- NULL
-    ## ags <- dt[, ..o_ags][[1]][1]
-    new_row <- t(c(NA, name, NA))
-    colnames(new_row) <- colnames(dt)
-    dtr <- rbind(dt,  new_row)
-
-    return(dtr)
-}
-
-add_destinations_with_0_flows <- function(dt, d_us, units) {
-
-### maybe I can omit this and later perform a full join that joins the
-### missing unit names and geometries
-    
-    unit <- get_unitcol(us = d_us, dest = TRUE)
-    unit <- strsplit(unit, "_")[[1]][1]
-    dtj <- join_units(dt, d_us, units[[unit]], dest = TRUE, full = TRUE)
-
-    return(dtj)
-}
-
-simplify_dt <- function(dt) {
-
-    dts <- dt[, 3:5]
-    colnames(dts) <- c("place", "key", "flow")
-
-    return(dts)
-}
-
-add_origin <- function(dt, ags) {
-
-    flow <- NULL
-
-    ## We add origin to the same column as destination, this we then
-    ## call "key". If origin is also a destination, that is, some
-    ## people who move from Saxony move to Saxony, the region appears
-    ## twice. Once as destination, once as origin. In this case we
-    ## want to add origin == TRUE to the row which is the origin, that
-    ## is, flow == NA.
-
-    ## If on the other hand origin is not a destination, there is only
-    ## one row and we can set dest == TRUE
-
-    if (nrow(dt[key == ags]) > 1) {
-        dtd <- dt[, "origin" := fifelse(key == ags & !is.na(flow), TRUE, FALSE)]
-    } else {
-        dtd <- dt[, "origin" := fifelse(key == ags, TRUE, FALSE)]
-    }
-    
-
-    return(dtd)
-}
-
-join_geom <- function(dt, units, o_us, d_us) {
-
-    GF <- i.geometry <- . <- AGS <- NULL
-    ### add test with sum(sapply(dtf$geom, is.null))
-    o_unit <- get_unitcol(us = o_us, dest = FALSE)
-    o_unit <- strsplit(o_unit, "_")[[1]][1]
-    d_unit <- get_unitcol(us = d_us, dest = TRUE)
-    d_unit <- strsplit(d_unit, "_")[[1]][1]
-   
-    dtj <- dt[units[[d_unit]][GF == 4, ], "geom" := i.geometry, on = .(key = AGS)]
-    dtj <- dtj[units[[o_unit]][GF == 4, ], "geom" := i.geometry, on = .(key = AGS)]
-
-    return(dtj)
+    flows2 <- copy(flows)
+    shp2 <- copy(shp)
+    setkeyv(flows2, "place") ## maybe bad to set key like that because it changes tables
+    setkeyv(shp2, "AGS")
+    flows2[shp2, "geom" := i.geometry]
+    return(flows2)
 }
 
 arrow_end_points <- function(dt, rm_centers = TRUE) {
 
-    origin <- xend <- yend <- NULL
+    origin <- xend <- yend <- o_region <- NULL
     
     ret_el <- function(l, idx) { el <- l[idx]; return(el) }
 
@@ -160,18 +90,6 @@ arrow_end_points <- function(dt, rm_centers = TRUE) {
     return(dta)
 }
 
-
-na_flows_to_0 <- function(dt) {
-
-    flow <- NULL
-    
-    dtf <- data.table::copy(dt)
-    dtf <- dtf[is.na(flow), "flow" := 0]
-
-    return(dtf)
-}
-
-
 ##' This function draws an arrow plot that draws arrows from origin to
 ##' destinations. The size of the arrow corresponds to the size of the flow
 ##'
@@ -186,7 +104,6 @@ na_flows_to_0 <- function(dt) {
 ##' @title Draw nice arrrow plot
 ##' @param dt data.table from get_arrow_data. Holds all the flows that
 ##'     could be drawn and all the geometry information.
-##' @param o_idx row number of origin region
 ##' @param dtarrow Subset of dt that only contains origin and the
 ##'     destinations where arrows are to be drawn.
 ##' @return plot
@@ -197,7 +114,7 @@ arrow_plot <- function(dt, dtarrow) {
     ### o_idx I can check from the dt, where dest == TRUE, no need to
     ### make it an argument, I think?
     
-    centers <- xend <- yend <- place <- flow <- NULL
+    centers <- xend <- yend <- place <- flow <- o_region <- NULL
     o_idx <- which(dtarrow[, o_region] == TRUE)
     plot <- ggplot2::ggplot(sf::st_set_geometry(dt, dt$geom)) +
         ggplot2::geom_sf() +
