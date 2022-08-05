@@ -20,12 +20,23 @@
 ##' @import data.table
 ##' @export join_inkar_vars
 ##' @author Konstantin
-join_inkar_vars <- function(shp, inkar, vars, us, year) {
-    ink <- get_inkar_vars(inkar, vars, us, year)
+join_inkar_vars <- function(shp, inkar, vars, us, zb) {
+    rb <- get_raumbezug(us)
+    avail <- unlist(lapply(vars, function(x) check_availability(inkar, rb, zb, x)))
+    vars <- vars[avail != 0]
+    ink <- get_inkar_vars(inkar, vars, rb, zb)
     shp_ink <- join_inkar(shp, ink)
     return(shp_ink)
 }
 
+check_availability <- function(inkar, rb, zb, var) {
+    n <- inkar[Raumbezug == rb &  Zeitbezug == zb & Indikator == var, .N]
+    if(n == 0) {
+        mes <- " '%s' is not available for %s and %s"
+        warning(sprintf(mes, var, zb, rb), call. = FALSE)
+    }
+    return(n)
+}
 
 join_inkar <- function(shp, ink) {
     ### add message that wide == TRUE is expected
@@ -37,12 +48,11 @@ join_inkar <- function(shp, ink) {
 
 }
 
-get_inkar_vars <- function(inkar, vars, us, year, wide = TRUE) {
+get_inkar_vars <- function(inkar, vars, rb, zb, wide = TRUE) {
     Raumbezug <- Zeitbezug <- Indikator <- NULL
     Kennziffer <- Wert  <- . <- NULL
         
-    rb <- get_raumbezug(us)
-    ink <- inkar[Raumbezug == rb & Zeitbezug == year & Indikator %in% vars, ]
+    ink <- inkar[Raumbezug == rb & Zeitbezug == zb & Indikator %in% vars, ]
     ink <- ink[, .SD[1], by = c("Indikator", "Wert")]
     ink <- ink[, .(Kennziffer, Indikator, Wert)]
     if(wide == TRUE) {
@@ -90,9 +100,14 @@ read_inkar <- function(path, leading_0 = TRUE) {
         inkar[, "Kennziffer" := as.character(Kennziffer)]
         inkar[, "Kennziffer" := gsub("(^[1-9]$)", "0\\1", Kennziffer)]
         new <- typeof(inkar[, Kennziffer])
-        mes <- "Kennziffer from %s converted to %s and leading 0's added \n
+        mes <- "Kennziffer from %s converted to %s and leading 0's added 
                 to make sure joining to shapefile works"
         message(sprintf(mes, old, new))
+        old <- typeof(inkar[, Zeitbezug])
+        ## inkar[, "Zeitbezug" := as.numeric(Zeitbezug)]
+        ## new <- typeof(inkar[, Zeitbezug])
+        ## mes <- "Zeitbezug from %s to %s"
+        ## message(sprintf(mes, old, new))
     }
     return(inkar)
 }
