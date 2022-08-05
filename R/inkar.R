@@ -14,7 +14,7 @@
 ##' @param vars character vector with variable names from inkar data
 ##'     that are to be joined.
 ##' @param us unit_simple: "st", "di" or "mu".
-##' @param year The yearwhich is to be joined. Assumed to be a
+##' @param zb The year which is to be joined. Assumed to be a
 ##'     character .
 ##' @return data.table with joined variables.
 ##' @import data.table
@@ -30,6 +30,7 @@ join_inkar_vars <- function(shp, inkar, vars, us, zb) {
 }
 
 check_availability <- function(inkar, rb, zb, var) {
+    Raumbezug <- Zeitbezug <- Indikator <- NULL
     n <- inkar[Raumbezug == rb &  Zeitbezug == zb & Indikator == var, .N]
     if(n == 0) {
         mes <- " '%s' is not available for %s and %s"
@@ -103,7 +104,7 @@ read_inkar <- function(path, leading_0 = TRUE) {
         mes <- "Kennziffer from %s converted to %s and leading 0's added 
                 to make sure joining to shapefile works"
         message(sprintf(mes, old, new))
-        old <- typeof(inkar[, Zeitbezug])
+        ## old <- typeof(inkar[, Zeitbezug])
         ## inkar[, "Zeitbezug" := as.numeric(Zeitbezug)]
         ## new <- typeof(inkar[, Zeitbezug])
         ## mes <- "Zeitbezug from %s to %s"

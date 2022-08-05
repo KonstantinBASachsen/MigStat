@@ -28,7 +28,7 @@ shp_cols <- ncol(shp)
 indic <- unique(inkar[, Indikator])
 idx <- c(428, 86, 344, 196, 193, 419, 240, 161, 153, 480)
 vars <- indic[idx]
-avail <- unlist(lapply(vars, function(x) check_availability(inkar, rb, zb, x))),
+avail <- unlist(lapply(vars, function(x) check_availability(inkar, rb, zb, x)))
 shp <- join_inkar_vars(shp, inkar, vars, us, zb)
 expect_equal(ncol(shp), shp_cols + length(vars[avail != 0]))
 
