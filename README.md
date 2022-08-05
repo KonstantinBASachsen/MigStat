@@ -3,19 +3,22 @@
 
 # MigStat
 
-<!-- badges: start -->
-<!-- badges: end -->
-
 The goal of MigStat is to ease working with Migration Statistics
 (Wanderungsstatistik). It’s main functionalities are:
 
--   create maps with arrows to indicate destination and size of
-    migration flows
--   calculate migration wins and losses for regions
--   calculate bivariate flows (“Umzüge”) to create [Circular Migration
-    Flow
-    Plots](https://www.r-bloggers.com/2014/03/circular-migration-flow-plots-in-r/)
--   join names of administrative units from official shape files
+-   prepare data to enable the fitting of spatial origin-destination
+    flow models using
+    [spflow](https://cran.r-project.org/web/packages/spflow/index.html)
+-   easy join of regional characteristics from the
+    [inkar](https://www.inkar.de/) data
+-   generate random (currently only uniform) moves.
+-   make visualizations easy by:
+    -   creating maps with arrows to indicate destinations and size of
+        migration flows from origin
+    -   calculate migration wins and losses for regions
+    -   calculate bivariate flows (“Umzüge”) to create [Circular
+        Migration Flow
+        Plots](https://www.r-bloggers.com/2014/03/circular-migration-flow-plots-in-r/)
 
 ## Installation
 
@@ -26,6 +29,21 @@ You can install the development version of MigStat from
 # install.packages("devtools")
 devtools::install_github("KonstantinBASachsen/MigStat")
 ```
+
+# General Overview
+
+The package evolves around three data sets: - [Migration
+Statistics](https://www.forschungsdatenzentrum.de/de/10-21242-12711-2013-00-00-1-1-0)
+The example data set gives an idea about the data structure and what
+observations can be expected. Unfortunately there are only 200 moves.
+For testing of visualizations and models this is not enough in my
+opinion. [^1] - [inkar](https://www.inkar.de/) This data has very many
+interesting regional characteristics for many years and on different
+administrative levels like federal states, districts and
+municipalities. -
+[shapefile](https://daten.gdz.bkg.bund.de/produkte/vg/vg250-ew_ebenen_1231/2014/vg250-ew_12-31.utm32s.shape.ebenen.zip)
+(2014 is not correct, 2013 should be used) This is used to obtain the
+geometry information of the regions and the population sizes.
 
 ## Examples
 
@@ -87,3 +105,9 @@ o <- which(dtarrow$dest == TRUE) ## index of origin region (so it
 
 arrow_plot(dtf, o, dtarrow) ## draw plot
 ```
+
+[^1]: The data set is actually not really needed. What is needed are the
+    column names and some missings here and there. I am not sure if it
+    is allowed to share the data structure publicely. I will find out
+    and if so, I remove the dependence on the example data and provide a
+    function to recreate it.
