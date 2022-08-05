@@ -73,33 +73,65 @@ workings.
 ### Example load data and join administrative units
 
 
-```{r load_data_join_administrative_units, eval = FALSE}
+```{r package_and_data, eval = TRUE}
 
 library(MigStat)
-## basic example code
-map_path <- "Path to shape files"
-example_path <- "path to example data Wanderungsstatistik"
 
-dt <- read_example(example_path)
-shps <- read_shapes(map_path) # read shapefiles. Assumes data is
-                              # organized in levels. Can be downloaded
-                              # [here](https://daten.gdz.bkg.bund.de/produkte/vg/vg250_ebenen_1231/2013/)
+ex_dat <- MigStat:::read_examples() ## reads shapefile and example migration statistics
+shps <- ex_dat$shps
+inkar_csv <- "/home/konstantin/Downloads/inkar_2021.csv"
+inkar <- MigStat::read_inkar(inkar_csv)
 
-dtj <- join_administries(dt, shps$state, shps$district, shps$muni, full = FALSE) ### join "official" names
+```
 
+Next we want to generate random moves between regions. First we
+specify for which regions. Moves can be drawn between origin and
+destination. Both can be of one of the following:
+- federal states (st)
+- districts (di)
+- municipalities (mu)
+
+In this case we generate moves where origin and destination are both
+federal states. Currently only uniformly distributed moves are
+created. This means every origin-destination pair has the same
+probability that somebody moves between them. This is very
+unrealistic.
+
+```{r random_moves}
+us <- "st" ## "unit_simple" on of c("st", "di", "mu")
+
+dt <- MigStat::n_new_rows(dt = ex_dat$mig, shps = shps, us_o = us, us_d = us, n = 1000)
+
+```
+The data is organized such that every row represents one move:
+
+```{R data_structure}
+
+dt
+
+```
+
+We are interested in the number of people moving between regions. The
+distance between the centroids of regions is reported as well.
+
+```{R}
+
+flows <- get_flows(dt, shps, us = "st")
+flows
 ```
 
 ### Create circular migration flow plot
 
 ```{r circ_plot, eval = FALSE}
 
-dtf <- get_flows(dtj, "st", simplify = TRUE)
-dtf <- dtf[complete.cases(dtf)]
-mig_chord(dtf[, 3:5])
+migest::mig_chord(flows[, 1:3]) ### for this names of regions would be nice
 
 ```
 
 ### Create Arrow Plot
+
+Now we can create an arrow plot that shows where and how many people
+move from origin.
 
 ```{R arrows_new, eval = FALSE}
 
