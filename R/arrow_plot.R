@@ -53,12 +53,12 @@ where_to <- function(dt, o_col, o_name, d_col) {
 
     flow <- NULL
     
-    o_ags <- get_agscol(o_col)
-    d_ags <- get_agscol(d_col)
-    dtf <- dt[, .SD, .SDcols = c(o_col, o_ags, d_col, d_ags)]
+##    o_ags <- get_agscol(o_col)
+##    d_ags <- get_agscol(d_col)
+    dtf <- dt[, .SD, .SDcols = c(o_col, d_col)]
     dtf <- dtf[get(o_col) == o_name, "flow" := .N, by = d_col]
     dtf <- dtf[!is.na(flow), ]
-    dtf <- dtf[, .SD[1], by = c(o_col, o_ags, d_col, d_ags)]
+    dtf <- dtf[, .SD[1], by = c(o_col, d_col)]
     return(dtf)
 }
 
@@ -73,9 +73,9 @@ origin_as_row <- function(dt, o_ags, name) {
 ### destination and the ags of origin to the ags of destination. Seems
 ### a little weird but then one column can be used to join names or
 ### geoms
-    ..o_ags <- NULL
-    ags <- dt[, ..o_ags][[1]][1]
-    new_row <- t(c(NA, NA, name, ags, NA))
+    ## ..o_ags <- NULL
+    ## ags <- dt[, ..o_ags][[1]][1]
+    new_row <- t(c(NA, name, NA))
     colnames(new_row) <- colnames(dt)
     dtr <- rbind(dt,  new_row)
 
@@ -151,8 +151,8 @@ arrow_end_points <- function(dt, rm_centers = TRUE) {
     dta$centers <- sf::st_centroid(dta$geom)
     dta$xend <- sapply(dta$centers, function(x) ret_el(x, 1))
     dta$yend <- sapply(dta$centers, function(x) ret_el(x, 2))
-    dta[origin == TRUE, "xend" := xend + 1]
-    dta[origin == TRUE, "yend" := yend + 1]
+    dta[dest == FALSE, "xend" := xend + 1]
+    dta[dest == FALSE, "yend" := yend + 1]
     if(rm_centers == TRUE) {
         dta[, "centers" := NULL]
     }
