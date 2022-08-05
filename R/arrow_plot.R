@@ -151,8 +151,8 @@ arrow_end_points <- function(dt, rm_centers = TRUE) {
     dta$centers <- sf::st_centroid(dta$geom)
     dta$xend <- sapply(dta$centers, function(x) ret_el(x, 1))
     dta$yend <- sapply(dta$centers, function(x) ret_el(x, 2))
-    dta[dest == FALSE, "xend" := xend + 1]
-    dta[dest == FALSE, "yend" := yend + 1]
+    dta[o_region == TRUE, "xend" := xend + 1]
+    dta[o_region == TRUE, "yend" := yend + 1]
     if(rm_centers == TRUE) {
         dta[, "centers" := NULL]
     }
@@ -192,13 +192,13 @@ na_flows_to_0 <- function(dt) {
 ##' @return plot
 ##' @export arrow_plot
 ##' @author Konstantin
-arrow_plot <- function(dt, o_idx, dtarrow) {
+arrow_plot <- function(dt, dtarrow) {
 
     ### o_idx I can check from the dt, where dest == TRUE, no need to
     ### make it an argument, I think?
     
     centers <- xend <- yend <- place <- flow <- NULL
-    
+    o_idx <- which(dtarrow[, o_region] == TRUE)
     plot <- ggplot2::ggplot(sf::st_set_geometry(dt, dt$geom)) +
         ggplot2::geom_sf() +
         ggplot2::geom_curve(data = dtarrow,
