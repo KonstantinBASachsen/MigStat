@@ -29,5 +29,28 @@ expect_equal(dtarrow[o_region == TRUE, .N], 1)
 ### if origin is also destination, there are two places with the
 ### "name", this is not the case for Mecklenburg-Vorpommern
 
-expect_equal(sum(grepl(get_ags(shp, name), dtarrow[, place])), 1) 
+expect_equal(sum(grepl(get_ags(shp, name), dtarrow[, place])), 1)
+
+### for "Leipzig" there are two ags keys in the district shape
+### table. One for the city of leipzig and one for the region. This is
+### supposed to throw an error.
+us <- "di"
+name <- "Leipzig"
+
+dtf <- get_flows(ex_dat$mig, shps, us)
+shp <- clean_shp(ex_dat$shps, us = us)
+expect_error(get_arrow_data(dtf, shp, name))
+
+### The error message asks to specify the key directly. This sould not
+### produce an error
+ags <- shp[GEN == "Leipzig", AGS]
+
+dtarrow <- get_arrow_data(dtf, shp, name, ags = ags[1])
+
+expect_equal(nrow(dtarrow), 4)
+
+dtarrow <- get_arrow_data(dtf, shp, name, ags = ags[2])
+
+expect_equal(nrow(dtarrow), 2)
+
 
