@@ -159,6 +159,17 @@ indic <- unique(inkar[, Indikator]) ### these are all available covariates
 idx <- c(428, 86, 344, 196, 193, 419, 240, 161, 153, 480)
 vars <- indic[idx] 
 shp <- MigStat::join_inkar_vars(shp = shp, inkar = inkar, vars = vars, us = us, zb = zb)
+colnames(shp)[5] <- "Anteil Minijobs"
+### with missing values the model can not be fit. Also excluding them
+### does not work because then there are nodes missing. Thus we simply
+### impute them with the sample average.
+vars <- vars[vars %in% colnames(shp)] ## because not all desired vars could be joined we check if they are indeed part of shp
+cn <- colnames(shp)
+m1 <- shp[, mean(get(cn[5]), na.rm = TRUE)]
+m2 <- shp[, mean(get(cn[7]), na.rm = TRUE)]
+shp[is.na(get(cn[5])), cn[5] := m1]
+shp[is.na(get(cn[7])), cn[7] := m2]
+
 
 ```
 
@@ -207,8 +218,8 @@ needed:
 
 idx <- !(colnames(shp) %in% c("geometry", "GEN"))
 shp <- shp[, ..idx]
-idx <- vars %in% colnames(shp) ## because not all desired vars could be joined we check if they are indeed part of shp
-m_cols <- c("EWZ", vars[idx]) ## columns included in model
+
+m_cols <- c("EWZ", vars) ## columns included in model
 shp[,  (m_cols) := lapply(.SD, scale), .SDcols = m_cols]
 
 shp_net <- 
@@ -227,5 +238,17 @@ shp_net_pairs <- spflow::sp_network_pair(
   dest_key_column = "destination")
 
 shp_multi_net <- spflow::sp_multi_network(shp_net, shp_net_pairs)
+
+```
+
+```{r model_estimation}
+
+hist(flows[, log(flow)]) ### actually, log flows should be approximately normal
+
+results_default <- spflow::spflow(
+  flow_formula = log(1 + flow) ~ . + G_(log( 1 + distance)),
+  sp_multi_network = shp_multi_net)
+
+results_default
 
 ```

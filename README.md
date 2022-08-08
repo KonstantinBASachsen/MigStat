@@ -88,41 +88,41 @@ The data is organized such that every row represents one move:
 
 dt
 #>       EF01 EF02U1 EF02U2 EF02U3 EF02U4 EF02U5 EF03U1 EF03U2 EF03U3 EF03U4
-#>    1:   NA     NA     04     NA     NA     NA     NA     10     NA     NA
-#>    2:   NA     NA     10     NA     NA     NA     NA     13     NA     NA
-#>    3:   NA     NA     11     NA     NA     NA     NA     13     NA     NA
-#>    4:   NA     NA     01     NA     NA     NA     NA     16     NA     NA
-#>    5:   NA     NA     11     NA     NA     NA     NA     08     NA     NA
+#>    1:   NA     NA     12     NA     NA     NA     NA     03     NA     NA
+#>    2:   NA     NA     09     NA     NA     NA     NA     11     NA     NA
+#>    3:   NA     NA     11     NA     NA     NA     NA     15     NA     NA
+#>    4:   NA     NA     13     NA     NA     NA     NA     03     NA     NA
+#>    5:   NA     NA     01     NA     NA     NA     NA     01     NA     NA
 #>   ---                                                                    
-#>  996:   NA     NA     10     NA     NA     NA     NA     08     NA     NA
-#>  997:   NA     NA     09     NA     NA     NA     NA     07     NA     NA
-#>  998:   NA     NA     13     NA     NA     NA     NA     08     NA     NA
-#>  999:   NA     NA     15     NA     NA     NA     NA     13     NA     NA
-#> 1000:   NA     NA     08     NA     NA     NA     NA     07     NA     NA
-#>       EF03U5 EF05U3 EF07 EF12U3 EF19 EF20 EF25                state_o
-#>    1:     NA     NA   NA     NA   NA   NA   NA               Saarland
-#>    2:     NA     NA   NA     NA   NA   NA   NA Mecklenburg-Vorpommern
-#>    3:     NA     NA   NA     NA   NA   NA   NA Mecklenburg-Vorpommern
-#>    4:     NA     NA   NA     NA   NA   NA   NA              Thüringen
-#>    5:     NA     NA   NA     NA   NA   NA   NA      Baden-Württemberg
-#>   ---                                                                
-#>  996:     NA     NA   NA     NA   NA   NA   NA      Baden-Württemberg
-#>  997:     NA     NA   NA     NA   NA   NA   NA        Rheinland-Pfalz
-#>  998:     NA     NA   NA     NA   NA   NA   NA      Baden-Württemberg
-#>  999:     NA     NA   NA     NA   NA   NA   NA Mecklenburg-Vorpommern
-#> 1000:     NA     NA   NA     NA   NA   NA   NA        Rheinland-Pfalz
+#>  996:   NA     NA     05     NA     NA     NA     NA     04     NA     NA
+#>  997:   NA     NA     08     NA     NA     NA     NA     12     NA     NA
+#>  998:   NA     NA     08     NA     NA     NA     NA     15     NA     NA
+#>  999:   NA     NA     10     NA     NA     NA     NA     11     NA     NA
+#> 1000:   NA     NA     14     NA     NA     NA     NA     10     NA     NA
+#>       EF03U5 EF05U3 EF07 EF12U3 EF19 EF20 EF25            state_o
+#>    1:     NA     NA   NA     NA   NA   NA   NA      Niedersachsen
+#>    2:     NA     NA   NA     NA   NA   NA   NA             Berlin
+#>    3:     NA     NA   NA     NA   NA   NA   NA     Sachsen-Anhalt
+#>    4:     NA     NA   NA     NA   NA   NA   NA      Niedersachsen
+#>    5:     NA     NA   NA     NA   NA   NA   NA Schleswig-Holstein
+#>   ---                                                            
+#>  996:     NA     NA   NA     NA   NA   NA   NA             Bremen
+#>  997:     NA     NA   NA     NA   NA   NA   NA        Brandenburg
+#>  998:     NA     NA   NA     NA   NA   NA   NA     Sachsen-Anhalt
+#>  999:     NA     NA   NA     NA   NA   NA   NA             Berlin
+#> 1000:     NA     NA   NA     NA   NA   NA   NA           Saarland
 #>                      state_d
-#>    1:                 Bremen
-#>    2:               Saarland
+#>    1:            Brandenburg
+#>    2:                 Bayern
 #>    3:                 Berlin
-#>    4:     Schleswig-Holstein
-#>    5:                 Berlin
+#>    4: Mecklenburg-Vorpommern
+#>    5:     Schleswig-Holstein
 #>   ---                       
-#>  996:               Saarland
-#>  997:                 Bayern
-#>  998: Mecklenburg-Vorpommern
-#>  999:         Sachsen-Anhalt
-#> 1000:      Baden-Württemberg
+#>  996:    Nordrhein-Westfalen
+#>  997:      Baden-Württemberg
+#>  998:      Baden-Württemberg
+#>  999:               Saarland
+#> 1000:                Sachsen
 ```
 
 We are interested in the number of people moving between regions. The
@@ -156,22 +156,22 @@ name <- "Baden-Württemberg" ## name of origin region
 dtarrow <- MigStat::get_arrow_data(flows, shp, name)
 dtarrow
 #>     place flow o_region     xend    yend                  centers
-#>  1:    01    6    FALSE 553652.9 6004156 POINT (553652.9 6004156)
+#>  1:    01    2    FALSE 553652.9 6004156 POINT (553652.9 6004156)
 #>  2:    02    5    FALSE 567310.6 5933674 POINT (567310.6 5933674)
-#>  3:    03    3    FALSE 511363.6 5846065 POINT (511363.6 5846065)
-#>  4:    04    3    FALSE 482904.8 5894462 POINT (482904.8 5894462)
-#>  5:    05    4    FALSE 399578.3 5703959 POINT (399578.3 5703959)
-#>  6:    06    5    FALSE 501846.2 5605263 POINT (501846.2 5605263)
-#>  7:    07    2    FALSE 388849.7 5529902 POINT (388849.7 5529902)
-#>  8:    08    4     TRUE 503073.9 5376508 POINT (503072.9 5376507)
-#>  9:    09    9    FALSE 677821.7 5423448 POINT (677821.7 5423448)
-#> 10:    10    2    FALSE 351467.0 5472192   POINT (351467 5472192)
-#> 11:    11    6    FALSE 798734.2 5825934 POINT (798734.2 5825934)
-#> 12:    12    4    FALSE 799146.5 5822278 POINT (799146.5 5822278)
-#> 13:    13    8    FALSE 732862.3 5961981 POINT (732862.3 5961981)
-#> 14:    14    6    FALSE 804516.1 5664713 POINT (804516.1 5664713)
-#> 15:    15    2    FALSE 685498.7 5765494 POINT (685498.7 5765494)
-#> 16:    16    4    FALSE 642505.2 5641040 POINT (642505.2 5641040)
+#>  3:    03    4    FALSE 511363.6 5846065 POINT (511363.6 5846065)
+#>  4:    04    5    FALSE 482904.8 5894462 POINT (482904.8 5894462)
+#>  5:    05    5    FALSE 399578.3 5703959 POINT (399578.3 5703959)
+#>  6:    06    3    FALSE 501846.2 5605263 POINT (501846.2 5605263)
+#>  7:    07    3    FALSE 388849.7 5529902 POINT (388849.7 5529902)
+#>  8:    08    6     TRUE 503073.9 5376508 POINT (503072.9 5376507)
+#>  9:    09    2    FALSE 677821.7 5423448 POINT (677821.7 5423448)
+#> 10:    10    4    FALSE 351467.0 5472192   POINT (351467 5472192)
+#> 11:    11    4    FALSE 798734.2 5825934 POINT (798734.2 5825934)
+#> 12:    12    7    FALSE 799146.5 5822278 POINT (799146.5 5822278)
+#> 13:    13    6    FALSE 732862.3 5961981 POINT (732862.3 5961981)
+#> 14:    14    7    FALSE 804516.1 5664713 POINT (804516.1 5664713)
+#> 15:    15    3    FALSE 685498.7 5765494 POINT (685498.7 5765494)
+#> 16:    16    3    FALSE 642505.2 5641040 POINT (642505.2 5641040)
 MigStat::arrow_plot(shp, dtarrow) ## draw plot, moves from BaWü to BaWü are a bit hidden
 ```
 
@@ -201,6 +201,16 @@ shp <- MigStat::join_inkar_vars(shp = shp, inkar = inkar, vars = vars, us = us, 
 #> Warning: 'Erholungsfläche je Einwohner' is not available for 2013 and
 #> Bundesländer
 #> Warning: 'Männliche Arbeitslose' is not available for 2013 and Bundesländer
+colnames(shp)[5] <- "Anteil Minijobs"
+### with missing values the model can not be fit. Also excluding them
+### does not work because then there are nodes missing. Thus we simply
+### impute them with the sample average.
+vars <- vars[vars %in% colnames(shp)] ## because not all desired vars could be joined we check if they are indeed part of shp
+cn <- colnames(shp)
+m1 <- shp[, mean(get(cn[5]), na.rm = TRUE)]
+m2 <- shp[, mean(get(cn[7]), na.rm = TRUE)]
+shp[is.na(get(cn[5])), cn[5] := m1]
+shp[is.na(get(cn[7])), cn[7] := m2]
 ```
 
 Now we looked a bit at the data; the data is in the right format and we
@@ -247,8 +257,8 @@ needed:
 
 idx <- !(colnames(shp) %in% c("geometry", "GEN"))
 shp <- shp[, ..idx]
-idx <- vars %in% colnames(shp) ## because not all desired vars could be joined we check if they are indeed part of shp
-m_cols <- c("EWZ", vars[idx]) ## columns included in model
+
+m_cols <- c("EWZ", vars) ## columns included in model
 shp[,  (m_cols) := lapply(.SD, scale), .SDcols = m_cols]
 
 shp_net <- 
@@ -267,6 +277,75 @@ shp_net_pairs <- spflow::sp_network_pair(
   dest_key_column = "destination")
 
 shp_multi_net <- spflow::sp_multi_network(shp_net, shp_net_pairs)
+```
+
+``` r
+
+hist(flows[, log(flow)]) ### actually, log flows should be approximately normal
+```
+
+<img src="man/figures/README-model_estimation-1.png" width="100%" />
+
+``` r
+
+results_default <- spflow::spflow(
+  flow_formula = log(1 + flow) ~ . + G_(log( 1 + distance)),
+  sp_multi_network = shp_multi_net)
+
+results_default
+#> --------------------------------------------------
+#> Spatial interaction model estimated by: MLE  
+#> Autocorrelation structure: model_9 (SDM)  
+#> Observations: 256  
+#> 
+#> --------------------------------------------------
+#> Coefficients:
+#>                                       est    sd  t.stat  p.value
+#> rho_d                               -0.08  0.08   -1.06     0.24
+#> rho_o                               -0.05  0.08   -0.58     0.33
+#> rho_w                               -0.12  0.15   -0.83     0.28
+#> (Intercept)                          8.93  2.21    4.05     0.08
+#> (Intra)                             -0.66  5.59   -0.12     0.46
+#> DEST_`Anteil Minijobs`              -0.03  0.09   -0.29     0.41
+#> DEST_Auszubildende                   0.09  0.08    1.22     0.22
+#> DEST_Berufsschülerinnen             -0.11  0.12   -0.91     0.26
+#> DEST_Bildungswanderer                0.11  0.06    1.77     0.16
+#> DEST_Binnenwanderungsvolumen         0.09  0.11    0.80     0.28
+#> DEST_EWZ                             0.07  0.04    1.76     0.16
+#> DEST_`Anteil Minijobs`.lag1         -0.68  0.32   -2.11     0.14
+#> DEST_Auszubildende.lag1              0.76  0.33    2.28     0.13
+#> DEST_Berufsschülerinnen.lag1        -0.36  0.17   -2.07     0.14
+#> DEST_Bildungswanderer.lag1           0.14  0.18    0.75     0.29
+#> DEST_Binnenwanderungsvolumen.lag1    0.52  0.25    2.12     0.14
+#> DEST_EWZ.lag1                       -0.21  0.24   -0.85     0.28
+#> ORIG_`Anteil Minijobs`              -0.03  0.09   -0.31     0.40
+#> ORIG_Auszubildende                   0.12  0.08    1.56     0.18
+#> ORIG_Berufsschülerinnen              0.06  0.12    0.52     0.35
+#> ORIG_Bildungswanderer                0.06  0.07    0.87     0.27
+#> ORIG_Binnenwanderungsvolumen        -0.10  0.11   -0.96     0.26
+#> ORIG_EWZ                             0.05  0.04    1.36     0.20
+#> ORIG_`Anteil Minijobs`.lag1         -0.62  0.33   -1.91     0.15
+#> ORIG_Auszubildende.lag1              0.42  0.33    1.26     0.21
+#> ORIG_Berufsschülerinnen.lag1        -0.27  0.17   -1.60     0.18
+#> ORIG_Bildungswanderer.lag1           0.59  0.18    3.22     0.10
+#> ORIG_Binnenwanderungsvolumen.lag1    0.63  0.25    2.49     0.12
+#> ORIG_EWZ.lag1                        0.25  0.24    1.01     0.25
+#> INTRA_`Anteil Minijobs`              0.24  0.36    0.67     0.31
+#> INTRA_Auszubildende                 -0.03  0.32   -0.08     0.47
+#> INTRA_Berufsschülerinnen            -0.75  0.49   -1.53     0.18
+#> INTRA_Bildungswanderer               0.35  0.25    1.38     0.20
+#> INTRA_Binnenwanderungsvolumen        0.44  0.42    1.04     0.24
+#> INTRA_EWZ                            0.10  0.16    0.60     0.33
+#> INTRA_`Anteil Minijobs`.lag1        -0.14  1.31   -0.11     0.47
+#> INTRA_Auszubildende.lag1             0.66  1.36    0.49     0.36
+#> INTRA_Berufsschülerinnen.lag1       -0.08  0.68   -0.11     0.46
+#> INTRA_Bildungswanderer.lag1         -0.93  0.75   -1.24     0.22
+#> INTRA_Binnenwanderungsvolumen.lag1  -0.19  1.01   -0.19     0.44
+#> INTRA_EWZ.lag1                      -0.78  0.99   -0.79     0.29
+#> log(1 + distance)                    0.00  0.05   -0.07     0.48
+#> 
+#> --------------------------------------------------
+#> R2_corr: 0.3598889
 ```
 
 [^1]: The data set is actually not really needed. What is needed are the
