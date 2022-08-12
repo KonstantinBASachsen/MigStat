@@ -66,3 +66,10 @@ keep_cols <- function(dt, keep) {
     return(dt_clean)
 
 }
+
+
+fpath <- function(path, fname, type) {
+    fullpath <- paste(path, fname, sep = "/")
+    fullpath <- paste(fullpath, type, sep = ".")
+    return(fullpath)
+}
