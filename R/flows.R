@@ -1,6 +1,6 @@
-get_net <- function(wins, losses) {
-    w <- copy(wins)
-    l <- copy(losses)
+get_net <- function(dt, us) {
+    w <- get_wins(dt, us)
+    l <- get_losses(dt, us)
     keys <- unique(c(w[, ags], l[, ags]))
     setkeyv(w, "ags")
     setkeyv(l, "ags")
