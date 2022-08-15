@@ -73,3 +73,12 @@ fpath <- function(path, fname, type) {
     fullpath <- paste(fullpath, type, sep = ".")
     return(fullpath)
 }
+
+set_geom <- function(dt, geom_only = T) {
+    dtgeom <- sf::st_set_geometry(dt, dt[, geometry])
+    if (geom_only == TRUE) {
+        dtgeom <- sf::st_geometry(dtgeom)
+    }
+
+    return(dtgeom)
+}
