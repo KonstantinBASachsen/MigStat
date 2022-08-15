@@ -50,7 +50,7 @@ get_flow <- function(dt, us, dest) {
     flows <- dtf[, .SD[1], by = ags]
     flows <- flows[, .SD, .SDcols = c(unit, ags, "flow")]
     dt[, "flow" := NULL]
-    
+    colnames(flows)[2] <- "ags"
     return(flows)
 }
 
