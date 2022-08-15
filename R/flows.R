@@ -1,3 +1,26 @@
+get_net <- function(wins, losses) {
+    w <- copy(wins)
+    l <- copy(losses)
+    keys <- unique(c(w[, ags], l[, ags]))
+    setkeyv(w, "ags")
+    setkeyv(l, "ags")
+    w <- w[keys, ]
+    w[is.na(flow), "flow" := 0]
+    l <- l[keys, ]
+    l[is.na(flow), "flow" := 0]
+    setkeyv(w, "ags")
+    setkeyv(l, "ags")
+    w[l, "flow" := flow - i.flow]
+    ### this next lines ensure that if there are regions in losses
+    ### that are not in wins, the name of the region is transfered to
+    ### wins
+    row <- w[is.na(region)][l, "region" := i.region]
+    idx <- which(is.na(w[, region]))
+    w[idx] <- row
+    return(w)
+}
+
+
 ##' Get wins (in-migration) for regions
 ##'
 ##' This function returns the number of in-migrations for every region
@@ -50,6 +73,7 @@ get_flow <- function(dt, us, dest) {
     flows <- dtf[, .SD[1], by = ags]
     flows <- flows[, .SD, .SDcols = c(unit, ags, "flow")]
     dt[, "flow" := NULL]
+    colnames(flows)[1] <- "region"
     colnames(flows)[2] <- "ags"
     return(flows)
 }
