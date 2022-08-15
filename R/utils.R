@@ -75,6 +75,7 @@ fpath <- function(path, fname, type) {
 }
 
 set_geom <- function(dt, geom_only = T) {
+    geometry <- NULL
     dtgeom <- sf::st_set_geometry(dt, dt[, geometry])
     if (geom_only == TRUE) {
         dtgeom <- sf::st_geometry(dtgeom)

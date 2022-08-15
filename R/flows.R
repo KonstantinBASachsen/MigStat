@@ -1,4 +1,5 @@
 get_net <- function(dt, us) {
+    ags <- flow <- region <- i.flow <- i.region <- NULL
     w <- get_wins(dt, us)
     l <- get_losses(dt, us)
     keys <- unique(c(w[, ags], l[, ags]))
