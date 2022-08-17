@@ -157,3 +157,11 @@ get_flows <- function(dt, shps, us, na_to_0 = TRUE) {
 ## }
 
 
+join_to_shp <- function(shp, dt, col, key_dt = "ags") {
+    i.flow <- NULL
+    shpj <- copy(shp)
+    setkeyv(shpj, "AGS")
+    setkeyv(dt, key_dt)
+    shpj[dt, (col) := i.flow]
+    return(shpj)
+}
