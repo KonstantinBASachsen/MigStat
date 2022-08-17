@@ -134,7 +134,26 @@ get_flows <- function(dt, shps, us, na_to_0 = TRUE) {
     ### dont use. Maybe copying data.tables is also too much
 }
 
-
+##' In-migration, out-migration or net-migration can be viwed as an
+##' attribute of regions. join_to_shp() takes a data.table and joins
+##' it to the data.table holding the shape information.
+##'
+##' .. content for \details{} ..
+##' @title join wins, losses or net migration to data.table of
+##'     shapefile
+##' @param shp data.table holding the shape information. Expected to
+##'     have column "AGS" that is used to join.
+##' @param dt data.table holding the flows (either wins, losses, or
+##'     net). Might be output from get_wins(), get_losses() or
+##'     get_net().
+##' @param col Name of new column in returned shp data.table.
+##' @param key_dt Name of column in dt that holds the AGS.
+##' @return shp data.table with joined column
+##' @import
+##' data.table
+##' @export
+##' join_to_shp
+##' @author Konstantin
 join_to_shp <- function(shp, dt, col, key_dt = "ags") {
     i.flow <- NULL
     shpj <- copy(shp)
