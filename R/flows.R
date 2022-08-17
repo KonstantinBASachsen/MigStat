@@ -1,16 +1,31 @@
-get_net <- function(dt, us) {
+##' computes the difference of in-migration and out-migration for all
+##' regions of one of the following types: states, districts,
+##' municipalities.
+##'
+##' The function makes sure that regions where no people in-migrated
+##' or out-migrated are handled approbpriately. That is, missing
+##' in-migration or out-migration is treated as 0.
+##' @title net migration for regions
+##' @param mig data.table of Migration Statistics
+##' @param us One of: "st", "di" or "mu", short hand for "states",
+##'     "districts", "municipalities".
+##' @return data.table with region, ags and net flow.
+##' @import data.table
+##' @export get_net
+##' @author Konstantin
+get_net <- function(mig, us) {
     ags <- flow <- region <- i.flow <- i.region <- NULL
-    w <- get_wins(dt, us)
-    l <- get_losses(dt, us)
+    w <- get_wins(mig, us)
+    l <- get_losses(mig, us)
     keys <- unique(c(w[, ags], l[, ags]))
-    setkeyv(w, "ags")
-    setkeyv(l, "ags")
+    data.tabl::setkeyv(w, "ags")
+    data.tabl::setkeyv(l, "ags")
     w <- w[keys, ]
     w[is.na(flow), "flow" := 0]
     l <- l[keys, ]
     l[is.na(flow), "flow" := 0]
-    setkeyv(w, "ags")
-    setkeyv(l, "ags")
+    data.tabl::setkeyv(w, "ags")
+    data.tabl::setkeyv(l, "ags")
     w[l, "flow" := flow - i.flow]
     ### this next lines ensure that if there are regions in losses
     ### that are not in wins, the name of the region is transfered to
