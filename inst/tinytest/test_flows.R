@@ -10,3 +10,4 @@ wins <- get_wins(dt, "mu")
 expect_equal(wins[muni_d == "München", flow], 8)
 
 ### add test if sum flows after get_flows equals rows of data.table
+### add test if nrow(get_flows()) == n_regions^2
