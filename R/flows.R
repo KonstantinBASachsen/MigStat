@@ -18,14 +18,14 @@ get_net <- function(mig, us) {
     w <- get_wins(mig, us)
     l <- get_losses(mig, us)
     keys <- unique(c(w[, ags], l[, ags]))
-    data.tabl::setkeyv(w, "ags")
-    data.tabl::setkeyv(l, "ags")
+    data.table::setkeyv(w, "ags")
+    data.table::setkeyv(l, "ags")
     w <- w[keys, ]
     w[is.na(flow), "flow" := 0]
     l <- l[keys, ]
     l[is.na(flow), "flow" := 0]
-    data.tabl::setkeyv(w, "ags")
-    data.tabl::setkeyv(l, "ags")
+    data.table::setkeyv(w, "ags")
+    data.table::setkeyv(l, "ags")
     w[l, "flow" := flow - i.flow]
     ### this next lines ensure that if there are regions in losses
     ### that are not in wins, the name of the region is transfered to
