@@ -134,28 +134,6 @@ get_flows <- function(dt, shps, us, na_to_0 = TRUE) {
     ### dont use. Maybe copying data.tables is also too much
 }
 
-## join_flows <- function(shapes, flows, key, unit) {
-##     ### do I still need this function? I wrote it because I wanted to
-##     ### retain all the regions with no flows for plotting but
-##     ### join_administries now does a full join so all regions with no
-##     ### flows are kept
-##     i.flow <- GF <- NULL
-##     ## unit <- colnames(flows)[unit_pos]
-##     ## ags <- get_agscol(unit)
-##     flows <- flows[stats::complete.cases(flows)]
-## ##    unit <- strsplit(unit, "_")[[1]][1]
-##     shape <- shapes[[unit]]
-##     data.table::setkeyv(flows, key)
-##     data.table::setkeyv(shape, "AGS")
- 
-##     shape <- shape[flows, "flows" := i.flow]
-##     shape <- shape[GF == 4, ] ### other numbers hold differnt
-##                               ### geometries, like without water I
-##                               ### think I read in some documentation.
-
-##     return(shape)    
-## }
-
 
 join_to_shp <- function(shp, dt, col, key_dt = "ags") {
     i.flow <- NULL
