@@ -69,11 +69,26 @@ keep_cols <- function(dt, keep) {
 
 
 fpath <- function(path, fname, type) {
+    ### probably not working under windows
     fullpath <- paste(path, fname, sep = "/")
     fullpath <- paste(fullpath, type, sep = ".")
     return(fullpath)
 }
 
+
+##' Looks in data.table for "geometry" column and uses it to create
+##' simple features object.
+##'
+##' @title set geometry attribute in data.table
+##' @param dt data.table with geometry attribute in column called
+##'     "geometry"
+##' @param geom_only If true all columns are dropped and only geometry
+##'     set is returned.
+##' @return If geom_only = FALSE, object of class("sf",
+##'     "data.table"). If geom_only == TRUE, class("sfc")
+##' @import sf
+##' @export set_geom
+##' @author Konstantin
 set_geom <- function(dt, geom_only = T) {
     geometry <- NULL
     dtgeom <- sf::st_set_geometry(dt, dt[, geometry])
