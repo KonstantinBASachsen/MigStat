@@ -138,7 +138,6 @@ get_flows <- function(dt, shps, us, na_to_0 = TRUE) {
 ##' attribute of regions. join_to_shp() takes a data.table and joins
 ##' it to the data.table holding the shape information.
 ##'
-##' .. content for \details{} ..
 ##' @title join wins, losses or net migration to data.table of
 ##'     shapefile
 ##' @param shp data.table holding the shape information. Expected to
@@ -156,9 +155,9 @@ get_flows <- function(dt, shps, us, na_to_0 = TRUE) {
 ##' @author Konstantin
 join_to_shp <- function(shp, dt, col, key_dt = "ags") {
     i.flow <- NULL
-    shpj <- copy(shp)
-    setkeyv(shpj, "AGS")
-    setkeyv(dt, key_dt)
+    shpj <- data.table::copy(shp)
+    data.table::setkeyv(shpj, "AGS")
+    data.table::setkeyv(dt, key_dt)
     shpj[dt, (col) := i.flow]
     return(shpj)
 }
