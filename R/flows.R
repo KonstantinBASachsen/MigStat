@@ -176,3 +176,17 @@ join_to_shp <- function(shp, dt, col, key_dt = "ags") {
     shpj[dt, (col) := i.flow]
     return(shpj)
 }
+
+
+join_pops <- function(flows, shp) {
+    flows_pop <- copy(flows)
+    flows_pop[, "rn" := 1:nrow(flows_pop)]
+    setkeyv(flows_pop, "origin")
+    setkeyv(shp, "AGS")
+    flows_pop[shp, "pop_o" := i.EWZ]
+    setkeyv(flows_pop, "destination")
+    flows_pop[shp, "pop_d" := i.EWZ]
+    flows_pop <- flows_pop[order(rn)]
+    flows_pop[, "rn" := NULL]
+    return(flows_pop)
+}
