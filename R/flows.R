@@ -131,6 +131,7 @@ get_flow <- function(dt, us, dest) {
 ##' @export get_flows
 ##' @author Konstantin
 get_flows <- function(dt, shps, us, pops, na_to_0 = TRUE) {
+    ### Don't know why this function needs state_o and so on cols
     flow <- NULL
     flows <- get_flows_only(dt, us)
     dist <- get_distances(shps, us)
