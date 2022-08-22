@@ -179,6 +179,15 @@ join_to_shp <- function(shp, dt, col, key_dt = "ags") {
 
 
 join_pops <- function(flows, shp) {
+    ### joins population sizes based on flows object. This function
+    ### has no own full = TRUE argument. That is, it takes the keys
+    ### from the flow object. The standard in get_flows() is to call
+    ### join_distances with full = TRUE. If population sizes are
+    ### joined afterwards it joins sizes to empty flows as well.
+
+### It seems to be not really intuitive to first call get flows to
+### simulate random draws then. Maybe I change it at some point.
+    
     flows_pop <- copy(flows)
     flows_pop[, "rn" := 1:nrow(flows_pop)]
     setkeyv(flows_pop, "origin")
