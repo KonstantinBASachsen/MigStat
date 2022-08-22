@@ -130,7 +130,7 @@ get_flow <- function(dt, us, dest) {
 ##' @import data.table
 ##' @export get_flows
 ##' @author Konstantin
-get_flows <- function(dt, shps, us, na_to_0 = TRUE) {
+get_flows <- function(dt, shps, us, pops, na_to_0 = TRUE) {
     flow <- NULL
     flows <- get_flows_only(dt, us)
     dist <- get_distances(shps, us)
@@ -140,6 +140,9 @@ get_flows <- function(dt, shps, us, na_to_0 = TRUE) {
 ##    flows[, c("destination", "origin") := lapply(.SD, as.numeric), .SDcols = c("destination", "origin")]
 ##    flows[, c("destination", "origin") := lapply(.SD, as.factor), .SDcols = c("destination", "origin")] 
     flows <- flows[, .SD, .SDcols = c("destination", "origin", "flow", "distance")]
+    if (pops == TRUE) {
+        flows <- join_pops(flows, shps[[get_shp_unit(us)]])
+    }
     if (na_to_0 == TRUE) {
         flows[is.na(flow), "flow" := 0]
     }
