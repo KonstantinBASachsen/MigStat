@@ -85,6 +85,16 @@ join_distances <- function(dt_flow, dt_dist, us, full = TRUE) {
 
 }
 
+join_distances <- function(region_pairs, distances) {
+
+    combs <- copy(region_pairs)
+    dist <- copy(distances)
+    setkeyv(combs, "od")
+    setkeyv(dist, "od")
+    combs[dist, "distance" := i.distance]
+    return(combs)
+    
+}
 
 get_distances <- function(shp) {
 
@@ -128,7 +138,7 @@ get_flows_only <- function(dt, us, simplify = TRUE) {
     return(dtf)
 }
 
-join_pops <- function(flows, shp) {
+join_populations <- function(flows, shp) {
     ### joins population sizes based on flows object. This function
     ### has no own full = TRUE argument. That is, it takes the keys
     ### from the flow object. The standard in get_flows() is to call
@@ -137,7 +147,7 @@ join_pops <- function(flows, shp) {
 
 ### It seems to be not really intuitive to first call get flows to
 ### simulate random draws then. Maybe I change it at some point.
-    
+    ### not sure what happens if there should be populations missing    
     flows_pop <- copy(flows)
     flows_pop[, "rn" := 1:nrow(flows_pop)]
     setkeyv(flows_pop, "origin")
