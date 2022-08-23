@@ -86,7 +86,7 @@ join_distances <- function(dt_flow, dt_dist, us, full = TRUE) {
 }
 
 join_distances <- function(region_pairs, distances) {
-
+    i.distance <- NULL
     combs <- copy(region_pairs)
     dist <- copy(distances)
     setkeyv(combs, "od")
@@ -147,7 +147,8 @@ join_populations <- function(flows, shp) {
 
 ### It seems to be not really intuitive to first call get flows to
 ### simulate random draws then. Maybe I change it at some point.
-    ### not sure what happens if there should be populations missing    
+### not sure what happens if there should be populations missing
+    i.EWZ <- rn <- NULL
     flows_pop <- copy(flows)
     flows_pop[, "rn" := 1:nrow(flows_pop)]
     setkeyv(flows_pop, "origin")
