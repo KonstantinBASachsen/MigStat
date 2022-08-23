@@ -86,17 +86,16 @@ join_distances <- function(dt_flow, dt_dist, us, full = TRUE) {
 }
 
 
-get_distances <- function(shps, us) {
+get_distances <- function(shp) {
 
     EWZ <- geometry <- centers <- AGS <- i.GEN <- . <- destination <-
         origin <- od <- i.distance <- NULL
     ### computes pair wise distances between all units of type
-    ### "us". Maybe I only need it for pairs with non zero flows?
-    shp <- shps[[get_shp_unit(us)]]
-    shp <- shp[EWZ != 0]
-    shp[, "centers" := st_centroid(geometry)]
-    distances <- round(st_distance(shp[, centers] / 1000), 0) 
-    keys <- shp[, AGS]
+### "us". Maybe I only need it for pairs with non zero flows?
+    shp_dist <- copy(shp)
+    shp_dist[, "centers" := st_centroid(geometry)]
+    distances <- round(st_distance(shp_dist[, centers] / 1000), 0) 
+    keys <- shp_dist[, AGS]
     colnames(distances) <- keys
     rownames(distances) <- keys
 
@@ -104,8 +103,8 @@ get_distances <- function(shps, us) {
     distances$destinations <- colnames(distances)
     dist_pairs <- melt(distances, id.vars = "destinations")
     colnames(dist_pairs) <- c("destination", "origin", "distance")
-    dist_pairs[shp, "o_name" := i.GEN, on = .(origin = AGS)]
-    dist_pairs[shp, "d_name" := i.GEN, on = .(destination = AGS)]
+    dist_pairs[shp_dist, "o_name" := i.GEN, on = .(origin = AGS)]
+    dist_pairs[shp_dist, "d_name" := i.GEN, on = .(destination = AGS)]
 
     return(dist_pairs)
 
