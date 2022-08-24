@@ -130,8 +130,9 @@ get_flows_only <- function(dt, us, simplify = TRUE) {
     dtf <- copy(dt)
     dtf[, "flow" := .N, by = c(ags_o, ags_d)]
     if (simplify == TRUE) {
-        dtf <- dtf[, .SD, .SDcols = c(ags_o, ags_d, unit_o, unit_d, "flow")]
+        dtf <- dtf[, .SD, .SDcols = c(ags_o, ags_d, "flow")]
         dtf <- dtf[, .SD[1], by = c(ags_o, ags_d)]
+        colnames(dtf) <- c("origin", "destination", "flow")
     }
 #### should do this in a separate step    
 ##    dtf <- dtf[, c(ags_o, ags_d) := lapply(.SD, as.numeric), .SDcols = c(ags_o, ags_d)]
