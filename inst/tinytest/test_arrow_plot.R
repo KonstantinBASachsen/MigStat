@@ -8,8 +8,11 @@ shp <- clean_shp(shps, us)
 name <- "Berlin"
 
 dtf <- get_flows(ex_dat$mig, shp, us)
-dtarrow <- get_arrow_data(dtf, shp, name)
+### get_arrow_data looks buggy, I think I want to add the origin row
+### and not replace dtarrow with it, see: dtarrow <- dtarrow[origin ==
+### ags, c(1,3,5)]
 
+dtarrow <- get_arrow_data(dtf, shp, name)
 
 ### should be exactly one origin, todo: rename dest to origin
 expect_equal(dtarrow[o_region == TRUE, .N], 1)
