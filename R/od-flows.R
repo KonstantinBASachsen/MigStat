@@ -21,12 +21,13 @@
 ##'     statistics
 ##' @param dt Migration Statistics data.table where every row is one
 ##'     migration.
-##' @param shps The shapefile with three levels: federal states,
-##'     districts, municipalities.
+##' @param shp The shapefile with the level corresponding to us
 ##' @param us "unit simple" between regions of which type are flows to
 ##'     be computed? Takes one of the following strings:
 ##'
 ##' "st": federal states "di": districts "mu": municipalities
+##' @param pops If population sizes should be joined. Feature will
+##'     probably be removed later.
 ##' @param na_to_0 logical, if TRUE, NA flows, that is, od_pairs where
 ##'     no migration took place are set to 0.
 ##' @return data.table with four columns: origin id, destination id,
@@ -46,7 +47,7 @@ get_flows <- function(dt, shp, us, pops = FALSE, na_to_0 = TRUE) {
 ##    flows[, c("destination", "origin") := lapply(.SD, as.factor), .SDcols = c("destination", "origin")] 
     flows <- flows[, .SD, .SDcols = c("destination", "origin", "flow", "distance")]
     if (pops == TRUE) {
-        flows <- join_pops(flows, shps[[get_shp_unit(us)]])
+        flows <- join_populations(flows, shp)
     }
     if (na_to_0 == TRUE) {
         flows[is.na(flow), "flow" := 0]
@@ -86,7 +87,7 @@ join_distances <- function(dt_flow, dt_dist, us, full = TRUE) {
 }
 
 join_distances <- function(region_pairs, distances) {
-    i.distance <- NULL
+    i.distance <- origin <- destination <- NULL
     combs <- copy(region_pairs)
     dist <- copy(distances)
     combs <- combs[, "od" := paste(origin, destination, sep = "_")]
@@ -124,7 +125,7 @@ get_distances <- function(shp) {
 
 
 get_flows_only <- function(dt, us, simplify = TRUE) {
-
+    . <- flow <- NULL
     unit_o <- get_unitcol(us, FALSE)
     unit_d <- get_unitcol(us, TRUE)
     ags_o <- get_agscol(unit_o)
@@ -134,6 +135,7 @@ get_flows_only <- function(dt, us, simplify = TRUE) {
     if (simplify == TRUE) {
         dtf <- dtf[, .SD, .SDcols = c(ags_o, ags_d, "flow")]
         dtf <- dtf[, .SD[1], by = c(ags_o, ags_d)]
+        dtf <- dtf[, .(get(ags_o), get(ags_d), flow)] ### making sure cols are in right order
         colnames(dtf) <- c("origin", "destination", "flow")
     }
 #### should do this in a separate step    
