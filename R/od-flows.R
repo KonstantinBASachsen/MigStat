@@ -34,12 +34,12 @@
 ##' @import data.table
 ##' @export get_flows
 ##' @author Konstantin
-get_flows <- function(dt, shps, us, pops, na_to_0 = TRUE) {
+get_flows <- function(dt, shp, us, pops = FALSE, na_to_0 = TRUE) {
     ### Don't know why this function needs state_o and so on cols
     flow <- NULL
     flows <- get_flows_only(dt, us)
-    dist <- get_distances(shps, us)
-    flows <- join_distances(flows, dist, us, full = TRUE)
+    dist <- get_distances(shp)
+    flows <- join_distances(flows, dist)
     ### I think the next two lines I implemented to obtain the data
     ### structure needed for spflow
 ##    flows[, c("destination", "origin") := lapply(.SD, as.numeric), .SDcols = c("destination", "origin")]
@@ -89,6 +89,8 @@ join_distances <- function(region_pairs, distances) {
     i.distance <- NULL
     combs <- copy(region_pairs)
     dist <- copy(distances)
+    combs <- combs[, "od" := paste(origin, destination, sep = "_")]
+    dist <- dist[, "od" := paste(origin, destination, sep = "_")]
     setkeyv(combs, "od")
     setkeyv(dist, "od")
     combs[dist, "distance" := i.distance]
