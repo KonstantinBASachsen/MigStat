@@ -4,10 +4,10 @@ shps <- ex_dat$shps
 dtj <- join_administries(ex_dat$mig, shps$state, shps$district, shps$muni, full = FALSE) ### join "official" names
 
 us <- "st"
+shp <- clean_shp(shps, us)
 name <- "Berlin"
 
-dtf <- get_flows(ex_dat$mig, shps, us)
-shp <- clean_shp(ex_dat$shps, us = us)
+dtf <- get_flows(ex_dat$mig, shp, us)
 dtarrow <- get_arrow_data(dtf, shp, name)
 
 
@@ -37,7 +37,7 @@ expect_equal(sum(grepl(get_ags(shp, name), dtarrow[, place])), 1)
 us <- "di"
 name <- "Leipzig"
 
-dtf <- get_flows(ex_dat$mig, shps, us)
+dtf <- get_flows(ex_dat$mig, shp, us)
 shp <- clean_shp(ex_dat$shps, us = us)
 expect_error(get_arrow_data(dtf, shp, name))
 
