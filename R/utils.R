@@ -68,10 +68,12 @@ keep_cols <- function(dt, keep) {
 }
 
 
-fpath <- function(path, fname, type) {
+fpath <- function(path, fname, type = NULL) {
     ### probably not working under windows
     fullpath <- paste(path, fname, sep = "/")
-    fullpath <- paste(fullpath, type, sep = ".")
+    if (!is.null(type)) {
+        fullpath <- paste(fullpath, type, sep = ".")
+        }
     return(fullpath)
 }
 
