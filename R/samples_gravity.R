@@ -1,4 +1,4 @@
-samples_gravity <- function(shp, size, dist = NULL) {
+samples_gravity <- function(shp, size, dist = NULL, probs = FALSE) {
     destination <- origin <- AGS <- NULL
     if (is.null(dist)) { dist <- get_distances(shp) }
 
@@ -11,7 +11,14 @@ samples_gravity <- function(shp, size, dist = NULL) {
     rows <- sample_gravity(combs, 10000)
     rows <- group_samples(rows)
     combs <- join_samples(combs, rows)
-    combs <- keep_cols(combs, c("origin", "destination", "distance", "flow"))
+    if (probs == TRUE) {
+        combs <- keep_cols(combs, c("origin", "destination",
+                                    "distance", "flow", "probs"))
+    } else {
+        combs <- keep_cols(combs, c("origin", "destination",
+                                    "distance", "flow"))
+    }
+    
     return(combs)
 }
 
