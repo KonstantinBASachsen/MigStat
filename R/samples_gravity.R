@@ -22,14 +22,15 @@
 samples_gravity <- function(shp, size, dist = NULL, probs = FALSE) {
     destination <- origin <- AGS <- NULL
     if (is.null(dist)) { dist <- get_distances(shp) }
-
-    dist[, "od" := paste(destination, origin, sep = "_")]
+    ### I want to return o_name and d_name as well. get_distances()
+    ### returns those so maybe I can say join_distances() to keep them.
+    dist[, "od" := paste(destination, origin, sep = "_")] 
     ags <- shp[order(AGS), AGS]
     combs <- create_region_combs(ags)
     combs <- join_distances(combs, dist)
     combs <- join_populations(combs, shp)
     combs <- gravity_probs(combs)
-    rows <- sample_gravity(combs, 10000)
+    rows <- sample_gravity(combs, size)
     rows <- group_samples(rows)
     combs <- join_samples(combs, rows)
     if (probs == TRUE) {
