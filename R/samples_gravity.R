@@ -33,7 +33,7 @@ create_region_combs <- function(ags) {
 
 
 gravity_probs <- function(reg_combinations, correction = TRUE) {
-    distance <- pop_o <- pop_d <- probs <- NULL
+    distance <- pop_o <- pop_d <- probs <- origin <- destination <- NULL
     flows_probs <- copy(reg_combinations)
     flows_probs[distance != 0, "probs" := pop_o * pop_d / distance^2]
     flows_probs[origin == "11" & destination == "12", "probs" := probs / 10]
