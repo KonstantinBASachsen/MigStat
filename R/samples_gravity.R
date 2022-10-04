@@ -1,3 +1,24 @@
+##' Creates random moves according to Gravity Model between regions.
+##'
+##' This function creates random moves between origin-destination
+##' pairs (od-pairs) of regions. The probability of one od-pair to be
+##' drawn is proportional to (population_o * population_d) /
+##' distance_od^2. This is the classical gravity model.
+##'
+##' It returns a data.table. Every row is one move between two regions.
+##' 
+##' @title Random data based on gravity model
+##' @param shp The shapefile of desired regions. Either all states,
+##'     all districts or all municipalities.
+##' @param size Sample size.
+##' @param dist Vector of pairwise distances. If not provided it is
+##'     created. This can take a long time.
+##' @param probs If TRUE, probabilites of every od-pair to be sampled
+##'     are returned. Useful for debugging. 
+##' @return It returns a data.table. Every row is one move between two regions.
+##' @import data.table
+##' @export samples_gravity
+##' @author Konstantin
 samples_gravity <- function(shp, size, dist = NULL, probs = FALSE) {
     destination <- origin <- AGS <- NULL
     if (is.null(dist)) { dist <- get_distances(shp) }
