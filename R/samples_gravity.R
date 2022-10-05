@@ -46,6 +46,10 @@ samples_gravity <- function(shp, size, dist = NULL, probs = FALSE) {
 
 create_region_combs <- function(ags) {
 ### this should be used by get_flows() as well
+
+#### takes a long time to compute this for municipalities. Maybe good
+#### to save it
+    
     origin <- destination <- NULL
     combs <- setDT(expand.grid(ags, ags, stringsAsFactors = FALSE))
     colnames(combs) <- c("origin", "destination")
