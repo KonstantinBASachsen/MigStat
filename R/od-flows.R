@@ -35,7 +35,7 @@
 ##' @import data.table
 ##' @export get_flows
 ##' @author Konstantin
-get_flows <- function(dt, shp, us, dist = FALSE, pops = FALSE, na_to_0 = TRUE) {
+get_flows <- function(dt, shp, us, dist = FALSE, full = FALSE, pops = FALSE, na_to_0 = TRUE) {
     ### I think it might be good if the function returns all regions
     ### and fills empty flows with 0's
 
@@ -45,7 +45,9 @@ get_flows <- function(dt, shp, us, dist = FALSE, pops = FALSE, na_to_0 = TRUE) {
     ### Don't know why this function needs state_o and so on cols
     flow <- NULL
     flows <- get_flows_only(dt, us)
-    flows <- join_missing_regions(flows = flows, shp = shp, na_to_0 = na_to_0)
+    if (full == TRUE) {
+        flows <- join_missing_regions(flows = flows, shp = shp)
+    }
     if (dist == TRUE) {
             dist <- get_distances(shp)
             flows <- join_distances(flows, dist)
