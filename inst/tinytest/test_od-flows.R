@@ -10,7 +10,7 @@ flows <- get_flows(mig, shp, "st", full = TRUE)
 
 ### all rows should be included in flows
 expect_equal(flows[, sum(flow)], 200)
-expect_equal(flows[origin == "09" & destination == "08", flow], 11)
+expect_equal(flows[origin == "08" & destination == "09", flow], 11)
 ### make sure leading 0's are maintained. This should be the case if
 ### all ags's have same length
 expect_equal(typeof(flows$origin), "character")
