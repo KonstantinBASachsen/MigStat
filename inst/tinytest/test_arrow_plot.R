@@ -7,7 +7,7 @@ us <- "st"
 shp <- clean_shp(shps, us)
 name <- "Berlin"
 
-dtf <- get_flows(ex_dat$mig, shp, us)
+dtf <- get_flows(ex_dat$mig, shp, us, dist = TRUE)
 ### get_arrow_data looks buggy, I think I want to add the origin row
 ### and not replace dtarrow with it, see: dtarrow <- dtarrow[origin ==
 ### ags, c(1,3,5)]
@@ -40,7 +40,7 @@ expect_equal(sum(grepl(get_ags(shp, name), dtarrow[, place])), 1)
 us <- "di"
 name <- "Leipzig"
 
-dtf <- get_flows(ex_dat$mig, shp, us)
+dtf <- get_flows(ex_dat$mig, shp, us, dist = TRUE)
 shp <- clean_shp(ex_dat$shps, us = us)
 expect_error(get_arrow_data(dtf, shp, name))
 
