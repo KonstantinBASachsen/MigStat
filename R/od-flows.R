@@ -35,7 +35,7 @@
 ##' @import data.table
 ##' @export get_flows
 ##' @author Konstantin
-get_flows <- function(dt, shp, us, pops = FALSE, na_to_0 = TRUE) {
+get_flows <- function(dt, shp, us, dist = FALSE, pops = FALSE, na_to_0 = TRUE) {
     ### I think it might be good if the function returns all regions
     ### and fills empty flows with 0's
 
@@ -46,13 +46,16 @@ get_flows <- function(dt, shp, us, pops = FALSE, na_to_0 = TRUE) {
     flow <- NULL
     flows <- get_flows_only(dt, us)
     flows <- join_missing_regions(flows = flows, shp = shp, na_to_0 = na_to_0)
-    dist <- get_distances(shp)
-    flows <- join_distances(flows, dist)
+    if (dist == TRUE) {
+            dist <- get_distances(shp)
+            flows <- join_distances(flows, dist)
+            flows[, "od" := NULL] ### don't know why I need to do this
+    }
     ### I think the next two lines I implemented to obtain the data
     ### structure needed for spflow
 ##    flows[, c("destination", "origin") := lapply(.SD, as.numeric), .SDcols = c("destination", "origin")]
 ##    flows[, c("destination", "origin") := lapply(.SD, as.factor), .SDcols = c("destination", "origin")] 
-    flows <- flows[, .SD, .SDcols = c("destination", "origin", "flow", "distance")]
+##    flows <- flows[, .SD, .SDcols = c("destination", "origin", "flow", "distance")]
     if (pops == TRUE) {
         flows <- join_populations(flows, shp)
     }
