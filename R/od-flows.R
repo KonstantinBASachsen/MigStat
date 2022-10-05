@@ -45,7 +45,7 @@ get_flows <- function(dt, shp, us, pops = FALSE, na_to_0 = TRUE) {
     ### Don't know why this function needs state_o and so on cols
     flow <- NULL
     flows <- get_flows_only(dt, us)
-    flows <- join_missing_regions(flows = flows, shp = shp, na_to_0 = TRUE)
+    flows <- join_missing_regions(flows = flows, shp = shp, na_to_0 = na_to_0)
     dist <- get_distances(shp)
     flows <- join_distances(flows, dist)
     ### I think the next two lines I implemented to obtain the data
@@ -55,9 +55,6 @@ get_flows <- function(dt, shp, us, pops = FALSE, na_to_0 = TRUE) {
     flows <- flows[, .SD, .SDcols = c("destination", "origin", "flow", "distance")]
     if (pops == TRUE) {
         flows <- join_populations(flows, shp)
-    }
-    if (na_to_0 == TRUE) {
-        flows[is.na(flow), "flow" := 0]
     }
     return(flows)
 
