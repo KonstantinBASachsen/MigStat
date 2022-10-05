@@ -59,6 +59,7 @@ get_flows <- function(dt, shp, us, dist = FALSE, pops = FALSE, na_to_0 = TRUE) {
     if (pops == TRUE) {
         flows <- join_populations(flows, shp)
     }
+    if (na_to_0) { flows[is.na(flow), flow := 0] }
     return(flows)
 
     ### probably the functions below do too much like adding columns I
@@ -103,7 +104,7 @@ get_distances <- function(shp) {
 
 }
 
-join_missing_regions <- function(flows, shp, na_to_0 = TRUE) {
+join_missing_regions <- function(flows, shp) {
 
     combs <- create_region_combs(shp[, AGS])
     flows[, "od" := paste(origin, destination, sep = "_")]
@@ -117,7 +118,6 @@ join_missing_regions <- function(flows, shp, na_to_0 = TRUE) {
     flows[combs, "origin" := i.origin]
     flows[combs, "destination" := i.destination]
     flows[, od := NULL]
-    if (na_to_0) { flows[is.na(flow), flow := 0] }
     return(flows)
 }
 
