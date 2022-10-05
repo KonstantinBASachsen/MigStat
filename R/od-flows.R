@@ -45,6 +45,7 @@ get_flows <- function(dt, shp, us, pops = FALSE, na_to_0 = TRUE) {
     ### Don't know why this function needs state_o and so on cols
     flow <- NULL
     flows <- get_flows_only(dt, us)
+    flows <- join_missing_regions(flows = flows, shp = shp, na_to_0 = TRUE)
     dist <- get_distances(shp)
     flows <- join_distances(flows, dist)
     ### I think the next two lines I implemented to obtain the data
@@ -129,6 +130,23 @@ get_distances <- function(shp) {
 
 }
 
+join_missing_regions <- function(flows, shp, na_to_0 = TRUE) {
+
+    combs <- create_region_combs(shp[, AGS])
+    flows[, "od" := paste(origin, destination, sep = "_")]
+    setkeyv(flows, "od")
+### Although all region pairs are already contained in combs I need
+### this because in the data are moves where origin is unknown.
+    keys <- unique(c(combs[, od], flows[, od]))
+    flows <- flows[keys]
+    setkeyv(combs, "od")
+    setkeyv(flows, "od")
+    flows[combs, "origin" := i.origin]
+    flows[combs, "destination" := i.destination]
+    flows[, od := NULL]
+    if (na_to_0) { flows[is.na(flow), flow := 0] }
+    return(flows)
+}
 
 get_flows_only <- function(dt, us, simplify = TRUE) {
     . <- flow <- NULL
