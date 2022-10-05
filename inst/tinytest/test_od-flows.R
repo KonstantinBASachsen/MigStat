@@ -2,7 +2,7 @@ ex_dat <- read_examples()
 mig <- ex_dat$mig
 
 shp <- clean_shp(ex_dat$shps, "st")
-flows <- get_flows(mig, shp, "st")
+flows <- get_flows(mig, shp, "st", full = TRUE)
 
 ### all rows should be included in flows
 expect_equal(flows[, sum(flow)], 200)
@@ -25,7 +25,7 @@ n_regions <- length(unique(shp[, AGS]))
 expect_true(nrow(flows) >= n_regions^2, info = sprintf("expected %s, got %s", n_regions^2, nrow(flows)))
 
 shp <- clean_shp(ex_dat$shps, "di")
-flows <- get_flows(mig, shp, "di")
+flows <- get_flows(mig, shp, "di", full = TRUE)
 ### all rows should be included in flows
 expect_equal(flows[, sum(flow)], 200)
 
