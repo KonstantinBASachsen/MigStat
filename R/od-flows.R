@@ -87,7 +87,8 @@ get_flows <- function(dt, shp, us, by = NULL, dist = FALSE, full = FALSE, pops =
 join_missing_regions <- function(flows, shp) {
     AGS <- origin <- destination <- od <- i.origin <- i.destination <- NULL
     combs <- create_region_combs(shp[, AGS])
-    flows[, "od" := paste(origin, destination, sep = "_")]
+    ## flows[, "od" := paste(origin, destination, sep = "_")]
+    flows[, "od" := paste(destination, origin, sep = "_")]
     setkeyv(flows, "od")
 ### Although all region pairs are already contained in combs I need
 ### this because in the data are moves where origin is unknown.
