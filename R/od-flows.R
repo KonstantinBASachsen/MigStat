@@ -1,7 +1,9 @@
 ##' get_flows() returns the sum of flows between every
-##' origin-destination pair. Also, the distances between the centroids
-##' of origin and destination are returned. od pairs without flow are
-##' added as well.
+##' origin-destination pair. These flows can be splitted across groups
+##' to obtain the flows between regions of people with certain
+##' characteristics.  Optionally the distances between the centroids
+##' of origin and destination are returned. Also, od pairs without
+##' flow can be added.
 ##'
 ##' The function needs two tables. One with the regional information
 ##' and the other with the flows between those pairs.
@@ -26,12 +28,21 @@
 ##'     be computed? Takes one of the following strings:
 ##'
 ##' "st": federal states "di": districts "mu": municipalities
+##' @param by Character vector. For all values of the given variables
+##'     the number of people that moved between regions is
+##'     summarized. If for example "gender" is given the flows of
+##'     males between regions is returned and the flow of females
+##'     between regions.
+##' @param dist If TRUE the distances between region pairs are
+##'     returned as well. If us is set to "mu" this takes a long time
+##' @param full If TRUE region pairs with 0 flows between them are
+##'     returned as well. If us = "mu" this might take some time.
 ##' @param pops If population sizes should be joined. Feature will
 ##'     probably be removed later.
 ##' @param na_to_0 logical, if TRUE, NA flows, that is, od_pairs where
 ##'     no migration took place are set to 0.
-##' @return data.table with four columns: origin id, destination id,
-##'     distance, flow
+##' @return data.table with columns: origin id, destination id, the
+##'     group columns, the flow between regions
 ##' @import data.table
 ##' @export get_flows
 ##' @author Konstantin
@@ -74,7 +85,7 @@ get_flows <- function(dt, shp, us, by = NULL, dist = FALSE, full = FALSE, pops =
 
 
 join_missing_regions <- function(flows, shp) {
-
+    AGS <- origin <- destination <- od <- i.origin <- i.destination <- NULL
     combs <- create_region_combs(shp[, AGS])
     flows[, "od" := paste(origin, destination, sep = "_")]
     setkeyv(flows, "od")
