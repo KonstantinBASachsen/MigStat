@@ -23,7 +23,8 @@ get_arrow_data <- function(flows, shp, name, min_flow = 0, ags = NULL) {
     origin <- place <- . <- flow <- o_region <- NULL
     xend <- yend <- centers <- NULL
     
-    cols <- c("destination", "origin", "flow", "distance")
+    ### order is not important, better check just if columns are there
+    cols <- c("origin", "destination", "flow", "distance") 
     
     stopifnot("expected columns not found. Please make sure 'flows' is result from get_flows()" = sum(cols == colnames(flows)) == length(cols))
     if (is.null(ags)) {
