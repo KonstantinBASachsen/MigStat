@@ -35,7 +35,7 @@
 ##' @import data.table
 ##' @export get_flows
 ##' @author Konstantin
-get_flows <- function(dt, shp, us, dist = FALSE, full = FALSE, pops = FALSE, na_to_0 = TRUE) {
+get_flows <- function(dt, shp, us, by = NULL, dist = FALSE, full = FALSE, pops = FALSE, na_to_0 = TRUE) {
     ### I think it might be good if the function returns all regions
     ### and fills empty flows with 0's
 
@@ -47,7 +47,7 @@ get_flows <- function(dt, shp, us, dist = FALSE, full = FALSE, pops = FALSE, na_
     ### I don't like join_populations() in here and I don't know
     ### anymore why I needed this. Probably for gravity sampling
     flow <- NULL
-    flows <- get_flows_only(dt, us)
+    flows <- get_flows_only(dt = dt, by = by, us = us)
     if (full == TRUE) {
         flows <- join_missing_regions(flows = flows, shp = shp)
     }
@@ -90,22 +90,22 @@ join_missing_regions <- function(flows, shp) {
     return(flows)
 }
 
-get_flows_only <- function(dt, us, simplify = TRUE) {
+
+get_flows_only <- function(dt, us, by = NULL, simplify = TRUE) {
     . <- flow <- NULL
     unit_o <- get_unitcol(us, FALSE)
     unit_d <- get_unitcol(us, TRUE)
     ags_o <- get_agscol(unit_o)
     ags_d <- get_agscol(unit_d)
     dtf <- copy(dt)
-    dtf[, "flow" := .N, by = c(ags_o, ags_d)]
+    dtf[, "flow" := .N, by = c(ags_o, ags_d, by)]
     if (simplify == TRUE) {
-        dtf <- dtf[, .SD, .SDcols = c(ags_o, ags_d, "flow")]
-        dtf <- dtf[, .SD[1], by = c(ags_o, ags_d)]
-        dtf <- dtf[, .(get(ags_o), get(ags_d), flow)] ### making sure cols are in right order
-        colnames(dtf) <- c("origin", "destination", "flow")
-    }
-#### should do this in a separate step    
-##    dtf <- dtf[, c(ags_o, ags_d) := lapply(.SD, as.numeric), .SDcols = c(ags_o, ags_d)]
+        dtf <- dtf[, .SD, .SDcols = c(ags_o, ags_d, by, "flow")]
+        dtf <- dtf[, .SD[1], by = c(ags_o, ags_d, by)]
+        dtf[, c("origin", "destination") := .(get(ags_o), get(ags_d))]
+        dtf[, c(ags_o, ags_d) := NULL]
+        data.table::setcolorder(dtf, c("origin", "destination", by, "flow"))
+        }
     return(dtf)
 }
 
