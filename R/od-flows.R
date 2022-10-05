@@ -62,33 +62,6 @@ get_flows <- function(dt, shp, us, pops = FALSE, na_to_0 = TRUE) {
     ### dont use. Maybe copying data.tables is also too much
 }
 
-## join_distances <- function(dt_flow, dt_dist, us, full = TRUE) {
-##     ### add join = FULL argument. Otherwise makes not much sense to
-##     ### compute all pairwise distances but only use non zero
-##     ### then. Best would be one function, that checks if all distances
-##     ### are required and only computes pairwise distances if non zero
-##     ### flows or full = TRUE
-##     od <- i.distance <- i.flow <- origin <- destination <- NULL
-    
-##     dcol <- get_agscol(get_unitcol(us, dest = TRUE))
-##     ocol <- get_agscol(get_unitcol(us, dest = FALSE))
-##     flow_dist <- copy(dt_flow)
-##     distances <- copy(dt_dist)
-##     distances <- distances[, "od" := paste(destination, origin, sep = "_")]
-##     flow_dist <- flow_dist[, "od" := paste(get(dcol), get(ocol), sep = "_")]
-##     if (full == TRUE) {
-##         setkeyv(flow_dist, "od")
-##         unique_keys <- unique(c(flow_dist[, get("od")], distances[, get("od")]))
-##         flow_dist <- flow_dist[unique_keys]
-##     } 
-##     setkey(distances, od)
-##     setkey(flow_dist, od)
-##     flow_dist <- distances[flow_dist, "flow" := i.flow]
-##     flow_dist[, "od" := NULL]
-
-##     return(flow_dist)
-
-## }
 
 join_distances <- function(region_pairs, distances) {
     i.distance <- origin <- destination <- NULL
