@@ -9,9 +9,9 @@ flows <- get_flows(dt = mig, shp = shp, us = us, by = c("gender", "age_gr"), ful
 flows <- get_flows(dt = mig, shp = shp, us = us, full = TRUE, dist = FALSE, na_to_0=TRUE)
 
 
-get_grouped <- function(flows, region, grouped = TRUE, by = NULL) {
-    stopifnot(region %in% c("origin", "destination"))
-    if(region == "origin") {
+get_grouped <- function(flows, reg, grouped = TRUE, by = NULL) {
+    stopifnot(reg %in% c("origin", "destination"))
+    if(reg == "origin") {
         type <- "losses"
     } else {
         type  <- "wins"
@@ -24,23 +24,18 @@ get_grouped <- function(flows, region, grouped = TRUE, by = NULL) {
         }
         message(sprintf("%s grouped by '%s' are returned", type, paste(by, collapse = ", ")))
 
-        losses <- losses[, paste(type) := sum(flow), by = c(region, by)]
-        losses <- losses[, .SD[1], by = c(region, by)]
-        losses <- losses[order(get(region))]
-        losses <- losses[, "region" := get(region)]
-        losses <- losses[, c("flow", "distance", "destination", "origin") := NULL]
+        losses <- losses[, paste(type) := sum(flow), by = c(reg, by)]
+##        losses <- losses[, "region" := get(reg)]
+        losses <- losses[, .SD[1], by = c(reg, by), .SDcols = c(type)]
     } else {
-        losses <- losses[, paste(type) := sum(flow), by = c(region)]
-        losses <- losses[, .SD[1], by = c(region)]
-        losses <- losses[order(get(region))]
-        losses <- losses[, "region" := get(region)]
-        losses <- losses[, .(get("region"), get(type))]
-        colnames(losses) <- c("region", paste(type))
+        losses <- losses[, paste(type) := sum(flow), by = reg]
+  ##      losses <- losses[, "region" := get(region)]
+        losses <- losses[, .SD[1], by = reg, .SDcols = c(type)]
     }
     return(losses)
 }
 
-wins <- get_grouped(flows = flows, region = "destination", grouped = TRUE, by = "gender")
+wins <- get_grouped(flows = flows, reg = "origin", grouped = FALSE)
 var <- "gender"
 type <- "wins"
 colnames(flows) %in% c("region", type)
