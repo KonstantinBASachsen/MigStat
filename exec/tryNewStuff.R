@@ -22,34 +22,26 @@ get_losses <- function(flows) {
 }
 
 get_net <- function(flows) {
-
-    wins <- get_wins(flows)
-    losses <- get_losses(flows)
-    
+    flow <- region <- i.flow <- i.region <- NULL
+    w <- get_wins(flows)
+    l <- get_losses(flows)
+    keys <- unique(c(w[, region], l[, region]))
+    data.table::setkeyv(w, "region")
+    data.table::setkeyv(l, "region")
+    w <- w[keys, ]
+    w[is.na(wins), "wins" := 0]
+    l <- l[keys, ]
+    l[is.na(losses), "losses" := 0]
+    data.table::setkeyv(w, "region")
+    data.table::setkeyv(l, "region")
+    w[l, "losses" := i.losses]
+    w[, "net" := wins - losses]
+    setcolorder(w, c("region", "net", "wins", "losses"))
+    ### the next lines ensure that if there are regions in losses that
+    ### are not in wins, the name of the region is transferred to wins
+    row <- w[is.na(region)][l, "region" := i.region]
+    idx <- which(is.na(w[, region]))
+    w[idx] <- row
+    return(w)
 }
 
-get_wins(flows)
-get_losses(flows)
-
-flows[, sum(flow), by = destination]
-flows[, sum(flow, na.rm = TRUE), by = origin][order(origin)]
-
-mig[EF02U2 == "02", ][, .N]
-
-get_agscol("state_d")
-
-print(flows[order(origin)], 200)
-
-
-mig[, .N, by = EF03U2][order(EF03U2)]
-
-flows[origin == "04"]
-mig[EF03U2 == "04"]
-unique(mig[, EF03U2])
-
-flows <- get_flows_only(dt = mig,  us = "st")
-flows[, sum(flow), by = destination]
-flows[, sum(flow), by = origin][V1 != 0] == mig[, .N, by = EF03U2][order(EF03U2)]
-
-mig[EF03U2 == "09" &  EF02U2 == "08", ]
-mig[EF03U2 == "08" &  EF02U2 == "09", ]
