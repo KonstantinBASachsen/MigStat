@@ -65,31 +65,39 @@ losses <- get_losses2(flows, TRUE)
 
 
 get_grouped <- function(flows, region, grouped = TRUE, by = NULL) {
+    stopifnot(region %in% c("origin", "destination"))
+    if(region == "origin") {
+        type <- "losses"
+    } else {
+        type  <- "wins"
+    }
     losses <- copy(flows)
     if (grouped == TRUE) {
         if (is.null(by)) {
             nogroup <- c("origin", "destination", "flow", "distance", "region")
             by <- setdiff(colnames(flows), nogroup)
         }
-        message(sprintf("losses grouped by '%s' are returned", paste(by, collapse = ", ")))
+        message(sprintf("%s grouped by '%s' are returned", type, paste(by, collapse = ", ")))
 
-        losses <- losses[, "losses" := sum(flow), by = c(region, by)]
+        losses <- losses[, paste(type) := sum(flow), by = c(region, by)]
         losses <- losses[, .SD[1], by = c(region, by)]
         losses <- losses[order(get(region))]
         losses <- losses[, "region" := get(region)]
         losses <- losses[, c("flow", "distance", "destination", "origin") := NULL]
     } else {
-        losses <- losses[, "losses" := sum(flow), by = c("origin")]
-        losses <- losses[, .SD[1], by = c("origin")]
-        losses <- losses[order(origin)]
-        losses <- losses[, "region" := origin]
-        losses <- losses[, .(region, losses)]
+        losses <- losses[, paste(type) := sum(flow), by = c(region)]
+        losses <- losses[, .SD[1], by = c(region)]
+        losses <- losses[order(get(region))]
+        losses <- losses[, "region" := get(region)]
+        losses <- losses[, .(get("region"), get(type))]
+        colnames(losses) <- c("region", paste(type))
     }
     return(losses)
 }
 
-test <- get_grouped(flows, "origin")
-
+test <- get_grouped(flows, "destination", TRUE)
+test <- get_grouped(flows, "origin", FALSE)
+test[order(region)]
 test[region == "09", sum(losses)]
 
 mig[EF03U2 == "09", ]
@@ -99,3 +107,10 @@ test <- get_grouped(flows, "destination")
 test[region == "09", sum(losses)]
 
 mig[EF02U2 == "09", ]
+var <- "wins"
+test[,  paste(var) := type]
+
+paste(var)
+
+test[, .(get("gender"), get("region"), get(var))]
+
