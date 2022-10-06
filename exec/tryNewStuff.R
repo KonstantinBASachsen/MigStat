@@ -20,7 +20,7 @@ setkeyv(wins, c("region", "gender" ))
 wins[keys]
 
 
-values <- list("region" = shp[, AGS], "gender" = c("m", "f"), "age_gr" = c("0-6", "7-16", "16-99"))
+values <- list("region" = c(shp[, AGS], "00"), "gender" = c("m", "f"), "age_gr" = c("0-6", "7-16", "16-99"))
 values
 
 
@@ -38,3 +38,26 @@ include_missing_obs <- function(dt, values, missing_col) {
     return(dtfull)
 }
 
+get_net <- function(flows, values, grouped, by = NULL) {
+
+    ### probably a good idea to supply "values" only optional and
+    ### otherwise read them from the columns. Although then there
+    ### might be some combinations missing that are not in the data
+    
+    wins <- get_wins(flows, grouped, by)
+    wins <- include_missing_obs(wins, values, "wins")
+    losses <- get_losses(flows, grouped, by)
+    losses <- include_missing_obs(losses, values, "losses")
+    setkeyv(wins, names(values))
+    setkeyv(losses, names(values))
+    wins[losses, "losses" := i.losses]
+    wins[, "net" := wins - losses]
+    return(wins)
+}
+
+net <- get_net(flows, values, TRUE)
+
+net[, sum(wins)]
+net[, sum(losses)]
+net[, sum(net)]
+?do.call
