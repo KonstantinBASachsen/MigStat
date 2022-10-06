@@ -16,26 +16,38 @@ get_grouped <- function(flows, reg, grouped = TRUE, by = NULL) {
     } else {
         type  <- "wins"
     }
-    losses <- copy(flows)
+    dt <- copy(flows)
     if (grouped == TRUE) {
         if (is.null(by)) {
             nogroup <- c("origin", "destination", "flow", "distance", "region")
             by <- setdiff(colnames(flows), nogroup)
         }
-        message(sprintf("%s grouped by '%s' are returned", type, paste(by, collapse = ", ")))
+        message(sprintf("%s grouped by '%s'", type, paste(by, collapse = ", ")))
 
-        losses <- losses[, paste(type) := sum(flow), by = c(reg, by)]
-##        losses <- losses[, "region" := get(reg)]
-        losses <- losses[, .SD[1], by = c(reg, by), .SDcols = c(type)]
+        dt <- dt[, paste(type) := sum(flow), by = c(reg, by)]
+        dt <- dt[, .SD[1], by = c(reg, by), .SDcols = c(type)]
+        colnames(dt)[colnames(dt) %in% c("origin", "destination")]  <- "region"
     } else {
-        losses <- losses[, paste(type) := sum(flow), by = reg]
-  ##      losses <- losses[, "region" := get(region)]
-        losses <- losses[, .SD[1], by = reg, .SDcols = c(type)]
+        dt <- dt[, paste(type) := sum(flow), by = reg]
+        dt <- dt[, .SD[1], by = reg, .SDcols = c(type)]
+        colnames(dt)[colnames(dt) %in% c("origin", "destination")]  <- "region"
     }
+    return(dt)
+}
+
+
+
+wins <- get_grouped(flows = flows, reg = "origin", grouped = TRUE, by = "age_gr")
+
+get_losses <- function(flows, grouped, by = NULL) {
+    losses <- get_grouped(flows, reg = "origin", grouped = grouped, by = by)
     return(losses)
 }
 
-wins <- get_grouped(flows = flows, reg = "origin", grouped = FALSE)
-var <- "gender"
-type <- "wins"
-colnames(flows) %in% c("region", type)
+get_wins <- function(flows, grouped, by = NULL) {
+    wins <- get_grouped(flows, reg = "destination", grouped = grouped, by = by)
+    return(wins)
+}
+
+get_wins(flows, TRUE)
+
