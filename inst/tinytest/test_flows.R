@@ -1,6 +1,8 @@
 ex_dat <- read_examples()
 mig <- ex_dat$mig
 shps <- ex_dat$shps
+mig$gender <- sample(c("m", "f"), nrow(mig), replace = TRUE)
+mig$age_gr <- sample(c("0-6", "7-16", "16-99"), nrow(mig), replace = TRUE)
 
 
 #################### get_wins() and get_losses() ###############################
