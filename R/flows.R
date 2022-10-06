@@ -6,33 +6,57 @@
 ##' in-migration or out-migration is treated as 0.
 ##' @title net migration for regions
 ##' @param flows data.table holding od-flows. Returned by get_flows().
+##' @param values A list of variable names with corresponding possible
+##'     values. For all combinations of the values the wins, losses
+##'     and net flows are returned
+##' @param grouped Logical, indicating if wins, losses and net are
+##'     returned for groups or in total per region
+##' @param by optional. If output is to be grouped, here the grouping
+##'     variables are given. If NULL, all columns except origin,
+##'     destination, distance and flow are taken as grouping variables
 ##' @return data.table with ags, net flow and wins and losses.
 ##' @import data.table
 ##' @export get_net
 ##' @author Konstantin
-get_net <- function(flows) {
-    flow <- region <- i.flow <- i.region <- NULL
-    w <- get_wins(flows)
-    l <- get_losses(flows)
-    keys <- unique(c(w[, region], l[, region]))
-    data.table::setkeyv(w, "region")
-    data.table::setkeyv(l, "region")
-    w <- w[keys, ]
-    w[is.na(wins), "wins" := 0]
-    l <- l[keys, ]
-    l[is.na(losses), "losses" := 0]
-    data.table::setkeyv(w, "region")
-    data.table::setkeyv(l, "region")
-    w[l, "losses" := i.losses]
-    w[, "net" := wins - losses]
-    setcolorder(w, c("region", "net", "wins", "losses"))
-    ### the next lines ensure that if there are regions in losses that
-    ### are not in wins, the name of the region is transferred to wins
-    row <- w[is.na(region)][l, "region" := i.region]
-    idx <- which(is.na(w[, region]))
-    w[idx] <- row
-    return(w)
+get_net <- function(flows, values, grouped, by = NULL) {
+    ### probably a good idea to supply "values" only optional and
+    ### otherwise read them from the columns. Although then there
+    ### might be some combinations missing that are not in the data
+    
+    wins <- get_wins(flows, grouped, by)
+    wins <- include_missing_obs(wins, values, "wins")
+    losses <- get_losses(flows, grouped, by)
+    losses <- include_missing_obs(losses, values, "losses")
+    setkeyv(wins, names(values))
+    setkeyv(losses, names(values))
+    wins[losses, "losses" := i.losses]
+    wins[, "net" := wins - losses]
+    return(wins)
 }
+
+## get_net <- function(flows) {
+##     flow <- region <- i.flow <- i.region <- NULL
+##     w <- get_wins(flows)
+##     l <- get_losses(flows)
+##     keys <- unique(c(w[, region], l[, region]))
+##     data.table::setkeyv(w, "region")
+##     data.table::setkeyv(l, "region")
+##     w <- w[keys, ]
+##     w[is.na(wins), "wins" := 0]
+##     l <- l[keys, ]
+##     l[is.na(losses), "losses" := 0]
+##     data.table::setkeyv(w, "region")
+##     data.table::setkeyv(l, "region")
+##     w[l, "losses" := i.losses]
+##     w[, "net" := wins - losses]
+##     setcolorder(w, c("region", "net", "wins", "losses"))
+##     ### the next lines ensure that if there are regions in losses that
+##     ### are not in wins, the name of the region is transferred to wins
+##     row <- w[is.na(region)][l, "region" := i.region]
+##     idx <- which(is.na(w[, region]))
+##     w[idx] <- row
+##     return(w)
+## }
 
 
 get_wins <- function(flows, grouped, by = NULL) {
