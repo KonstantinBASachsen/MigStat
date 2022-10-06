@@ -64,3 +64,38 @@ get_losses2 <- function(flows, grouped = TRUE, by = NULL) {
 losses <- get_losses2(flows, TRUE)
 
 
+get_grouped <- function(flows, region, grouped = TRUE, by = NULL) {
+    losses <- copy(flows)
+    if (grouped == TRUE) {
+        if (is.null(by)) {
+            nogroup <- c("origin", "destination", "flow", "distance", "region")
+            by <- setdiff(colnames(flows), nogroup)
+        }
+        message(sprintf("losses grouped by '%s' are returned", paste(by, collapse = ", ")))
+
+        losses <- losses[, "losses" := sum(flow), by = c(region, by)]
+        losses <- losses[, .SD[1], by = c(region, by)]
+        losses <- losses[order(get(region))]
+        losses <- losses[, "region" := get(region)]
+        losses <- losses[, c("flow", "distance", "destination", "origin") := NULL]
+    } else {
+        losses <- losses[, "losses" := sum(flow), by = c("origin")]
+        losses <- losses[, .SD[1], by = c("origin")]
+        losses <- losses[order(origin)]
+        losses <- losses[, "region" := origin]
+        losses <- losses[, .(region, losses)]
+    }
+    return(losses)
+}
+
+test <- get_grouped(flows, "origin")
+
+test[region == "09", sum(losses)]
+
+mig[EF03U2 == "09", ]
+
+test <- get_grouped(flows, "destination")
+
+test[region == "09", sum(losses)]
+
+mig[EF02U2 == "09", ]
