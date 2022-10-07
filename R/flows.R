@@ -25,6 +25,10 @@ get_net <- function(flows, values = NULL, grouped, by = NULL) {
 
     ### not working right now when grouped = FALSE, because it still
     ### expects values
+
+    ### maybe grouped is not really necessary because values already
+    ### gives the grouping information
+
     wins <- get_wins(flows, grouped, by)
     wins <- include_missing_obs(wins, values, "wins")
     losses <- get_losses(flows, grouped, by)
@@ -35,6 +39,7 @@ get_net <- function(flows, values = NULL, grouped, by = NULL) {
     wins[, "net" := wins - losses]
     return(wins)
 }
+
 
 ## get_net <- function(flows) {
 ##     flow <- region <- i.flow <- i.region <- NULL
