@@ -6,11 +6,6 @@
 ##' in-migration or out-migration is treated as 0.
 ##' @title net migration for regions
 ##' @param flows data.table holding od-flows. Returned by get_flows().
-##' @param values A list of variable names with corresponding possible
-##'     values. For all combinations of the values the wins, losses
-##'     and net flows are returned
-##' @param grouped Logical, indicating if wins, losses and net are
-##'     returned for groups or in total per region
 ##' @param by optional. If output is to be grouped, here the grouping
 ##'     variables are given. If NULL, all columns except origin,
 ##'     destination, distance and flow are taken as grouping variables
@@ -39,10 +34,12 @@ get_net <- function(flows, by = NULL) {
     ### of values, because they contain the grouping variables. What
     ### if no values are supplied? But then I can not join anyways
 ### because observations are not balanced.
-    no_keys <- c("origin", "destination", "flow", "distance", "region")
-    keys <- setdiff(colnames(flows), no_keys)
-
-    keys <- c("region", keys[! keys %in% c("destination", "origin")])
+    if (is.null(by)) {
+        ### this removes wins[, "wins"] and losses[, "losses"]
+        keys <- intersect(colnames(wins), colnames(losses))
+    } else {
+        keys <- c("region", by)
+    }
     setkeyv(wins, keys)
     setkeyv(losses, keys)
     wins[losses, "losses" := i.losses]
