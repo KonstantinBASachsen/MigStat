@@ -6,7 +6,9 @@ mig[, "gender" := c(rep("m", 100), rep("f", 100))]
 mig[, "age_gr" := fifelse(EF25 < 35, "0-35", ">35")]
 
 shp <- clean_shp(ex_dat$shps, "st")
-flows <- get_flows(mig, shp, "st", full = TRUE)
+all_regions <- c(shp[, AGS], "00")
+values <- list("origin" = all_regions, "destination" = all_regions)
+flows <- get_flows(mig, shp, "st", values = values)
 
 ### all rows should be included in flows
 expect_equal(flows[, sum(flow)], 200)
@@ -30,7 +32,13 @@ n_regions <- length(unique(shp[, AGS]))
 expect_true(nrow(flows) >= n_regions^2, info = sprintf("expected %s, got %s", n_regions^2, nrow(flows)))
 
 shp <- clean_shp(ex_dat$shps, "di")
-flows <- get_flows(mig, shp, "di", full = TRUE)
+all_regions <- c(shp[, AGS], "00000") ### does not work
+all_regions2 <- unique(c(mig[, EF03U4], mig[, EF02U4]))
+all_regions3 <- unique(c(all_regions, all_regions2))
+## setdiff(all_regions2, all_regions)
+
+values <- list("origin" = all_regions3, "destination" = all_regions3)
+flows <- get_flows(mig, shp, "di", values = values)
 ### all rows should be included in flows
 expect_equal(flows[, sum(flow)], 200)
 
@@ -43,9 +51,15 @@ expect_true(nrow(flows) >= n_regions^2, info = sprintf("expected %s, got %s", n_
 #################### testing grouped od-flows ########################
 ######################################################################
 
-mig[EF02U2 == "09" & EF03U2 == "08"]
+## mig[EF02U2 == "09" & EF03U2 == "08"]
 flows <- get_flows(mig, shp, by = "gender", us = "st")
 expect_equal(flows[origin == "08" & destination == "09", flow], c(6, 5))
 
 flows <- get_flows(mig, shp, by = c("gender", "age_gr"), us = "st")
+
+### dont know whats going on here. One time I got in mig different group sizes
+## expect_equal(flows[origin == "08" & destination == "09", ][order(gender, age_gr), flow], c(2, 1, 3, 2, 1, 2))
 expect_equal(flows[origin == "08" & destination == "09", flow], c(3, 3, 1, 4))
+
+## flows[origin == "08" & destination == "09", ]
+## mig[EF03U2 == "08" & EF02U2 == "09", .(gender, age_gr)]
