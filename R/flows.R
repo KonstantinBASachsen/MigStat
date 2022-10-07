@@ -18,7 +18,7 @@
 ##' @import data.table
 ##' @export get_net
 ##' @author Konstantin
-get_net <- function(flows, grouped, by = NULL) {
+get_net <- function(flows, by = NULL) {
     ### probably a good idea to supply "values" only optional and
     ### otherwise read them from the columns. Although then there
     ### might be some combinations missing that are not in the data
@@ -30,9 +30,9 @@ get_net <- function(flows, grouped, by = NULL) {
     ### gives the grouping information
     i.losses <- NULL
     
-    wins <- get_wins(flows, grouped, by)
+    wins <- get_wins(flows, by)
 ##    wins <- include_missing_obs(wins, values, "wins")
-    losses <- get_losses(flows, grouped, by)
+    losses <- get_losses(flows, by)
     ## losses <- include_missing_obs(losses, values, "losses")
     ### in wins and losses the columns are not called "origin" and
     ### "destination" anymore but region. Still I need the other names
@@ -76,18 +76,18 @@ get_net <- function(flows, grouped, by = NULL) {
 ## }
 
 
-get_wins <- function(flows, grouped, by = NULL) {
-    wins <- get_grouped(flows, reg = "destination", grouped = grouped, by = by)
+get_wins <- function(flows, by = NULL) {
+    wins <- get_grouped(flows, reg = "destination", by = by)
     return(wins)
 }
 
 
-get_losses <- function(flows, grouped, by = NULL) {
-    losses <- get_grouped(flows, reg = "origin", grouped = grouped, by = by)
+get_losses <- function(flows, by = NULL) {
+    losses <- get_grouped(flows, reg = "origin", by = by)
     return(losses)
 }
 
-get_grouped <- function(flows, reg, grouped, by = NULL) {
+get_grouped <- function(flows, reg, by = NULL) {
     flow <- NULL
     
     stopifnot(reg %in% c("origin", "destination"))
