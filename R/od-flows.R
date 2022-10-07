@@ -117,6 +117,18 @@ get_regions <- function(dt, shps, us, type) {
     return(all_regions)
 }
 
+
+include_missing_obs <- function(dt, values, missing_col) {
+    mc <- missing_col
+    stopifnot("missing_col not in data.table" = mc %in% colnames(dt))
+    keys <- do.call(data.table::CJ, values)
+    setkeyv(dt, names(values))
+    dtfull <- dt[keys, ]
+    dtfull <- dtfull[order(mget(names(values)))]
+    dtfull <- dtfull[is.na(get(mc)), paste(mc)  := 0]
+    return(dtfull)
+}
+
 join_populations <- function(flows, shp) {
     ### joins population sizes based on flows object. This function
     ### has no own full = TRUE argument. That is, it takes the keys
