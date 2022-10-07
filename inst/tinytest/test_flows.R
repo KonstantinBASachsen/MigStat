@@ -49,7 +49,7 @@ all_regions <- unique(c(mig[, EF03U2], mig[, EF02U2]))
 values <- list("origin" = all_regions, "destination" = all_regions)
 flows <- get_flows(mig, shp, us = "st", values = values)
 
-net <- get_net(flows, values = values, grouped = FALSE)
+net <- get_net(flows, grouped = FALSE)
 expect_equal(net[, sum(net)], 0)
 expect_equal(net[, sum(losses)], 200)
 expect_equal(net[, sum(wins)], 200)
