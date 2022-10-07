@@ -18,11 +18,13 @@
 ##' @import data.table
 ##' @export get_net
 ##' @author Konstantin
-get_net <- function(flows, values, grouped, by = NULL) {
+get_net <- function(flows, values = NULL, grouped, by = NULL) {
     ### probably a good idea to supply "values" only optional and
     ### otherwise read them from the columns. Although then there
     ### might be some combinations missing that are not in the data
-    
+
+    ### not working right now when grouped = FALSE, because it still
+    ### expects values
     wins <- get_wins(flows, grouped, by)
     wins <- include_missing_obs(wins, values, "wins")
     losses <- get_losses(flows, grouped, by)
