@@ -27,17 +27,17 @@ expect_equal(wins[, sum(wins)], nrow(mig))
 ########################### get_net() ##########################################
 ################################################################################
 
-### since every win of one region is a loss of some other region, they
-### cancel each other out
-## net <- get_net(flows)
-## expect_equal(net[, sum(net)], 0)
+## since every win of one region is a loss of some other region, they
+## cancel each other out
+net <- get_net(flows, grouped = FALSE)
+expect_equal(net[, sum(net)], 0)
 
-## ### checks if all regions in wins and all in losses are part of net as
-## ### well. This is not always the case, even if get_flows() was invoked
-## ### with full = TRUE. This is so because there might be regions that
-## ### are only origin or only destination. get_net() takes care of this
-## ### by handling regions that are not origin regions as 0 losses and
-## ### regions that are not destinations as 0 wins.
+### checks if all regions in wins and all in losses are part of net as
+### well. This is not always the case, even if get_flows() was invoked
+### with full = TRUE. This is so because there might be regions that
+### are only origin or only destination. get_net() takes care of this
+### by handling regions that are not origin regions as 0 losses and
+### regions that are not destinations as 0 wins.
 
-## n_regions <- length(unique(c(losses[, region], wins[, region])))
-## expect_equal(nrow(net), n_regions)
+n_regions <- length(unique(c(losses[, region], wins[, region])))
+expect_equal(nrow(net), n_regions)
