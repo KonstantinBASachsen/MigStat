@@ -28,7 +28,9 @@ values <- list("origin" = regions, "destination" = regions,
                "gender" = c("m", "f"), "age_gr" = c("0-6", "7-16", "16-99"))
 flows <- get_flows(dt = mig, shp = shp, us = us, by = c("gender", "age_gr"), values = values)
 
-net <- get_net(flows, values)
+net <- get_net(flows, b = "gender")
 net[, sum(losses)]
 net[, sum(wins)]
+
+
 
