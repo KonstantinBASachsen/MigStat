@@ -35,8 +35,8 @@
 ##'     between regions.
 ##' @param dist If TRUE the distances between region pairs are
 ##'     returned as well. If us is set to "mu" this takes a long time
-##' @param full If TRUE region pairs with 0 flows between them are
-##'     returned as well. If us = "mu" this might take some time.
+##'@param values A named list of variable values. These values are
+##'     used to fill missing flows.
 ##' @param pops If population sizes should be joined. Feature will
 ##'     probably be removed later.
 ##' @param na_to_0 logical, if TRUE, NA flows, that is, od_pairs where
@@ -52,9 +52,10 @@ get_flows <- function(dt, shp, us, by = NULL, dist = FALSE, values = NULL, pops 
 
     ### I think I should not compute and join the distances
     ### here. Maybe this belongs to some other function
-    
+
 ### Don't know why this function needs state_o and so on cols
 
+    ### shp only needed for pops. Should be removed
     ### I don't like join_populations() in here and I don't know
     ### anymore why I needed this. Probably for gravity sampling
     flow <- NULL
@@ -83,27 +84,6 @@ get_flows <- function(dt, shp, us, by = NULL, dist = FALSE, values = NULL, pops 
     ### probably the functions below do too much like adding columns I
     ### dont use. Maybe copying data.tables is also too much
 }
-
-
-
-## join_missing_regions <- function(flows, shp) {
-##     AGS <- origin <- destination <- od <- i.origin <- i.destination <- NULL
-##     combs <- create_region_combs(shp[, AGS])
-##     ## flows[, "od" := paste(origin, destination, sep = "_")]
-##     flows[, "od" := paste(destination, origin, sep = "_")]
-##     setkeyv(flows, "od")
-## ### Although all region pairs are already contained in combs I need
-## ### this because in the data are moves where origin is unknown.
-##     keys <- unique(c(combs[, od], flows[, od]))
-##     flows <- flows[keys]
-##     setkeyv(combs, "od")
-##     setkeyv(flows, "od")
-##     flows[combs, "origin" := i.origin]
-##     flows[combs, "destination" := i.destination]
-##     flows[, od := NULL]
-##     return(flows)
-## }
-
 
 get_flows_only <- function(dt, us, by = NULL, simplify = TRUE) {
     . <- flow <- NULL
