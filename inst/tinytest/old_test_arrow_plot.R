@@ -1,13 +1,13 @@
-
 ex_dat <- read_examples()
 shps <- ex_dat$shps
-dtj <- join_administries(ex_dat$mig, shps$state, shps$district, shps$muni, full = FALSE) ### join "official" names
+mig <- ex_dat$mig
+##dtj <- join_administries(ex_dat$mig, shps$state, shps$district, shps$muni, full = FALSE) ### join "official" names
 
 us <- "st"
 shp <- clean_shp(shps, us)
 name <- "Berlin"
 
-dtf <- get_flows(ex_dat$mig, shp, us, dist = TRUE)
+dtf <- get_flows(dt = mig, us = us, dist = TRUE)
 ### get_arrow_data looks buggy, I think I want to add the origin row
 ### and not replace dtarrow with it, see: dtarrow <- dtarrow[origin ==
 ### ags, c(1,3,5)]
