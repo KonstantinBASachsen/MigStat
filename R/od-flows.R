@@ -23,7 +23,6 @@
 ##'     statistics
 ##' @param dt Migration Statistics data.table where every row is one
 ##'     migration.
-##' @param shp The shapefile with the level corresponding to us
 ##' @param us "unit simple" between regions of which type are flows to
 ##'     be computed? Takes one of the following strings:
 ##'
@@ -33,20 +32,14 @@
 ##'     summarized. If for example "gender" is given the flows of
 ##'     males between regions is returned and the flow of females
 ##'     between regions.
-##' @param dist If TRUE the distances between region pairs are
-##'     returned as well. If us is set to "mu" this takes a long time
 ##'@param values A named list of variable values. These values are
 ##'     used to fill missing flows.
-##' @param pops If population sizes should be joined. Feature will
-##'     probably be removed later.
-##' @param na_to_0 logical, if TRUE, NA flows, that is, od_pairs where
-##'     no migration took place are set to 0.
 ##' @return data.table with columns: origin id, destination id, the
 ##'     group columns, the flow between regions
 ##' @import data.table
 ##' @export get_flows
 ##' @author Konstantin
-get_flows <- function(dt, us, by = NULL, values = NULL, dist = FALSE) {
+get_flows <- function(dt, us, by = NULL, values = NULL) {
     ### I think it might be good if the function returns all regions
     ### and fills empty flows with 0's
 
@@ -65,11 +58,11 @@ get_flows <- function(dt, us, by = NULL, values = NULL, dist = FALSE) {
         ##        flows <- join_missing_regions(flows = flows, shp = shp)
         flows <- include_missing_obs(flows, values, "flow")
     }
-    if (dist == TRUE) {
-            dist <- get_distances(shp)
-            flows <- join_distances(flows, dist)
-            flows[, "od" := NULL] ### don't know why I need to do this
-    }
+    ## if (dist == TRUE) {
+    ##         dist <- get_distances(shp)
+    ##         flows <- join_distances(flows, dist)
+    ##         flows[, "od" := NULL] ### don't know why I need to do this
+    ## }
     ### I think the next two lines I implemented to obtain the data
     ### structure needed for spflow
 ##    flows[, c("destination", "origin") := lapply(.SD, as.numeric), .SDcols = c("destination", "origin")]
