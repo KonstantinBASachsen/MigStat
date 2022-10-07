@@ -64,3 +64,22 @@ expect_equal(net[, sum(wins)], 200)
 
 ## n_regions <- length(unique(c(losses[, region], wins[, region])))
 expect_equal(nrow(net), 17)
+
+########################### get_net() grouped operations #######################
+################################################################################
+us <- "st"
+all_regions <- get_regions(mig, shps, us, "all")
+
+values <- list("origin" = all_regions, "destination" = all_regions,
+               "gender" = c("m", "f"), "age_gr" = c("0-6", "7-16", "16-99"))
+
+flows <- get_flows(mig, shp, us, by = c("gender", "age_gr"), values = values)
+net <- get_net(flows)
+
+expected <- net[region == "05", wins]
+actual <- mig[EF02U2 == "05", .N, by = .( gender, age_gr)][, N]
+expect_equal(intersect(expected, actual),union(expected, actual) )
+
+expected <- net[region == "05", losses]
+actual <- mig[EF03U2 == "05", .N, by = .( gender, age_gr)][, N]
+expect_equal(intersect(expected, actual), union(expected, actual) )
