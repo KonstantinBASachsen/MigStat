@@ -78,7 +78,7 @@ get_flows <- function(dt, shp, us, by = NULL, dist = FALSE, values = NULL, pops 
     if (pops == TRUE) {
         flows <- join_populations(flows, shp)
     }
-    if (na_to_0) { flows[is.na(flow), flow := 0] }
+    if (na_to_0) { flows[is.na(flow), flow := 0] } ### do I still need this?
     return(flows)
 
     ### probably the functions below do too much like adding columns I
