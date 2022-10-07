@@ -1,7 +1,6 @@
 ex_dat <- read_examples()
 shps <- ex_dat$shps
 mig <- ex_dat$mig
-dt <- join_administries(ex_dat$mig, shps$state, shps$district, shps$muni, full = TRUE)
 
 s <- sample_move(mig, shps, us_o = "st", us_d = "mu")
 expect_equal(nchar(s$ags_o), 2)

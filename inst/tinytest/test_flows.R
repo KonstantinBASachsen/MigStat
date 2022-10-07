@@ -10,7 +10,6 @@ mig$age_gr <- sample(c("0-6", "7-16", "16-99"), nrow(mig), replace = TRUE)
 
 us <- "mu"
 shp <- clean_shp(shps, us)
-## dt <- join_administries(ex_dat$mig, shps$state, shps$district, shps$muni, full = TRUE)
 flows <- get_flows(dt = mig, us = us)
 losses <- get_losses(flows)
 expect_equal(losses[region == "09162000", losses], 6)
