@@ -29,8 +29,28 @@ expect_equal(wins[, sum(wins)], nrow(mig))
 
 ## since every win of one region is a loss of some other region, they
 ## cancel each other out
-net <- get_net(flows, grouped = FALSE)
+
+### values is taken to fill missing observations, This is necessary
+### because a missing observation means a 0 flow. For summarizing data
+### it is important to fill the missing observations. Lets say I want
+### to get the net migration of Delitzsch of people aged between 16
+### and 24. 10 left Delitzsch, nobody moved in. Net is wins - losses
+### so I need to fill the missing row with 0. "Values" is supposed to
+### hold all possible combinations that are filled with 0, if it is
+### not in the data.
+
+### This values should work but it does not, because there are AGS's
+### in the data that seem to be not valid
+## values <- list("region" = c(unique(shp[, AGS]), "00000000"))
+## mis_o <- setdiff(flows[, origin], values[[1]])
+## mis_d <- setdiff(flows[, destination], values[[1]])
+
+
+values <- list("region" = unique(c(flows[, origin], flows[, destination])))
+net <- get_net(flows, values = values, grouped = FALSE)
 expect_equal(net[, sum(net)], 0)
+expect_equal(net[, sum(losses)], 200)
+expect_equal(net[, sum(wins)], 200)
 
 ### checks if all regions in wins and all in losses are part of net as
 ### well. This is not always the case, even if get_flows() was invoked
