@@ -31,11 +31,17 @@ get_net <- function(flows, values = NULL, grouped, by = NULL) {
     i.losses <- NULL
     
     wins <- get_wins(flows, grouped, by)
-    wins <- include_missing_obs(wins, values, "wins")
+##    wins <- include_missing_obs(wins, values, "wins")
     losses <- get_losses(flows, grouped, by)
-    losses <- include_missing_obs(losses, values, "losses")
-    setkeyv(wins, names(values))
-    setkeyv(losses, names(values))
+    ## losses <- include_missing_obs(losses, values, "losses")
+    ### in wins and losses the columns are not called "origin" and
+    ### "destination" anymore but region. Still I need the other names
+    ### of values, because they contain the grouping variables. What
+    ### if no values are supplied? But then I can not join anyways
+    ### because observations are not balanced.
+    keys <- c("region", names(values)[! names(values) %in% c("destination", "origin")])
+    setkeyv(wins, keys)
+    setkeyv(losses, keys)
     wins[losses, "losses" := i.losses]
     wins[, "net" := wins - losses]
     return(wins)
