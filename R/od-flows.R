@@ -46,7 +46,7 @@
 ##' @import data.table
 ##' @export get_flows
 ##' @author Konstantin
-get_flows <- function(dt, shp, us, by = NULL, dist = FALSE, full = FALSE, pops = FALSE, na_to_0 = TRUE) {
+get_flows <- function(dt, shp, us, by = NULL, dist = FALSE, values = NULL, pops = FALSE, na_to_0 = TRUE) {
     ### I think it might be good if the function returns all regions
     ### and fills empty flows with 0's
 
@@ -59,8 +59,10 @@ get_flows <- function(dt, shp, us, by = NULL, dist = FALSE, full = FALSE, pops =
     ### anymore why I needed this. Probably for gravity sampling
     flow <- NULL
     flows <- get_flows_only(dt = dt, by = by, us = us)
-    if (full == TRUE) {
-        flows <- join_missing_regions(flows = flows, shp = shp)
+    if (!is.null(values)) {
+##        stopifnot("values must be a list" = is.list(values))
+        ##        flows <- join_missing_regions(flows = flows, shp = shp)
+        flows <- include_missing_obs(flows, values, "flow")
     }
     if (dist == TRUE) {
             dist <- get_distances(shp)
