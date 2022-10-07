@@ -97,6 +97,7 @@ get_flows_only <- function(dt, us, by = NULL, simplify = TRUE) {
 }
 
 get_regions <- function(dt, shps, us, type) {
+    AGS <- NULL
     stopifnot(type %in% c("data", "all"))
     ags_o <- get_agscol(get_unitcol(us, F))
     ags_d <- get_agscol(get_unitcol(us, T))
