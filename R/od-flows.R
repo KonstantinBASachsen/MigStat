@@ -103,6 +103,20 @@ get_flows_only <- function(dt, us, by = NULL, simplify = TRUE) {
     return(dtf)
 }
 
+get_regions <- function(dt, shps, us, type) {
+    stopifnot(type %in% c("data", "all"))
+    ags_o <- get_agscol(get_unitcol(us, F))
+    ags_d <- get_agscol(get_unitcol(us, T))
+    shp <- clean_shp(shps, us)
+    if (type == "data") {
+        all_regions <- unique(c(dt[, get(ags_o)], dt[, get(ags_d)]))
+    }
+    if (type == "all") {
+        all_regions <- unique(c(shp[, AGS], dt[, get(ags_o)], dt[, get(ags_d)]))
+    }
+    return(all_regions)
+}
+
 join_populations <- function(flows, shp) {
     ### joins population sizes based on flows object. This function
     ### has no own full = TRUE argument. That is, it takes the keys

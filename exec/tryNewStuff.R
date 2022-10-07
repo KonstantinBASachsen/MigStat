@@ -3,19 +3,6 @@ mig <- ex_dat$mig
 mig$gender <- sample(c("m", "f"), nrow(mig), replace = TRUE)
 mig$age_gr <- sample(c("0-6", "7-16", "16-99"), nrow(mig), replace = TRUE)
 
-get_regions <- function(dt, shps, us, type) {
-    stopifnot(type %in% c("data", "all"))
-    ags_o <- get_agscol(get_unitcol(us, F))
-    ags_d <- get_agscol(get_unitcol(us, T))
-    shp <- clean_shp(shps, us)
-    if (type == "data") {
-        all_regions <- unique(c(dt[, get(ags_o)], dt[, get(ags_d)]))
-    }
-    if (type == "all") {
-        all_regions <- unique(c(shp[, AGS], dt[, get(ags_o)], dt[, get(ags_d)]))
-    }
-    return(all_regions)
-}
 
 
 
