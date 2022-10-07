@@ -12,10 +12,10 @@ us <- "mu"
 shp <- clean_shp(shps, us)
 ## dt <- join_administries(ex_dat$mig, shps$state, shps$district, shps$muni, full = TRUE)
 flows <- get_flows(mig, shp, us)
-losses <- get_losses(flows, grouped = FALSE)
+losses <- get_losses(flows)
 expect_equal(losses[region == "09162000", losses], 6)
 
-wins <- get_wins(flows, grouped = FALSE)
+wins <- get_wins(flows)
 expect_equal(wins[region == "11000000", wins], 6)
 
 ### add test if sum flows after get_flows equals rows of data.table
@@ -49,7 +49,7 @@ all_regions <- unique(c(mig[, EF03U2], mig[, EF02U2]))
 values <- list("origin" = all_regions, "destination" = all_regions)
 flows <- get_flows(mig, shp, us = "st", values = values)
 
-net <- get_net(flows, grouped = FALSE)
+net <- get_net(flows)
 expect_equal(net[, sum(net)], 0)
 expect_equal(net[, sum(losses)], 200)
 expect_equal(net[, sum(wins)], 200)
