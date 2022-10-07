@@ -51,7 +51,7 @@ create_region_combs <- function(ags) {
 #### to save it
     
     origin <- destination <- NULL
-    combs <- setDT(expand.grid(ags, ags, stringsAsFactors = FALSE))
+    combs <- data.table::CJ(ags, ags)
     colnames(combs) <- c("origin", "destination")
     combs[, "od" := paste(destination, origin, sep = "_")]
     return(combs)
