@@ -8,7 +8,7 @@ mig[, "age_gr" := fifelse(EF25 < 35, "0-35", ">35")]
 shp <- clean_shp(ex_dat$shps, "st")
 all_regions <- c(shp[, AGS], "00")
 values <- list("origin" = all_regions, "destination" = all_regions)
-flows <- get_flows(mig, shp, "st", values = values)
+flows <- get_flows(dt = mig,  us = "st", values = values)
 
 ### all rows should be included in flows
 expect_equal(flows[, sum(flow)], 200)
@@ -38,7 +38,7 @@ all_regions3 <- unique(c(all_regions, all_regions2))
 ## setdiff(all_regions2, all_regions)
 
 values <- list("origin" = all_regions3, "destination" = all_regions3)
-flows <- get_flows(mig, shp, "di", values = values)
+flows <- get_flows(dt = mig, us = "di", values = values)
 ### all rows should be included in flows
 expect_equal(flows[, sum(flow)], 200)
 
@@ -52,10 +52,10 @@ expect_true(nrow(flows) >= n_regions^2, info = sprintf("expected %s, got %s", n_
 ######################################################################
 
 ## mig[EF02U2 == "09" & EF03U2 == "08"]
-flows <- get_flows(mig, shp, by = "gender", us = "st")
+flows <- get_flows(dt = mig, by = "gender", us = "st")
 expect_equal(flows[origin == "08" & destination == "09", flow], c(6, 5))
 
-flows <- get_flows(mig, shp, by = c("gender", "age_gr"), us = "st")
+flows <- get_flows(dt = mig, us = "st", by = c("gender", "age_gr"))
 
 ### dont know whats going on here. One time I got in mig different group sizes
 ## expect_equal(flows[origin == "08" & destination == "09", ][order(gender, age_gr), flow], c(2, 1, 3, 2, 1, 2))
