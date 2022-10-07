@@ -94,21 +94,17 @@ get_grouped <- function(flows, reg, grouped, by = NULL) {
         type  <- "wins"
     }
     dt <- copy(flows)
-    if (grouped == TRUE) {
-        if (is.null(by)) {
-            nogroup <- c("origin", "destination", "flow", "distance", "region")
-            by <- setdiff(colnames(flows), nogroup)
-        }
-        message(sprintf("%s grouped by '%s'", type, paste(by, collapse = ", ")))
-
-        dt <- dt[, paste(type) := sum(flow), by = c(reg, by)]
-        dt <- dt[, .SD[1], by = c(reg, by), .SDcols = c(type)]
-        colnames(dt)[colnames(dt) %in% c("origin", "destination")]  <- "region"
-    } else {
-        dt <- dt[, paste(type) := sum(flow), by = reg]
-        dt <- dt[, .SD[1], by = reg, .SDcols = c(type)]
-        colnames(dt)[colnames(dt) %in% c("origin", "destination")]  <- "region"
+    if (is.null(by)) {
+        nogroup <- c("origin", "destination", "flow", "distance", "region")
+        by <- setdiff(colnames(flows), nogroup)
     }
+    if (!is.null(by)) {
+        message(sprintf("%s grouped by '%s'", type, paste(by, collapse = ", ")))
+    }
+    dt <- dt[, paste(type) := sum(flow), by = c(reg, by)]
+    dt <- dt[, .SD[1], by = c(reg, by), .SDcols = c(type)]
+    colnames(dt)[colnames(dt) %in% c("origin", "destination")]  <- "region"
+    
     return(dt)
 }
 
