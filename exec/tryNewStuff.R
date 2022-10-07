@@ -43,6 +43,9 @@ get_net <- function(flows, values, grouped, by = NULL) {
     ### probably a good idea to supply "values" only optional and
     ### otherwise read them from the columns. Although then there
     ### might be some combinations missing that are not in the data
+
+    ### maybe grouped is not really necessary because values already
+    ### gives the grouping information
     
     wins <- get_wins(flows, grouped, by)
     wins <- include_missing_obs(wins, values, "wins")
@@ -55,7 +58,7 @@ get_net <- function(flows, values, grouped, by = NULL) {
     return(wins)
 }
 
-net <- get_net(flows, values, TRUE)
+net <- get_net(flows, values[1], FALSE)
 
 net[, sum(wins)]
 net[, sum(losses)]
