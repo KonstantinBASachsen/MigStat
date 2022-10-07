@@ -28,7 +28,8 @@ get_net <- function(flows, values = NULL, grouped, by = NULL) {
 
     ### maybe grouped is not really necessary because values already
     ### gives the grouping information
-
+    i.losses <- NULL
+    
     wins <- get_wins(flows, grouped, by)
     wins <- include_missing_obs(wins, values, "wins")
     losses <- get_losses(flows, grouped, by)
@@ -78,6 +79,8 @@ get_losses <- function(flows, grouped, by = NULL) {
 }
 
 get_grouped <- function(flows, reg, grouped, by = NULL) {
+    flow <- NULL
+    
     stopifnot(reg %in% c("origin", "destination"))
     if(reg == "origin") {
         type <- "losses"
