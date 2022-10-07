@@ -46,7 +46,7 @@
 ##' @import data.table
 ##' @export get_flows
 ##' @author Konstantin
-get_flows <- function(dt, shp, us, by = NULL, dist = FALSE, values = NULL, pops = FALSE, na_to_0 = TRUE) {
+get_flows <- function(dt, us, by = NULL, values = NULL, dist = FALSE) {
     ### I think it might be good if the function returns all regions
     ### and fills empty flows with 0's
 
@@ -75,10 +75,10 @@ get_flows <- function(dt, shp, us, by = NULL, dist = FALSE, values = NULL, pops 
 ##    flows[, c("destination", "origin") := lapply(.SD, as.numeric), .SDcols = c("destination", "origin")]
 ##    flows[, c("destination", "origin") := lapply(.SD, as.factor), .SDcols = c("destination", "origin")] 
 ##    flows <- flows[, .SD, .SDcols = c("destination", "origin", "flow", "distance")]
-    if (pops == TRUE) {
-        flows <- join_populations(flows, shp)
-    }
-    if (na_to_0) { flows[is.na(flow), flow := 0] } ### do I still need this?
+    ## if (pops == TRUE) {
+    ##     flows <- join_populations(flows, shp)
+    ## }
+    ## if (na_to_0) { flows[is.na(flow), flow := 0] } ### do I still need this?
     return(flows)
 
     ### probably the functions below do too much like adding columns I
