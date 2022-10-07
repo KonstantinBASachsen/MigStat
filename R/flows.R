@@ -18,7 +18,7 @@
 ##' @import data.table
 ##' @export get_net
 ##' @author Konstantin
-get_net <- function(flows, values = NULL, grouped, by = NULL) {
+get_net <- function(flows, grouped, by = NULL) {
     ### probably a good idea to supply "values" only optional and
     ### otherwise read them from the columns. Although then there
     ### might be some combinations missing that are not in the data
@@ -38,8 +38,11 @@ get_net <- function(flows, values = NULL, grouped, by = NULL) {
     ### "destination" anymore but region. Still I need the other names
     ### of values, because they contain the grouping variables. What
     ### if no values are supplied? But then I can not join anyways
-    ### because observations are not balanced.
-    keys <- c("region", names(values)[! names(values) %in% c("destination", "origin")])
+### because observations are not balanced.
+    no_keys <- c("origin", "destination", "flow", "distance", "region")
+    keys <- setdiff(colnames(flows), no_keys)
+
+    keys <- c("region", keys[! keys %in% c("destination", "origin")])
     setkeyv(wins, keys)
     setkeyv(losses, keys)
     wins[losses, "losses" := i.losses]
