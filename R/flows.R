@@ -98,6 +98,17 @@ get_grouped <- function(flows, reg, grouped, by = NULL) {
     return(dt)
 }
 
+include_missing_obs <- function(dt, values, missing_col) {
+    ms <- missing_col
+    stopifnot("missing_col not in data.table" = ms %in% colnames(dt))
+    keys <- do.call(data.table::CJ, values)
+    setkeyv(dt, names(values))
+    dtfull <- dt[keys, ]
+    dtfull <- dtfull[order(mget(names(values)))]
+    dtfull <- dtfull[is.na(get(ms)), paste(ms)  := 0]
+    return(dtfull)
+}
+
 ## ##' Get wins (in-migration) for regions
 ## ##'
 ## ##' This function returns the number of in-migrations for every region
