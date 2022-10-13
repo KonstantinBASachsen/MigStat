@@ -100,3 +100,8 @@ set_geom <- function(dt, geom_only = T) {
 
     return(dtgeom)
 }
+
+object_size <- function(object, units = "Mb") {
+    size <- format(utils::object.size(object), units = units)
+    return(size)
+}
