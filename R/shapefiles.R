@@ -47,8 +47,8 @@ read_shapes <- function(path, year = 2013) {
     shapes <- shapes[grep(as.character(year), shapes)]
     
     muni_file  <- shapes[grep("gem", shapes)]
-    states_file <- shapes[grep("krs", shapes)]
-    districts_file <- shapes[grep("lan", shapes)]
+    states_file <- shapes[grep("lan", shapes)]
+    districts_file <- shapes[grep("krs", shapes)]
 
     munis <- sf::read_sf(paste(path, muni_file, sep = "/"))
     munis <- data.table::setDT(munis)
