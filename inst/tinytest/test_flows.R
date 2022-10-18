@@ -9,7 +9,7 @@ mig$age_gr <- sample(c("0-6", "7-16", "16-99"), nrow(mig), replace = TRUE)
 ################################################################################
 
 us <- "mu"
-shp <- clean_shp(shps, us)
+shp <- clean_shp(shps, us, keep = c("AGS", "GEN", "geometry"))
 flows <- get_flows(dt = mig, us = us)
 losses <- get_losses(flows)
 expect_equal(losses[region == "09162000", losses], 6)

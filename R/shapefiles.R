@@ -40,11 +40,15 @@ get_shp_unit <- function(us) {
 ##' @import data.table
 ##' sf
 ##' @author Konstantin
-read_shapes <- function(path) {
+read_shapes <- function(path, year = 2013) {
 
-    muni_file  <- "VG250_GEM.shp"
-    states_file <- "VG250_LAN.shp"
-    districts_file <- "VG250_KRS.shp"
+    shapes <- list.files(path)
+    shapes <- shapes[grep(".shp", shapes)]
+    shapes <- shapes[grep(as.character(year), shapes)]
+    
+    muni_file  <- shapes[grep("gem", shapes)]
+    states_file <- shapes[grep("krs", shapes)]
+    districts_file <- shapes[grep("lan", shapes)]
 
     munis <- sf::read_sf(paste(path, muni_file, sep = "/"))
     munis <- data.table::setDT(munis)

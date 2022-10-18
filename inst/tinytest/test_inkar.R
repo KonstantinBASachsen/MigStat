@@ -23,7 +23,7 @@ expect_equal(nrow(inkar[ones][ Kennziffer != "0"]), 0)
 us <- "st"
 zb <- "2013"
 rb <- get_raumbezug(us)
-shp <- clean_shp(ex_dat$shps, us)
+shp <- clean_shp(ex_dat$shps, us, keep = c("AGS", "GEN"))
 shp_cols <- ncol(shp)
 indic <- unique(inkar[, Indikator])
 idx <- c(428, 86, 344, 196, 193, 419, 240, 161, 153, 480)

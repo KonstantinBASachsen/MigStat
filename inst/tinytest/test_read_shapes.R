@@ -1,6 +1,6 @@
 
-map_path <- "/home/konstantin/Documents/project/Diss/inst/extdata/vg250_3112.utm32s.shape.ebenen/vg250_ebenen"
-shapes <- read_shapes(map_path)
+shp_path <-  "~/Diss/inst/extdata/test/shapes/new"
+shapes <- read_shapes(shp_path)
 
 ### administrative entities to read
 

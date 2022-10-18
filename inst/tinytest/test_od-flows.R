@@ -5,7 +5,7 @@ mig <- ex_dat$mig
 mig[, "gender" := c(rep("m", 100), rep("f", 100))]
 mig[, "age_gr" := fifelse(EF25 < 35, "0-35", ">35")]
 
-shp <- clean_shp(ex_dat$shps, "st")
+shp <- clean_shp(ex_dat$shps, "st", keep = c("AGS"))
 all_regions <- c(shp[, AGS], "00")
 values <- list("origin" = all_regions, "destination" = all_regions)
 flows <- get_flows(dt = mig,  us = "st", values = values)
@@ -31,7 +31,7 @@ expect_equal(length(unique(nchar(flows$destination))), 1)
 n_regions <- length(unique(shp[, AGS]))
 expect_true(nrow(flows) >= n_regions^2, info = sprintf("expected %s, got %s", n_regions^2, nrow(flows)))
 
-shp <- clean_shp(ex_dat$shps, "di")
+shp <- clean_shp(ex_dat$shps, "di", keep = "AGS")
 all_regions <- c(shp[, AGS], "00000") ### does not work
 all_regions2 <- unique(c(mig[, EF03U4], mig[, EF02U4]))
 all_regions3 <- unique(c(all_regions, all_regions2))
