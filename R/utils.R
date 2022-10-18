@@ -105,3 +105,22 @@ object_size <- function(object, units = "Mb") {
     size <- format(utils::object.size(object), units = units)
     return(size)
 }
+
+ggsave_d <- function(plot_name, plot, path, ...) {
+    plot_path <- file.path(path, "plots")
+    data_path <- file.path(path, "plot_data")
+    if (! dir.exists(plot_path)) {
+        dir.create(plot_path, recursive = TRUE)
+        message(sprintf("Directory to save plot created: %s", plot_path))
+    }
+    if (! dir.exists(data_path)) {
+        dir.create(data_path, recursive = TRUE)
+        message(sprintf("Directory to save data from plot created: %s", data_path))
+    }
+    ggplot2::ggsave(filename = paste0(plot_name, ".pdf"), plot = plot, path = plot_path, ...)
+    fpath <- file.path(data_path, paste0(plot_name, ".csv"))
+    data.table::fwrite(x = plot$data, file = fpath)
+    if(file.exists(fpath)) {
+        message("csv of plot data written to disk")}
+    ## not save bc file might exists and is not created anew
+}
