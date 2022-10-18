@@ -40,8 +40,10 @@ get_shp_unit <- function(us) {
 ##' @import data.table
 ##' sf
 ##' @author Konstantin
-read_shapes <- function(path, year = 2013) {
-
+read_shapes <- function(path, year = 2014) {
+    ### 2014 I only mention here because I want to use it in my test
+    ### files and by setting this as a default I don't need to do it
+    ### manually
     shapes <- list.files(path)
     shapes <- shapes[grep(".shp", shapes)]
     shapes <- shapes[grep(as.character(year), shapes)]
