@@ -52,13 +52,13 @@ read_shapes <- function(path, year = 2014) {
     states_file <- shapes[grep("lan", shapes)]
     districts_file <- shapes[grep("krs", shapes)]
 
-    munis <- sf::read_sf(paste(path, muni_file, sep = "/"))
+    munis <- sf::read_sf(file.path(path, muni_file))
     munis <- data.table::setDT(munis)
 
-    states <- sf::read_sf(paste(path, states_file, sep = "/"))
+    states <- sf::read_sf(file.path(path, states_file))
     states <- data.table::setDT(states)
 
-    districts <- sf::read_sf(paste(path, districts_file, sep = "/"))
+    districts <- sf::read_sf(file.path(path, districts_file))
     districts <- data.table::setDT(districts)
 
     shapes <- list("state" = states, "district" = districts, "muni" = munis)
