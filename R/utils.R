@@ -124,3 +124,10 @@ ggsave_d <- function(plot_name, plot, path, ...) {
         message("csv of plot data written to disk")}
     ## not save bc file might exists and is not created anew
 }
+
+create_od <- function(o, d) {
+    m1 <- as.matrix(o)
+    m2 <- as.matrix(d)
+    m <- paste(m1, m2, sep = "_")
+    return(m)
+}

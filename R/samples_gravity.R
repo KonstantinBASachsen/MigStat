@@ -26,7 +26,7 @@ samples_gravity <- function(shp, size, dist = NULL, probs = FALSE) {
 ### returns those so maybe I can say join_distances() to keep them.
     message("distances done")
     if ("od" %in% colnames(dist) == FALSE) {
-        dist[, "od" := paste(destination, origin, sep = "_")]
+        dist[, "od" := create_od(origin, destination)]
     }
 
     ags <- shp[order(AGS), AGS]
@@ -64,7 +64,8 @@ create_region_combs <- function(ags) {
     origin <- destination <- NULL
     combs <- data.table::CJ(ags, ags)
     colnames(combs) <- c("origin", "destination")
-    combs[, "od" := paste(destination, origin, sep = "_")]
+    
+    combs[, "od" := create_od(origin, destination)]
     return(combs)
     }
 
