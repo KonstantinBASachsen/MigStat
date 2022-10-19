@@ -82,3 +82,5 @@ expect_equal(intersect(expected, actual),union(expected, actual) )
 expected <- net[region == "05", losses]
 actual <- mig[EF03U2 == "05", .N, by = .( gender, age_gr)][, N]
 expect_equal(intersect(expected, actual), union(expected, actual) )
+
+

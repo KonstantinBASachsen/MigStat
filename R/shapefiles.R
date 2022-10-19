@@ -36,9 +36,10 @@ get_shp_unit <- function(us) {
 ##' @title read shape files as data.tables
 ##' @param path path to shape files. Expects directory structure where
 ##'     information for levels is stored in different files
+##' @param year Year of shapefiles. Important because geometries and
+##'     AGS's keys of regions change sometimes
 ##' @return list with data.tables as named elements
-##' @import data.table
-##' sf
+##' @import data.table sf
 ##' @author Konstantin
 read_shapes <- function(path, year = 2014) {
     ### 2014 I only mention here because I want to use it in my test
