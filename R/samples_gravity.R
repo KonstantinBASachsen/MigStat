@@ -26,14 +26,20 @@ samples_gravity <- function(shp, size, dist = NULL, probs = FALSE) {
 ### returns those so maybe I can say join_distances() to keep them.
     message("distances done")
     if ("od" %in% colnames(dist) == FALSE) {
+        message("creating od col")
         dist[, "od" := create_od(origin, destination)]
+    } else {
+        message("od col found in distance data")
     }
 
     ags <- shp[order(AGS), AGS]
     message("creating sample space")
     combs <- create_region_combs(ags)
     message("sample space created")
-    combs <- join_distances(combs, dist)
+    ##    combs <- join_distances(combs, dist)
+    setkeyv(combs, "od")
+    setkeyv(dist, "od")
+    combs[dist, "distance" := i.distance]
     message("distances joined")
     combs <- join_populations(combs, shp)
     message("populations joined")
