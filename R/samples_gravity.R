@@ -20,7 +20,7 @@
 ##' @export samples_gravity
 ##' @author Konstantin
 samples_gravity <- function(shp, size, dist = NULL, probs = FALSE) {
-    destination <- origin <- AGS <- NULL
+    destination <- origin <- AGS <- i.distance <- NULL
     if (is.null(dist)) { dist <- get_distances(shp) }
     ### I want to return o_name and d_name as well. get_distances()
 ### returns those so maybe I can say join_distances() to keep them.
