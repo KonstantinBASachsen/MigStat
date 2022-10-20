@@ -106,7 +106,7 @@ object_size <- function(object, units = "Mb") {
     return(size)
 }
 
-ggsave_d <- function(plot, plot_name, path, ...) {
+ggsave_d <- function(plot, plot_name, path, data, ...) {
     plot_path <- file.path(path, "plots")
     data_path <- file.path(path, "plot_data")
     if (! dir.exists(plot_path)) {
@@ -119,7 +119,19 @@ ggsave_d <- function(plot, plot_name, path, ...) {
     }
     ggplot2::ggsave(filename = paste0(plot_name, ".pdf"), plot = plot, path = plot_path, ...)
     fpath <- file.path(data_path, paste0(plot_name, ".csv"))
-    data.table::fwrite(x = plot$data, file = fpath)
+    if (is.null(data)) {
+        dt <- copy(plot$data)
+    } else {
+        dt <- copy(data)
+    }
+    
+    if ("geom" %in% colnames(dt)) {
+        dt[, "geom" := NULL]
+    }
+    if ("geometry" %in% colnames(dt)) {
+        dt[, "geometry" := NULL]
+}
+    data.table::fwrite(x = dt, file = fpath)
     if(file.exists(fpath)) {
         message("csv of plot data written to disk")}
     ## not save bc file might exists and is not created anew
