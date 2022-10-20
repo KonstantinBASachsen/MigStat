@@ -25,20 +25,13 @@ samples_gravity <- function(shp, size, dist = NULL, probs = FALSE) {
     ### I want to return o_name and d_name as well. get_distances()
 ### returns those so maybe I can say join_distances() to keep them.
     message("distances done")
-    if ("od" %in% colnames(dist) == FALSE) {
-        message("creating od col")
-        dist[, "od" := create_od(origin, destination)]
-    } else {
-        message("od col found in distance data")
-    }
-
     ags <- shp[order(AGS), AGS]
     message("creating sample space")
     combs <- create_region_combs(ags)
     message("sample space created")
     ##    combs <- join_distances(combs, dist)
-    setkeyv(combs, "od")
-    setkeyv(dist, "od")
+    setkeyv(combs, c("origin", "destination"))
+    setkeyv(dist, c("origin", "destination"))
     combs[dist, "distance" := i.distance]
     message("distances joined")
     combs <- join_populations(combs, shp)
@@ -71,7 +64,7 @@ create_region_combs <- function(ags) {
     combs <- data.table::CJ(ags, ags)
     colnames(combs) <- c("origin", "destination")
     
-    combs[, "od" := create_od(origin, destination)]
+##    combs[, "od" := create_od(origin, destination)]
     return(combs)
     }
 
@@ -91,6 +84,9 @@ gravity_probs <- function(reg_combinations, correction = TRUE) {
 
 sample_gravity <- function(combs, size = 1000) {
     od <- probs <- NULL
+    message("creating od pairs")
+    combs[, "od" := create_od(origin, destination)]
+    message("od pairs created")
     rows <- sample(combs[, od],
                    size = size, replace = TRUE, prob = combs[, probs])
     rows <- setDT(data.frame(rows))
