@@ -106,7 +106,7 @@ object_size <- function(object, units = "Mb") {
     return(size)
 }
 
-ggsave_d <- function(plot_name, plot, path, ...) {
+ggsave_d <- function(plot, plot_name, path, ...) {
     plot_path <- file.path(path, "plots")
     data_path <- file.path(path, "plot_data")
     if (! dir.exists(plot_path)) {
