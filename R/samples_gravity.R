@@ -83,7 +83,7 @@ gravity_probs <- function(reg_combinations, correction = TRUE) {
 }
 
 sample_gravity <- function(combs, size = 1000) {
-    od <- probs <- NULL
+    od <- probs <- origin <- destination <- i.distance <- NULL
     message("creating od pairs")
     combs[, "od" := create_od(origin, destination)]
     message("od pairs created")
