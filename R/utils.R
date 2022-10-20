@@ -107,6 +107,11 @@ object_size <- function(object, units = "Mb") {
 }
 
 ggsave_d <- function(plot, plot_name, path, data, ...) {
+#### add message if col is dropped
+
+#### add message if data from plot object is saved
+### add warning if only one list column is present in plot data
+    
     plot_path <- file.path(path, "plots")
     data_path <- file.path(path, "plot_data")
     if (! dir.exists(plot_path)) {
