@@ -68,14 +68,14 @@ keep_cols <- function(dt, keep) {
 }
 
 
-fpath <- function(path, fname, type = NULL) {
-    ### probably not working under windows
-    fullpath <- file.path(path, fname)
-    if (!is.null(type)) {
-        fullpath <- paste(fullpath, type, sep = ".")
-        }
-    return(fullpath)
-}
+## fpath <- function(path, fname, type = NULL) {
+##     ### probably not working under windows
+##     fullpath <- file.path(path, fname)
+##     if (!is.null(type)) {
+##         fullpath <- paste(fullpath, type, sep = ".")
+##         }
+##     return(fullpath)
+## }
 
 
 ##' Looks in data.table for "geometry" column and uses it to create
