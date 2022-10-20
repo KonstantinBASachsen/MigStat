@@ -41,17 +41,17 @@ samples_gravity <- function(shp, size, dist = NULL, probs = FALSE) {
     message("sampling starts")
     rows <- sample_gravity(combs, size)
     message("sampling complete")
-    rows <- group_samples(rows)
-    combs <- join_samples(combs, rows)
-    if (probs == TRUE) {
-        combs <- keep_cols(combs, c("origin", "destination",
-                                    "distance", "flow", "probs"))
-    } else {
-        combs <- keep_cols(combs, c("origin", "destination",
-                                    "distance", "flow"))
-    }
+    ## rows <- group_samples(rows)
+    ## combs <- join_samples(combs, rows)
+    ## if (probs == TRUE) {
+    ##     combs <- keep_cols(combs, c("origin", "destination",
+    ##                                 "distance", "flow", "probs"))
+    ## } else {
+    ##     combs <- keep_cols(combs, c("origin", "destination",
+    ##                                 "distance", "flow"))
+    ## }
     
-    return(combs)
+    return(rows)
 }
 
 create_region_combs <- function(ags) {
