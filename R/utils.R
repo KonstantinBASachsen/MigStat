@@ -131,13 +131,13 @@ object_size <- function(object, units = "Mb") {
 ##'     used. See ?ggplot2::ggsave
 ##' @export ggsave_d
 ##' @author Konstantin
-ggsave_d <- function(plot, plot_name, path, data, ...) {
-    if (class(plot) != c("gg", "ggplot")) {
+ggsave_d <- function(plot, plot_name, path, data = NULL, ...) {
+    if (is(plot) != "gg") {
         stop("Plot should be result from ggplot()")
     }
-    if (grepl(".", plot_name) == TRUE) {
-        warning("Did you specify file ending in plot_name. Better without ending")
-    }
+    ## if (grepl(".", plot_name) == TRUE) {
+    ##     warning("Did you specify file ending in plot_name. Better without ending")
+    ## } Apparently "." tests for any character
     plot_path <- file.path(path, "plots")
     data_path <- file.path(path, "plot_data")
     if (! dir.exists(plot_path)) {
