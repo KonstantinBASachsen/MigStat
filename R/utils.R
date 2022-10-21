@@ -130,9 +130,10 @@ object_size <- function(object, units = "Mb") {
 ##'     .csv. Plot saved as .pdf by default but other formats can be
 ##'     used. See ?ggplot2::ggsave
 ##' @export ggsave_d
+##' @importFrom methods is
 ##' @author Konstantin
 ggsave_d <- function(plot, plot_name, path, data = NULL, ...) {
-    if (is(plot) != "gg") {
+    if (methods::is(plot) != "gg") {
         stop("Plot should be result from ggplot()")
     }
     ## if (grepl(".", plot_name) == TRUE) {

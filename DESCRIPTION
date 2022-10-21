@@ -13,4 +13,5 @@ Imports:
 	data.table,
 	sf,
 	foreign,
-	ggplot2
+	ggplot2,
+	methods
