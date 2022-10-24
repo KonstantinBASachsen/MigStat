@@ -63,23 +63,52 @@ join_units <- function(dt, us, to_join, dest, full) {
 
 }
 
-do_join <- function(dt, to_join, key, col, type = "GEN", full = FALSE) {
+
+##' Joins geometry or name of regions from shapefile to data table
+##'
+##' When working with the Migration Statistics it is often necessary
+##' to join the geometry for plotting. Also joining official names of
+##' regions is helpful. The joining is done based on the AGS.
+##'
+##' The join is either a left join or a full join, depending on
+##' full. Even if full = FALSE all keys in dt are returned. Even if
+##' the keys are not in shp.
+##' @title Join shapefile to data table
+##' @param dt Data table to join name or geometry of regions to.
+##' @param shp data table of shapefile
+##' @param key1 Name of column in dt that stores the AGS.
+##' @param key2 Name of column in shp that stores the AGS.
+##' @param col Name of new column in dt that is created by joining
+##'     name or geometry of region
+##' @param type Either "n" which joins names of regions or
+##'     "g" which joins geometry information
+##' @param full logical. If TRUE a full join is performed. This means
+##'     if there are keys in shp that are not in dt, additional rows
+##'     are created.
+##' @return data table with new column
+##' @import data.table
+##' @export do_join
+##' @author Konstantin
+do_join <- function(dt, shp, type, col, key1, key2 = "AGS", full = FALSE) {
+    if(! type %in% c("n", "g")) {
+        stop("Type either n for name or g for geometry")
+    }
     ## performs full join
     i.GEN <- AGS <- i.geometry <- NULL
     if(full == TRUE) {
         setkeyv(dt, key)
-        unique_keys <- unique(c(dt[, get(key)], to_join[, AGS]))
+        unique_keys <- unique(c(dt[, get(key1)], shp[, get(key2)]))
         dtu <- dt[unique_keys]
     } else {
         dtu <- dt
     }
-    setkeyv(dtu, key)
-    setkeyv(to_join, "AGS")
-    if (type == "GEN") {
-        dtu[to_join, (col) := i.GEN]
+    setkeyv(dtu, key1)
+    setkeyv(shp, key2)
+    if (type == "n") {
+        dtu[shp, (col) := i.GEN]
     }
-    if (type == "geometry") {
-        dtu[to_join, (col) := i.geometry]
+    if (type == "g") {
+        dtu[shp, (col) := i.geometry]
     }
     return(dtu)
 
