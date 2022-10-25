@@ -46,7 +46,13 @@ read_shapes <- function(path, year = 2014) {
     ### files and by setting this as a default I don't need to do it
     ### manually
     shapes <- list.files(path)
+    if (length(shapes) == 0) {
+        stop(sprintf("no files found in %s", path))
+    }
     shapes <- shapes[grep(".shp", shapes)]
+    if (length(shapes) == 0) {
+        stop(sprintf("no shapefiles found in %s", path))
+    }
     shapes <- shapes[grep(as.character(year), shapes)]
     
     muni_file  <- shapes[grep("gem", shapes)]
