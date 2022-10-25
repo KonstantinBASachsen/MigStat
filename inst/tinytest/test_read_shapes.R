@@ -1,5 +1,5 @@
 
-shp_path <-  "~/Documents/Diss/inst/extdata/shapes/new"
+shp_path <-  "~/Diss/inst/extdata/shapes/no_ewz"
 shapes <- read_shapes(shp_path)
 
 ### administrative entities to read

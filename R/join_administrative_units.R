@@ -57,7 +57,7 @@ join_units <- function(dt, us, to_join, dest, full) {
     unit <- get_unitcol(us, dest)
     ags <- get_agscol(unit)
 
-    dtj <- do_join(dt, to_join, ags, unit, full)
+    dtj <- do_join(dt = dt, shp = to_join, type = "n", col = unit, key1 = ags, full = full)
     
     return(dtj)
 
@@ -96,7 +96,7 @@ do_join <- function(dt, shp, type, col, key1, key2 = "AGS", full = FALSE) {
     ## performs full join
     i.GEN <- AGS <- i.geometry <- NULL
     if(full == TRUE) {
-        setkeyv(dt, key)
+        setkeyv(dt, key1)
         unique_keys <- unique(c(dt[, get(key1)], shp[, get(key2)]))
         dtu <- dt[unique_keys]
     } else {
