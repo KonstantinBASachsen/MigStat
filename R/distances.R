@@ -2,10 +2,12 @@ join_distances <- function(region_pairs, distances) {
     i.distance <- origin <- destination <- NULL
     combs <- copy(region_pairs)
     dist <- copy(distances)
-    combs <- combs[, "od" := create_od(origin, destination)]
-    dist <- dist[, "od" := create_od(origin, destination)]
-    setkeyv(combs, "od")
-    setkeyv(dist, "od")
+    ## combs <- combs[, "od" := create_od(origin, destination)]
+    ## dist <- dist[, "od" := create_od(origin, destination)]
+    ## setkeyv(combs, "od")
+    ## setkeyv(dist, "od")
+    setkeyv(combs, c("origin", "destination"))
+    setkeyv(dist, c("origin", "destination"))
     combs[dist, "distance" := i.distance]
     return(combs)
     
