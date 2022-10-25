@@ -218,3 +218,8 @@ theme_brrrp <- function(maj.x = FALSE, maj.y = FALSE, min.x = FALSE, min.y = FAL
         }
     return(brrrp)
 }
+
+reload_migstat <- function() {
+    detach("package:MigStat", unload = TRUE)
+    library("MigStat")
+}
