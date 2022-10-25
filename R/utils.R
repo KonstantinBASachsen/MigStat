@@ -133,6 +133,10 @@ object_size <- function(object, units = "Mb") {
 ##' @importFrom methods is
 ##' @author Konstantin
 ggsave_d <- function(plot, plot_name, path, data = NULL, ...) {
+    ### now filename and plot args are swapped compared to
+### ggplot2::ggsave
+
+    ### checking name for file ending would be nice
     if (methods::is(plot) != "gg") {
         stop("Plot should be result from ggplot()")
     }
