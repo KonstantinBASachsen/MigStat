@@ -145,3 +145,30 @@ join_populations <- function(flows, shp) {
     flows_pop[, "rn" := NULL]
     return(flows_pop)
 }
+
+##' Ungroups an MigStat::get_flows() object
+##'
+##' sum_flows can be used to ungroup flows returned by
+##' MigStat::get_flows(). The usual workflow involves invoking
+##' get_flows() with all grouping variables that might be of
+##' interest. Sometimes not all grouping variables are needed. The
+##' sum_flows() can be used to sum flows (haha) over the not needed
+##' groups. All variables that are not mentioned in the by argument
+##' are summed over.
+##' @title Sum flows returned from MigStat::get_flows()
+##' @param flows object returned by get_flows()
+##' @param by character vector of variables which groups should be
+##'     retained. All variables not mentioned here are summed over
+##' @return A data.table
+##' @import data.table
+##' @export sum_flows
+##' @author Konstantin
+sum_flows <- function(flows, by) {
+    flow <- NULL
+    dt <- data.table::copy(flows)
+    dt <- dt[, "flow" := sum(flow), by = by]
+    dt <- dt[, .SD[1], by = by]
+    dt <- dt[, .SD, .SDcols = c(by, "flow")]
+    return(dt)
+}
+
