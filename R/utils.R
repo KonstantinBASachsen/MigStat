@@ -200,22 +200,22 @@ create_od <- function(o, d) {
 ##' @export theme_brrrp
 ##' @author Konstantin
 theme_brrrp <- function(maj.x = FALSE, maj.y = FALSE, min.x = FALSE, min.y = FALSE) {
-    if (class(c(maj.x, maj.y, min.x, min.y) != "logical")) {
+    if (class(c(maj.x, maj.y, min.x, min.y)) != "logical") {
         stop("maj.x, maj.y, min.x, min.y all have to be TRUE or FALSE (logical)")
     }
-    brrrp <- ggplot2::theme_bw() +
-        if(!maj.x) {
-            brrrp <- brrrp + ggplot2::theme(panel.grid.major.x = ggplot2::element_blank())
-        } 
-        if(!maj.y) {
-            brrrp <- brrrp + ggplot2::theme(panel.grid.major.y = ggplot2::element_blank())
-        } 
-        if(!min.x) {
-            brrrp <- brrrp + ggplot2::theme(panel.grid.minor.x = ggplot2::element_blank())
-        } 
-        if(!min.y) {
-            brrrp <- brrrp + ggplot2::theme(panel.grid.minor.y = ggplot2::element_blank())
-        }
+    brrrp <- ggplot2::theme_bw()
+    if(!maj.x) {
+        brrrp <- brrrp + ggplot2::theme(panel.grid.major.x = ggplot2::element_blank())
+    } 
+    if(!maj.y) {
+        brrrp <- brrrp + ggplot2::theme(panel.grid.major.y = ggplot2::element_blank())
+    } 
+    if(!min.x) {
+        brrrp <- brrrp + ggplot2::theme(panel.grid.minor.x = ggplot2::element_blank())
+    } 
+    if(!min.y) {
+        brrrp <- brrrp + ggplot2::theme(panel.grid.minor.y = ggplot2::element_blank())
+    }
     return(brrrp)
 }
 
