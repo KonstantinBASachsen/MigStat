@@ -199,8 +199,8 @@ create_od <- function(o, d) {
 ##' @import ggplot2
 ##' @export theme_brrrp
 ##' @author Konstantin
-theme_brrrp <- function(maj.x = FALSE, maj.y = FALSE, min.x = FALSE, min.y = FALSE) {
-    if (class(c(maj.x, maj.y, min.x, min.y)) != "logical") {
+theme_brrrp <- function(leg.pos = NULL, maj.x = FALSE, maj.y = FALSE, min.x = FALSE, min.y = FALSE) {
+    if (inherits(c(maj.x, maj.y, min.x, min.y), "logical") == FALSE ) {
         stop("maj.x, maj.y, min.x, min.y all have to be TRUE or FALSE (logical)")
     }
     brrrp <- ggplot2::theme_bw()
@@ -216,6 +216,11 @@ theme_brrrp <- function(maj.x = FALSE, maj.y = FALSE, min.x = FALSE, min.y = FAL
     if(!min.y) {
         brrrp <- brrrp + ggplot2::theme(panel.grid.minor.y = ggplot2::element_blank())
     }
+    if (!is.null(leg.pos)) {
+        brrrp <- brrrp + theme(legend.position = leg.pos)
+    }
+    brrrp <- brrrp + theme(plot.title = element_text(colour = "blue", face = "bold",
+                                                     hjust = 0.5))
     return(brrrp)
 }
 
