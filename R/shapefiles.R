@@ -35,7 +35,7 @@ clean_shp <- function(shp, keep =  c("AGS", "GEN", "geometry"), us = NULL) {
     shp_clean <- rename_ags_col(shp_clean)
     shp_clean <- ags_digits(shp_clean)
     if ("GF" %in% colnames(shp_clean)) {
-        shp_clean[GF == 4, ]
+        shp_clean <- shp_clean[GF == 4, ]
     }
     shp_clean <- keep_cols(shp_clean, keep)
     return(shp_clean)
