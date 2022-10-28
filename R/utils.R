@@ -191,6 +191,8 @@ create_od <- function(o, d) {
 ##' This theme makes it easy to specify the desired grid for a ggplot
 ##' object. Inspired by https://www.youtube.com/watch?v=48-ymyX6PlU
 ##' @title Own brrrp theme
+##' @param leg.pos legend position as coordinates like c(0.1, 0.7) for
+##'     upper left or c(0.8, 0.2) for lower right
 ##' @param maj.x major x grid, logical
 ##' @param maj.y major y grid, logical
 ##' @param min.x minor x grid, logical
