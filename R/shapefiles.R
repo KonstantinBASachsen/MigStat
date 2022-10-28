@@ -23,6 +23,76 @@ get_shp_unit <- function(us) {
     return(unit)
 }
 
+rename_ags_col <- function(shp) {
+    #### in older shapefiles is no AGS column. Instead there is a KEY
+    #### column which can be used for municipality AGS. However for
+    #### districts and federal states it can not always be used
+    #### because it might be set to NA. If this is the case, the
+    #### column SHN can be used. This function checks these
+    #### possibilities and returns the AGS column
+    dt <- setDT(copy(shp))
+    cols <- colnames(dt)
+    if( "AGS" %in% cols) {
+        ags <- "AGS"
+        message("AGS column already present.")
+    } else if("KEY" %in% cols) {
+        nas <- dt[is.na(KEY), .N]
+        if (nas == 0) {
+            ags <- "KEY"
+            message("KEY column found with 0 missings. Renamed to AGS")
+        } else {
+            ags <- "SHN"
+            mes <- "KEY column found with %s missings. Renaming SHN to AGS instead"
+            message(sprintf(mes, nas))
+        }
+        dt[, "AGS" := get(ags)]
+        dt[, (ags) := NULL]
+    } else {
+        warning("No appropriate column found")
+    }
+    return(dt)
+}
+
+
+ags_digits <- function(shp) {
+    ### In new shapefiles the AGS for federal states has two digits,
+### the one for districts 5 and the one for municipalities 8. In older
+### shapefiles the AGS may have 10 digits for municipalities,
+### districts and federal states. The additional digits are 0's. They
+### don't convey any information. To join the migration statistics
+### with the shapefiles this function removes the unncessary
+### digits. Probably better to write a function that checks if ags has
+### right number already and if not recodes.
+    
+    dt <- copy(shp)
+    n_reg <- uniqueN(dt[, GEN])
+    n_digits <- unique(nchar(dt[, AGS]))
+    if ( n_reg < 100) {
+        if (n_digits != 2) {
+            dt[, "AGS" := substr(AGS, 1, 2)]
+            mes <- "Found %s regions, assuming states."
+            message(sprintf(mes, n_reg))
+        } else {
+            message("AGS already right format")
+        }
+    } else if (100 < n_reg & n_reg < 600) {
+        if (n_digits != 5) {
+            mes <- "Found %s regions, assuming districts."
+            message(sprintf(mes, n_reg))
+            dt[, "AGS" := substr(AGS, 1, 5)]
+        } else {
+            message("AGS already right format")
+        }
+    } else {
+        if (n_digits != 8) {
+            mes <- "Found %s regions, assuming municipalities."
+            message(sprintf(mes, n_reg))
+        } else {
+            message("AGS already right format")
+        }
+    }
+    return(dt)
+}
 
 ##' Read shape files from path as data.tables
 ##'
