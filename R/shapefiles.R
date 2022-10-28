@@ -24,10 +24,14 @@
 ##' @import data.table
 ##' @export clean_shp
 ##' @author Konstantin
-clean_shp <- function(shp, keep =  c("AGS", "GEN", "geometry")) {
-
+clean_shp <- function(shp, keep =  c("AGS", "GEN", "geometry"), us = NULL) {
+    if (is.list(shp) & length(shp) == 3) {
+        message("shp assumed to be a list of region types")
+        shp_clean <- shp[[get_shp_unit(us)]]
+    } else {
+        shp_clean <- copy(shp)
+    }
     AGS <- GF <- NULL
-    shp_clean <- copy(shp)
     shp_clean <- rename_ags_col(shp_clean)
     shp_clean <- ags_digits(shp_clean)
     if ("GF" %in% colnames(shp_clean)) {
