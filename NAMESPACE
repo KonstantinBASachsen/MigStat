@@ -2,6 +2,7 @@
 
 export(add_ratios)
 export(arrow_plot)
+export(clean_shp)
 export(do_join)
 export(geom_splitflow)
 export(get_arrow_data)

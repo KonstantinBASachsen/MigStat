@@ -1,3 +1,29 @@
+##' Returns clean data.table of shapefile ready to be joined to
+##' Migration Statistics
+##'
+##' The shapefiles from the "Bundesamt für Kartographie and Geodäsie"
+##' that can be downloaded here:
+##' https://daten.gdz.bkg.bund.de/produkte/vg/vg250_ebenen_1231/ do
+##' have some issues. In older shapefiles there is no AGS
+##' column. Instead the AGS is stored in either the column KEY or the
+##' column SHN. Furthermore these columns have more digits than the
+##' usual two for federal states, five for districts or 8 dor
+##' municipalities. clean_shp() takes care of these issues and returns
+##' a data.table that has the AGS column in the right
+##' format. Currently this all happens in the background. I plan to
+##' make it optional in the future.
+##'
+##' Additionally clean_shp() selects the right rows. In newer
+##' shapefiles the column GF allows to use different geometries
+##' depending on what is included (water for example). GF == 4 takes
+##' the rows we want.
+##' @title Clean shapefile and make it ready to be joined
+##' @param shp The shapefile that is to be cleaned
+##' @param keep The columns to be kept
+##' @return data.table of nice and clean shapefile
+##' @import data.table
+##' @export clean_shp
+##' @author Konstantin
 clean_shp <- function(shp, keep =  c("AGS", "GEN", "geometry")) {
 
     AGS <- GF <- NULL
