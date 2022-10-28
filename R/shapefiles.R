@@ -1,18 +1,14 @@
-clean_shp <- function(shps, us, keep =  c("AGS", "GEN", "EWZ", "geometry")) {
+clean_shp <- function(shp, keep =  c("AGS", "GEN", "geometry")) {
 
-    AGS <- NULL
-    shp_clean <- get_shp_region(shps, us, drop_gf = TRUE)
+    AGS <- GF <- NULL
+    shp_clean <- copy(shp)
+    shp_clean <- rename_ags_col(shp_clean)
+    shp_clean <- ags_digits(shp_clean)
+    if ("GF" %in% colnames(shp_clean)) {
+        shp_clean[GF == 4, ]
+    }
     shp_clean <- keep_cols(shp_clean, keep)
     return(shp_clean)
-}
-
-get_shp_region <- function(shps, us, drop_gf) {
-    GF <- NULL
-    shp <- shps[[get_shp_unit(us)]]
-    if (drop_gf ==  TRUE) {
-        shp <- shp[GF == 4]
-    }
-    return(shp)
 }
 
 get_shp_unit <- function(us) {
