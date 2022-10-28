@@ -26,6 +26,7 @@ rename_ags_col <- function(shp) {
     #### because it might be set to NA. If this is the case, the
     #### column SHN can be used. This function checks these
     #### possibilities and returns the AGS column
+    KEY <- NULL
     dt <- setDT(copy(shp))
     cols <- colnames(dt)
     if( "AGS" %in% cols) {
@@ -59,7 +60,7 @@ ags_digits <- function(shp) {
 ### with the shapefiles this function removes the unncessary
 ### digits. Probably better to write a function that checks if ags has
 ### right number already and if not recodes.
-    
+    GEN <- AGS <- NULL
     dt <- copy(shp)
     n_reg <- uniqueN(dt[, GEN])
     n_digits <- unique(nchar(dt[, AGS]))

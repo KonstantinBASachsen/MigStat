@@ -101,7 +101,8 @@ get_regions <- function(dt, shps, us, type) {
     stopifnot(type %in% c("data", "all"))
     ags_o <- get_agscol(get_unitcol(us, F))
     ags_d <- get_agscol(get_unitcol(us, T))
-    shp <- clean_shp(shps, us, keep = "AGS")
+    shp <- shps[[us]] ### not sure if this works though
+    shp <- clean_shp(shp, keep = "AGS")
     if (type == "data") {
         all_regions <- unique(c(dt[, get(ags_o)], dt[, get(ags_d)]))
     }
