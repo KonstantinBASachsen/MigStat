@@ -20,11 +20,17 @@
 ##' @title Clean shapefile and make it ready to be joined
 ##' @param shp The shapefile that is to be cleaned
 ##' @param keep The columns to be kept
+##' @param us optional. If shp is a list of three it is supposed to
+##'     hold three data.tables. One for federal states, one for
+##'     districts, one for municipalities. us allows to choose one. 
 ##' @return data.table of nice and clean shapefile
 ##' @import data.table
 ##' @export clean_shp
 ##' @author Konstantin
 clean_shp <- function(shp, keep =  c("AGS", "GEN", "geometry"), us = NULL) {
+    if (!is.null(us)) {
+        stopifnot(us %in% c("mu", "di", "st"))
+    }
     if (is.list(shp) & length(shp) == 3) {
         message("shp assumed to be a list of region types")
         shp_clean <- shp[[get_shp_unit(us)]]
