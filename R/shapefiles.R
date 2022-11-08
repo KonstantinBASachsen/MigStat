@@ -1,4 +1,4 @@
-clean_shps <- function(shps_path, us, years) {
+clean_shps <- function(shps_path, years) {
     n_years <- length(years)
     files <- list.files(shps_path)
     ### For every year there are the region types. Municipalities,
@@ -41,6 +41,7 @@ get_shape_dt <- function(shapes, idx, years) {
 }    
 
 smallup_shp <- function(shp) {
+    AGS <- NULL
     shp[, "year_min" := as.numeric(NA)]
     shp[, "year_max" := as.numeric(NA)]
     shp[, "year_min" := min(year), by = AGS]
