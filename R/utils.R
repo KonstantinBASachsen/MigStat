@@ -229,3 +229,8 @@ theme_brrrp <- function(leg.pos = NULL, maj.x = FALSE, maj.y = FALSE, min.x = FA
 unload_migstat <- function() {
     detach("package:MigStat", unload = TRUE)
 }
+
+return_el <- function(l, idx) {
+    el <- l[[idx]]
+    return(el)
+}
