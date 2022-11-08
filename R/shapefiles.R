@@ -1,13 +1,15 @@
-clean_shps <- function(shps_path, years) {
+clean_shps <- function(shps_path, new_path, years) {
     n_years <- length(years)
     files <- list.files(shps_path)
     ### For every year there are the region types. Municipalities,
     ### districts and federal states. For every region type there are
     ### three files necessary. A .shp, a .dbf and a .shx. This there
 ### need to be n_years * 3 * 3 files in shp_path
+
+    ### add option for more detailed check what files are missing
     n_needed <- n_years * 3 * 3
     n_files <- length(files)
-    if (n_files != n_needed) {
+    if (n_files < n_needed) {
         mes <- sprintf("There seem to be files missing! Expected %s, got %s",
                        n_needed, n_files)
         stop(mes)
@@ -26,6 +28,13 @@ clean_shps <- function(shps_path, years) {
     munis <- smallup_shp(munis)
     regions <- list("states" = states, "districts" = districts,
                     "munis" = munis)
+    write <- FALSE
+    if (write == TRUE) {
+           sf::write_sf(states, new_path, append = FALSE)
+           sf::write_sf(districts, file.path(new_path, "districts"), append = FALSE)
+           sf::write_sf(munis, file.path(new_path, "munis"), append = FALSE)
+ 
+    }
     return(regions)
 }
     
