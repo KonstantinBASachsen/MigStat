@@ -1,3 +1,57 @@
+clean_shps <- function(shps_path, us, years) {
+    n_years <- length(years)
+    files <- list.files(shps_path)
+    ### For every year there are the region types. Municipalities,
+    ### districts and federal states. For every region type there are
+    ### three files necessary. A .shp, a .dbf and a .shx. This there
+### need to be n_years * 3 * 3 files in shp_path
+    n_needed <- n_years * 3 * 3
+    n_files <- length(files)
+    if (n_files != n_needed) {
+        mes <- sprintf("There seem to be files missing! Expected %s, got %s",
+                       n_needed, n_files)
+        stop(mes)
+    }
+    shapes <- lapply(years, function(year) MigStat::read_shapes(shps_path, year))
+    keep  <- c("AGS", "GEN", "BEZ", "geometry") ## added BEZ because GEN might not reveal differences
+    shapes <- lapply(shapes, function(year)
+        lapply(year, function(region) suppressMessages(clean_shp(region, keep = keep))))
+
+    states <- get_shape_dt(shapes, 1, years)
+    districts <- get_shape_dt(shapes, 2, years)
+    munis <- get_shape_dt(shapes, 3, years)
+    
+    states <- smallup_shp(states)
+    districts <- smallup_shp(districts)
+    munis <- smallup_shp(munis)
+    regions <- list("states" = states, "districts" = districts,
+                    "munis" = munis)
+    return(regions)
+}
+    
+get_shape_dt <- function(shapes, idx, years) {
+    ### Eine kleien Hilfsfunktion, welche aus den eingelesenen
+    ### shapefiles einen data.fram / data.table erstellt.
+
+    dt <- lapply(shapes, function(year) return_el(year, idx))
+    dt <- lapply(1:length(years), function(i) dt[[i]][, "year" := years[i]])
+    dt <- rbindlist(dt)
+    setkeyv(dt, c("AGS", "year"))
+    return(dt)    
+}    
+
+smallup_shp <- function(shp) {
+    shp[, "year_min" := as.numeric(NA)]
+    shp[, "year_max" := as.numeric(NA)]
+    shp[, "year_min" := min(year), by = AGS]
+    shp[, "year_max" := max(year), by = AGS]
+    shp[, "year" := NULL]
+    group <- colnames(shp)[!colnames(shp) %in% "geometry"]
+    shp <- shp[, .SD[1],  by = group]
+    return(shp)
+}
+
+
 ##' Returns clean data.table of shapefile ready to be joined to
 ##' Migration Statistics
 ##'
@@ -189,4 +243,4 @@ read_shapes <- function(path, year = 2014) {
 
     shapes <- list("state" = states, "district" = districts, "muni" = munis)
     return(shapes)    
-    }
+}
