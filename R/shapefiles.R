@@ -28,6 +28,8 @@
 ##' @export clean_shp
 ##' @author Konstantin
 clean_shp <- function(shp, keep =  c("AGS", "GEN", "geometry"), us = NULL) {
+
+    ### test if BEZ in colnames before keep_cols
     if (!is.null(us)) {
         stopifnot(us %in% c("mu", "di", "st"))
     }
@@ -167,7 +169,9 @@ read_shapes <- function(path, year = 2014) {
         stop(sprintf("no shapefiles found in %s", path))
     }
     shapes <- shapes[grep(as.character(year), shapes)]
-    
+    if (length(shapes) == 0) {
+        stop(sprintf("no shapefiles for year %s found in %s", year, path))
+    }
     muni_file  <- shapes[grep("gem", shapes)]
     states_file <- shapes[grep("lan", shapes)]
     districts_file <- shapes[grep("krs", shapes)]
