@@ -40,6 +40,7 @@ clean_shp <- function(shp, keep =  c("AGS", "GEN", "geometry"), us = NULL) {
     AGS <- GF <- NULL
     shp_clean <- rename_ags_col(shp_clean)
     shp_clean <- ags_digits(shp_clean)
+    shp_clean <- rename_bez_col(shp_clean)
     if ("GF" %in% colnames(shp_clean)) {
         shp_clean <- shp_clean[GF == 4, ]
     }
@@ -84,6 +85,18 @@ rename_ags_col <- function(shp) {
         warning("No appropriate column found")
     }
     return(dt)
+}
+
+rename_bez_col <- function(shp) {
+    #### in shapefiles from 2000 to 2014 the "BEZ" col which indicates
+#### the type of region was called "DES". Here I rename it to BEZ
+    stopifnot(is(shp, "data.table"))
+    cols <- colnames(shp)
+    if ("DES" %in% cols) {
+        cols[cols == "DES"] <- "BEZ"
+        colnames(shp) <- cols
+    }
+    return(shp)
 }
 
 
