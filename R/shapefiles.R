@@ -243,14 +243,31 @@ read_shapes <- function(path, year = 2014) {
     #### type = 6 makes sure that geometry is of type
     #### sfc_MULTIPOLYGON. See ?sf::read_sf
     munis <- sf::read_sf(file.path(path, muni_file), type = 6)
+    munis <- right_crs(munis)
     munis <- data.table::setDT(munis)
 
     states <- sf::read_sf(file.path(path, states_file), type = 6)
+    states <- right_crs(states)
     states <- data.table::setDT(states)
 
     districts <- sf::read_sf(file.path(path, districts_file), type = 6)
+    districts <- right_crs(districts)
     districts <- data.table::setDT(districts)
-
+    
     shapes <- list("state" = states, "district" = districts, "muni" = munis)
     return(shapes)    
+}
+
+right_crs <- function(shp) {
+    ### it seems from reading the shapfiles that at least for the
+    ### years 2000 to 2012 the crs is WGS 84 / UTM 32N. For years from
+    ### 2013 to 2018 it is ERTS 89/ UTM 32N. I don't know for other
+    ### years. This function quickly checks the crs and transforms if
+    ### necessary
+
+    crs <- sf::st_crs(shp)$input
+    if (grepl("ERTS89", crs) == FALSE) {
+        shp <- sf::st_transform(shp, 25832) ## EPSG code for ERTS89 / UTM 32N
+    }
+    return(shp)
 }
