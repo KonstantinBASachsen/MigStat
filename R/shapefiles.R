@@ -42,7 +42,10 @@ clean_shps <- function(shps_path, new_path, years, type = "ags") {
     
 get_shape_dt <- function(shapes, idx, years) {
     ### Eine kleien Hilfsfunktion, welche aus den eingelesenen
-    ### shapefiles einen data.fram / data.table erstellt.
+### shapefiles einen data.fram / data.table erstellt.
+
+    ## would be nicer if it accepts "us" as input and sets idx
+    ## accordingly.
 
     dt <- lapply(shapes, function(year) return_el(year, idx))
     dt <- lapply(1:length(years), function(i) dt[[i]][, "year" := years[i]])
