@@ -187,6 +187,11 @@ ags_digits <- function(shp) {
 ### with the shapefiles this function removes the unncessary
 ### digits. Probably better to write a function that checks if ags has
 ### right number already and if not recodes.
+
+### When I read in the shapefiles I know which region type it is so I
+### need not check the number of regions. Should fix it sometime but
+### it works for now.
+    
     GEN <- AGS <- NULL
     dt <- copy(shp)
     n_reg <- uniqueN(dt[, GEN])
