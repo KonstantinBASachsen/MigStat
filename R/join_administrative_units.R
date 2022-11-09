@@ -108,6 +108,8 @@ do_join <- function(dt, shp, type, col, key1, key2 = "AGS", full = FALSE) {
         dtu[shp, (col) := i.GEN]
     }
     if (type == "g") {
+        ### if no match is found there is still some multipolygon
+        ### returned. This seems bad
         dtu[shp, (col) := i.geometry]
     }
     return(dtu)
