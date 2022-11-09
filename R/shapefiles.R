@@ -31,8 +31,7 @@ clean_shps <- function(shps_path, new_path, years, type = "ags") {
     munis <- smallup_shp(munis)
     regions <- list("states" = states, "districts" = districts,
                     "munis" = munis)
-    write <- FALSE
-    if (write == TRUE) {
+    if (!is.null(new_path)) {
            sf::write_sf(states, new_path, append = FALSE)
            sf::write_sf(districts, file.path(new_path, "districts"), append = FALSE)
            sf::write_sf(munis, file.path(new_path, "munis"), append = FALSE)
