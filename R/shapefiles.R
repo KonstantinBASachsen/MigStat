@@ -30,7 +30,8 @@
 ##' same entity on the level of districts
 ##'
 ##' \code{ags2 <- munis[, uniqueN(GEN), by = AGS][V1 > 1, AGS]}
-##' \code{munis2 <- munis[AGS %in% ags2, .SD[1], by = c("AGS", "GEN")][order(AGS)][, .(AGS, GEN, BEZ, year)]}
+##' \code{munis[AGS %in% ags2, .SD[1], by = c("AGS", "GEN")][
+##' order(AGS)][, .(AGS, GEN, BEZ, year)]}
 ##'
 ##' The same applies for municipalities. There are keys that refer to
 ##' more than one name but again this can be ignored. Seems to almost
