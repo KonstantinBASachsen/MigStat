@@ -1,4 +1,7 @@
-clean_shps <- function(shps_path, new_path, years) {
+clean_shps <- function(shps_path, new_path, years, type = "ags") {
+    if (type %in% c("ags", "complete") == FALSE) {
+        stop("please specify type as 'ags' or 'complete'")
+    }
     n_years <- length(years)
     files <- list.files(shps_path)
     ### For every year there are the region types. Municipalities,
@@ -49,15 +52,22 @@ get_shape_dt <- function(shapes, idx, years) {
     return(dt)    
 }    
 
-smallup_shp <- function(shp) {
+smallup_shp <- function(shp, type) {
+    ### probably I dont really need year_min and year_max because
+    ### joining with AGS only is fine, even if years differ. It seems
+    ### that AGS do not refer to completely different entities.
     AGS <- NULL
     shp[, "year_min" := as.numeric(NA)]
     shp[, "year_max" := as.numeric(NA)]
     shp[, "year_min" := min(year), by = AGS]
     shp[, "year_max" := max(year), by = AGS]
     shp[, "year" := NULL]
-    group <- colnames(shp)[!colnames(shp) %in% "geometry"]
-    shp <- shp[, .SD[1],  by = group]
+    if (type == "ags") {
+        shp <- shp[, .SD[1],  by = AGS]
+    } else {
+        group <- colnames(shp)[!colnames(shp) %in% "geometry"]
+        shp <- shp[, .SD[1],  by = AGS]
+    }
     return(shp)
 }
 
