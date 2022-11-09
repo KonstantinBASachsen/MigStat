@@ -1,4 +1,58 @@
-clean_shps <- function(shps_path, new_path, years, type = "ags") {
+##' Reads shapefiles from disk and returns nicely formatted tables of
+##' shapeinformation.
+##'
+##' This function reads shapefiles from disk. It expects that the year
+##' is encoded in the file name like vg250_lan_2018.shp. It is also
+##' important that every file has either "lan", "krs" or "gem" in its
+##' name to indicate the region type. Later I plan to write a function
+##' that accesses the data on the server of the Bundesamt für
+##' Kartographie and Geodäsie. Then again these files do have some
+##' problems that took some time fixing. So might be easier to
+##' download shapes from somewhere else.
+##'
+##' When joining information from the shapefiles it is not immideatly
+##' clear if I can just use the AGS or if other information like the
+##' year is important as well. Can I simply take the AGS as key? Or do
+##' I have to take the years into account as well? This would be the
+##' case if there are AGS that refer to a different entity in
+##' different years. If the entity is a bit iffernt, like some changes
+##' in the borders or so this I ignore for now. I do not know, when
+##' and if this might be important. Below I show some example code
+##' that can be used to check informally these things. It does not run
+##' but gives some guidelines.
+##'
+##' \code{ags2 <- districts[, uniqueN(GEN), by = AGS][V1 > 1, AGS]}
+##'
+##' \code{districts[AGS %in% ags2, .SD[1], by = c("AGS", "GEN")][
+##' order(AGS)][, .(AGS, GEN, BEZ, year)]}
+##'
+##' From a first glance it seems that one AGS refers to roughly the
+##' same entity on the level of districts
+##'
+##' \code{ags2 <- munis[, uniqueN(GEN), by = AGS][V1 > 1, AGS]}
+##' \code{munis2 <- munis[AGS %in% ags2, .SD[1], by = c("AGS", "GEN")][order(AGS)][, .(AGS, GEN, BEZ, year)]}
+##'
+##' The same applies for municipalities. There are keys that refer to
+##' more than one name but again this can be ignored. Seems to almost
+##' exclusively the case because the region is named a bit differently
+
+##' @title Nicely formatted tables from shapefiles
+##' @param shps_path Path to shapefiles. Expects rather strict file
+##'     structure. See details.
+##' @param new_path If specified three clean data.tables are written
+##'     to new_path. One for federal states, one for districts and one
+##'     for municipalities.
+##' @param years Which years are processed
+##' @param type Either "ags" or "complete". "ags" returns one ags only
+##'     once. This should be fine for our purposes because one ags
+##'     refers to roughly the same entity. If "complete" one ags is
+##'     returned for every unique combination of GEN, BEZ and AGS. Gen
+##'     is the name of the region and BEZ some classification.
+##' @return list of three data.tables: states, districts and munis.
+##' @export clean_shps
+##' @import data.table
+##' @author Konstantin
+clean_shps <- function(shps_path, new_path = NULL, years, type = "ags") {
     if (type %in% c("ags", "complete") == FALSE) {
         stop("please specify type as 'ags' or 'complete'")
     }
