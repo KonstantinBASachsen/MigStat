@@ -81,16 +81,15 @@ clean_shps <- function(shps_path, new_path = NULL, years, type = "ags") {
     districts <- get_shape_dt(shapes, 2, years)
     munis <- get_shape_dt(shapes, 3, years)
     
-    states <- smallup_shp(states)
-    districts <- smallup_shp(districts)
-    munis <- smallup_shp(munis)
+    states <- smallup_shp(states, type)
+    districts <- smallup_shp(districts, type)
+    munis <- smallup_shp(munis, type)
     regions <- list("states" = states, "districts" = districts,
                     "munis" = munis)
     if (!is.null(new_path)) {
-           sf::write_sf(states, new_path, append = FALSE)
-           sf::write_sf(districts, file.path(new_path, "districts"), append = FALSE)
-           sf::write_sf(munis, file.path(new_path, "munis"), append = FALSE)
- 
+        sf::write_sf(set_geom(states, geom_only = FALSE), file.path(new_path, "states.shp"))
+        sf::write_sf(set_geom(districts, geom_only = FALSE), file.path(new_path, "districts.shp"))
+        sf::write_sf(set_geom(munis, geom_only = FALSE), file.path(new_path, "munis.shp"))
     }
     return(regions)
 }
