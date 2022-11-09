@@ -6,18 +6,18 @@ clean_shps <- function(shps_path, new_path, years, type = "ags") {
     files <- list.files(shps_path)
     ### For every year there are the region types. Municipalities,
     ### districts and federal states. For every region type there are
-    ### three files necessary. A .shp, a .dbf and a .shx. This there
-### need to be n_years * 3 * 3 files in shp_path
+    ### three files necessary. A .shp, a .dbf, a .shx and a .prj. Thus
+    ### there need to be n_years * 3 * 4 files in shp_path
 
     ### add option for more detailed check what files are missing
-    n_needed <- n_years * 3 * 3
+    n_needed <- n_years * 3 * 4
     n_files <- length(files)
     if (n_files < n_needed) {
         mes <- sprintf("There seem to be files missing! Expected %s, got %s",
                        n_needed, n_files)
         stop(mes)
     }
-    shapes <- lapply(years, function(year) MigStat::read_shapes(shps_path, year))
+    shapes <- lapply(years, function(year) read_shapes(shps_path, year))
     keep  <- c("AGS", "GEN", "BEZ", "geometry") ## added BEZ because GEN might not reveal differences
     shapes <- lapply(shapes, function(year)
         lapply(year, function(region) suppressMessages(clean_shp(region, keep = keep))))
