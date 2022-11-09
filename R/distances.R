@@ -1,5 +1,6 @@
 join_distances <- function(region_pairs, distances) {
     i.distance <- origin <- destination <- NULL
+    ### maybe I should remove those copy because of memory
     combs <- copy(region_pairs)
     dist <- copy(distances)
     ## combs <- combs[, "od" := create_od(origin, destination)]
