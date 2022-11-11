@@ -163,7 +163,8 @@ smallup_shp <- function(shp, type) {
         shp[, "year" := NULL]
     } else {
         group <- colnames(shp)[!colnames(shp) %in% "geometry"]
-        shp <- shp[, .SD[1],  by = AGS]
+        group <- c("AGS", "year")
+        shp <- shp[, .SD[1],  by = group]
     }
     return(shp)
 }
