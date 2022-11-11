@@ -74,8 +74,7 @@ read_clean_shps <- function(clean_path, type = "ags") {
 ##'     returned for every unique combination of GEN, BEZ and AGS. Gen
 ##'     is the name of the region and BEZ some classification.
 ##' @return list of three data.tables: states, districts and munis.
-##' @export clean_shps
-##' @import data.table
+##'##' @import data.table
 ##' @author Konstantin
 clean_shps <- function(shps_path, new_path = NULL, years, type = "ags") {
     if (type %in% c("ags", "complete") == FALSE) {
@@ -197,7 +196,6 @@ smallup_shp <- function(shp, type) {
 ##'     districts, one for municipalities. us allows to choose one. 
 ##' @return data.table of nice and clean shapefile
 ##' @import data.table
-##' @export clean_shp
 ##' @author Konstantin
 clean_shp <- function(shp, keep =  c("AGS", "GEN", "geometry"), us = NULL) {
 
