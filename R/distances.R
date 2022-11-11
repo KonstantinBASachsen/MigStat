@@ -15,7 +15,10 @@ join_distances <- function(region_pairs, distances) {
 }
 
 get_distances <- function(shp) {
-
+    #### there is room for improvement. I compute all pairwise
+    #### distances, without using symmetrie. This is especially bad
+    #### because half of diskspace and more importantly of memory
+    #### could be saved
     EWZ <- geometry <- centers <- AGS <- i.GEN <- . <- destination <-
         origin <- od <- i.distance <- NULL
     ### computes pair wise distances between all units of type
@@ -29,13 +32,8 @@ get_distances <- function(shp) {
     distances <- as.table(distances)
     distances <- as.data.frame(distances)
     setDT(distances)
-    ## distances <- setDT(data.frame(distances, check.names = FALSE))
-    ## distances$destinations <- colnames(distances)
-    ## dist_pairs <- melt(distances, id.vars = "destinations")
     colnames(distances) <- c("destination", "origin", "distance")
     distances[, "distance" := as.integer(distance)]
-    ## dist_pairs[shp_dist, "o_name" := i.GEN, on = .(origin = AGS)]
-    ## dist_pairs[shp_dist, "d_name" := i.GEN, on = .(destination = AGS)]
     return(distances)
 
 }
