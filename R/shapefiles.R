@@ -100,9 +100,19 @@ clean_shps <- function(shps_path, new_path = NULL, years, type = "ags") {
     regions <- list("states" = states, "districts" = districts,
                     "munis" = munis)
     if (!is.null(new_path)) {
-        sf::write_sf(set_geom(states, geom_only = FALSE), file.path(new_path, "states.shp"))
-        sf::write_sf(set_geom(districts, geom_only = FALSE), file.path(new_path, "districts.shp"))
-        sf::write_sf(set_geom(munis, geom_only = FALSE), file.path(new_path, "munis.shp"))
+        if (type == "ags") {
+            st_path <- file.path(new_path, "states.shp")
+            di_path <- file.path(new_path, "districts.shp")
+            mu_path <- file.path(new_path, "munis.shp")
+        }
+        if (type == "complete") {
+            st_path <- file.path(new_path, "states_all.shp")
+            di_path <- file.path(new_path, "districts_all.shp")
+            mu_path <- file.path(new_path, "munis_all.shp")
+        }
+        sf::write_sf(set_geom(states, geom_only = FALSE), st_path)
+        sf::write_sf(set_geom(districts, geom_only = FALSE), di_path)
+        sf::write_sf(set_geom(munis, geom_only = FALSE), mu_path)
     }
     return(regions)
 }
