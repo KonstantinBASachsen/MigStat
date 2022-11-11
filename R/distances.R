@@ -26,13 +26,16 @@ get_distances <- function(shp) {
     keys <- shp_dist[, AGS]
     colnames(distances) <- keys
     rownames(distances) <- keys
-
-    distances <- setDT(data.frame(distances, check.names = FALSE))
-    distances$destinations <- colnames(distances)
-    dist_pairs <- melt(distances, id.vars = "destinations")
-    colnames(dist_pairs) <- c("destination", "origin", "distance")
+    distances <- as.table(distances)
+    distances <- as.data.frame(distances)
+    setDT(distances)
+    ## distances <- setDT(data.frame(distances, check.names = FALSE))
+    ## distances$destinations <- colnames(distances)
+    ## dist_pairs <- melt(distances, id.vars = "destinations")
+    colnames(distances) <- c("destination", "origin", "distance")
+    distances[, "distance" := as.integer(distance)]
     ## dist_pairs[shp_dist, "o_name" := i.GEN, on = .(origin = AGS)]
     ## dist_pairs[shp_dist, "d_name" := i.GEN, on = .(destination = AGS)]
-    return(dist_pairs)
+    return(distances)
 
 }
