@@ -112,6 +112,10 @@ smallup_shp <- function(shp, type) {
     ### probably I dont really need year_min and year_max because
     ### joining with AGS only is fine, even if years differ. It seems
     ### that AGS do not refer to completely different entities.
+
+    ### Although now there are some names missing. Maybe possible to
+    ### use not first but last row in .SD[last]? I think in later
+    ### years names were there
     AGS <- NULL
     shp[, "year_min" := as.numeric(NA)]
     shp[, "year_max" := as.numeric(NA)]
