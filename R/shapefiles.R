@@ -100,6 +100,9 @@ clean_shps <- function(shps_path, new_path = NULL, years, type = "ags") {
     regions <- list("states" = states, "districts" = districts,
                     "munis" = munis)
     if (!is.null(new_path)) {
+        if(dir.exists(new_path) == FALSE) {
+            dir.create(new_path)
+        }
         if (type == "ags") {
             st_path <- file.path(new_path, "states.shp")
             di_path <- file.path(new_path, "districts.shp")
