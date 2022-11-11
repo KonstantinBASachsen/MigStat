@@ -31,9 +31,8 @@ get_distances <- function(shp) {
     distances$destinations <- colnames(distances)
     dist_pairs <- melt(distances, id.vars = "destinations")
     colnames(dist_pairs) <- c("destination", "origin", "distance")
-    dist_pairs[shp_dist, "o_name" := i.GEN, on = .(origin = AGS)]
-    dist_pairs[shp_dist, "d_name" := i.GEN, on = .(destination = AGS)]
-
+    ## dist_pairs[shp_dist, "o_name" := i.GEN, on = .(origin = AGS)]
+    ## dist_pairs[shp_dist, "d_name" := i.GEN, on = .(destination = AGS)]
     return(dist_pairs)
 
 }
