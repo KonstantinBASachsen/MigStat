@@ -10,3 +10,4 @@ clean_path <- "~/extdata/shapes31simple2/"
 
 years <- 2000:2018
 regions <- clean_shps(shps_path, clean_path, years, "complete")
+regions <- clean_shps(shps_path, clean_path, years, "ags")
