@@ -1,12 +1,23 @@
-read_clean_shps <- function(clean_path) {
+read_clean_shps <- function(clean_path, type = "ags") {
     GEN <- NULL
-    districts <- sf::read_sf(file.path(clean_path, "districts.shp"))
+    if (type == "ags") {
+        st_path <- file.path(clean_path, "states.shp")
+        di_path <- file.path(clean_path, "districts.shp")
+        mu_path <- file.path(clean_path, "munis.shp")
+    }
+    if (type == "complete") {
+        st_path <- file.path(clean_path, "states_all.shp")
+        di_path <- file.path(clean_path, "districts_all.shp")
+        mu_path <- file.path(clean_path, "munis_all.shp")
+    }
+    states <- sf::read_sf(st_path)
+    data.table::setDT(states)
+    districts <- sf::read_sf(di_path)
     data.table::setDT(districts)
-    ### Now I remove columns I added earlier. Fix sometime
     districts[is.na(GEN), "GEN" := "kein Name"]
-    munis <- sf::read_sf(file.path(clean_path, "munis.shp"))
+    munis <- sf::read_sf(mu_path)
     data.table::setDT(munis)
-    regions <- list("districts" = districts, "munis" = munis)
+    regions <- list("states" = states, "districts" = districts, "munis" = munis)
     return(regions)
 }
 
