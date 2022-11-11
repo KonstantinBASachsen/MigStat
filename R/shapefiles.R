@@ -134,10 +134,10 @@ smallup_shp <- function(shp, type) {
     ## shp[, "year_max" := as.numeric(NA)]
     ## shp[, "year_min" := min(year), by = AGS]
     ## shp[, "year_max" := max(year), by = AGS]
-    shp[, "year" := NULL]
     shp[, "BEZ" := NULL]
     if (type == "ags") {
         shp <- shp[, .SD[1],  by = AGS]
+        shp[, "year" := NULL]
     } else {
         group <- colnames(shp)[!colnames(shp) %in% "geometry"]
         shp <- shp[, .SD[1],  by = AGS]
