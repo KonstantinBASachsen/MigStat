@@ -1,3 +1,17 @@
+read_clean_shps <- function(clean_path) {
+    districts <- sf::read_sf(file.path(clean_path, "districts.shp"))
+    data.table::setDT(districts)
+    ### Now I remove columns I added earlier. Fix sometime
+    districts[, c("BEZ", "year_min", "year_max") := NULL]
+    districts[is.na(GEN), "GEN" := "kein Name"]
+    munis <- sf::read_sf(file.path(clean_path, "munis.shp"))
+    data.table::setDT(munis)
+    munis[, c("BEZ", "year_min", "year_max") := NULL]
+    regions <- list("districts" = districts, "munis" = munis)
+    return(regions)
+}
+
+
 ##' Reads shapefiles from disk and returns nicely formatted tables of
 ##' shapeinformation.
 ##'
