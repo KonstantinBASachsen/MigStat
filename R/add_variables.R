@@ -11,6 +11,10 @@ group_regions <- function(mig, shp) {
 #### interessanten Gemeinden heraus. Dies sollte bestenfalls im
 #### korrekten Jahr geschehen, da sich die AGS durchaus ändern
 #### können. Dies implementiere ich später.
+    ### Ist es nicht einfacher/ klarer, direkt die AGS an
+### group_regions() zu übergeben?
+
+    ### looks complicated and it takes a long time
     regions <- c("Hoyerswerda", "Riesa", "Oschatz", "Delitzsch", "Altenburg")
     ags_names <- shp[GEN %in% regions, .(AGS, GEN)]
     
