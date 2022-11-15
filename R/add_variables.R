@@ -3,7 +3,7 @@ group_regions <- function(mig, shp) {
     EF02U2 <- group_d <- EF02U5 <- NULL
     ags_sachsen <- "14" 
     ags_bl <- as.character(1:16)
-    ags_bl[1:9] <- paste0("0", ags_bl[1:9])
+##    ags_bl[1:9] <- paste0("0", ags_bl[1:9]) ## not needed anymore bc AGS as integer
     ags_ost <- c("12", "13", "15", "16") ### ohne Berlin, ohne Sachsen
     ags_west <- setdiff(ags_bl, c(ags_sachsen, ags_ost)) #### mit Berlin
 
@@ -14,7 +14,8 @@ group_regions <- function(mig, shp) {
     ### Ist es nicht einfacher/ klarer, direkt die AGS an
 ### group_regions() zu übergeben?
 
-    ### looks complicated and it takes a long time
+    ### looks complicated and it takes a long time. Actuallly if
+    ### shps[, AGS] is integer as well it is much faster
     regions <- c("Hoyerswerda", "Riesa", "Oschatz", "Delitzsch", "Altenburg")
     ags_names <- shp[GEN %in% regions, .(AGS, GEN)]
     
