@@ -85,7 +85,6 @@ get_flows_only <- function(dt, us, by = NULL) {
     ags_o <- get_agscol(unit_o)
     ags_d <- get_agscol(unit_d)
     dt <- dt[, .(flow = .N), by = c(ags_o, ags_d, by)]
-    print(colnames(dt))
     dt[, c("origin", "destination") := .(get(ags_o), get(ags_d))]
     dt[, c(ags_o, ags_d) := NULL]
     data.table::setcolorder(dt, c("origin", "destination", by, "flow"))
