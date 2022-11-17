@@ -22,7 +22,12 @@ get_net <- function(flows, by = NULL) {
     ### expects values
 
     ### maybe grouped is not really necessary because values already
-    ### gives the grouping information
+### gives the grouping information
+
+    ### 15.11 missing flows to 0 not working. Maybe only if
+    ### get_flows() already fills missing combinations? Seems bad to
+    ### do it in get_flows() to many rows, not often needed. Better do
+    ### it here
     i.losses <- NULL
     
     wins <- get_wins(flows, by)
