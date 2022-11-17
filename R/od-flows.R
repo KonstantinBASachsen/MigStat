@@ -78,22 +78,17 @@ get_flows <- function(dt, us, by = NULL, values = NULL) {
     ### dont use. Maybe copying data.tables is also too much
 }
 
-get_flows_only <- function(dt, us, by = NULL, simplify = TRUE) {
+get_flows_only <- function(dt, us, by = NULL) {
     . <- flow <- NULL
     unit_o <- get_unitcol(us, FALSE)
     unit_d <- get_unitcol(us, TRUE)
     ags_o <- get_agscol(unit_o)
     ags_d <- get_agscol(unit_d)
-    dtf <- copy(dt)
-    dtf[, "flow" := .N, by = c(ags_o, ags_d, by)]
-    if (simplify == TRUE) {
-        dtf <- dtf[, .SD, .SDcols = c(ags_o, ags_d, by, "flow")]
-        dtf <- dtf[, .SD[1], by = c(ags_o, ags_d, by)]
-        dtf[, c("origin", "destination") := .(get(ags_o), get(ags_d))]
-        dtf[, c(ags_o, ags_d) := NULL]
-        data.table::setcolorder(dtf, c("origin", "destination", by, "flow"))
-        }
-    return(dtf)
+    dt <- dt[, .(flow = .N), by = c(ags_o, ags_d, by)]
+    dt[, c("origin", "destination") := .(get(ags_o), get(ags_d))]
+    dt[, c(ags_o, ags_d) := NULL]
+    data.table::setcolorder(dt, c("origin", "destination", by, "flow"))
+    return(dt)
 }
 
 get_regions <- function(dt, shps, us, type) {
