@@ -61,9 +61,10 @@ custom_boxplot <- function(dt, title) {
 }
 
 
-get_net <- function(wins, losses) {
-    ### Erstellt gemeinsame data.table aus wins und losses uns
-    ### berechnet die Netto Migration
+get_net2 <- function(wins, losses, states, ags_gen) {
+    ## Erstellt gemeinsame data.table aus wins und losses unsberechnet
+    ## die Netto Migration
+    i.GEN <- . <- AGS <- age_gr <- state <- name_r <- NULL
     keys_w <- colnames(wins)[! colnames(wins) %in% c("flow", "wins")]
     keys_l <- colnames(losses)[!colnames(losses) %in% c("flow", "losses")]
     net <- merge(wins, losses, by.x = keys_w, by.y = keys_l, all = TRUE)
@@ -75,7 +76,7 @@ get_net <- function(wins, losses) {
     net[is.na(losses), "losses" := 0]
     net[, "net" := wins - losses]
     net[ags_gen, "name_r" := i.GEN, on = .(region = AGS)]
-    net[shps$states, "name_bl" := i.GEN, on = .(state = AGS)]
+    net[states, "name_bl" := i.GEN, on = .(state = AGS)]
 ### the following line makes sure that regions with different ags are
 ### treated as one. In this case the number of groups/ rows is not
 ### reduced
