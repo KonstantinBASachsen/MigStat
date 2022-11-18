@@ -6,7 +6,7 @@ add_vars <- function(mig, add_vars = c("age_gr", "year_gr", "regions_gr"), ags_g
         mig[, "age_gr" := fifelse(EF25 < 18, ages[1],
                                   fifelse(EF25 < 30, ages[2],
                                           fifelse(EF25 < 60, ages[3], ages[4])))]
-        mes <- sprintf("Created 'age_gr' with age categories %s", paste(ages, collapse = " "))
+        mes <- sprintf("Created 'age_gr' with age categories %s \n", paste(ages, collapse = " "))
         message(mes)
     }
     if ("year_gr" %in% add_vars) {
@@ -14,7 +14,7 @@ add_vars <- function(mig, add_vars = c("age_gr", "year_gr", "regions_gr"), ags_g
         mig[, "year_gr" := as.character(NA)]
         mig[, "year_gr" := fifelse(year < 2011, yg[1],
                                    fifelse(year >= 2011 & year < 2016, yg[2], yg[3]))]
-        mes <- sprintf("Created 'year_gr' with categories %s", paste(yg, collapse = " "))
+        mes <- sprintf("Created 'year_gr' with categories %s \n", paste(yg, collapse = " "))
     }
     if ("regions_gr" %in% add_vars) {
         if (is.null(ags_gen) == TRUE) {
