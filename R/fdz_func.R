@@ -13,7 +13,16 @@ read_mig <- function(path, year) {
     dt <- dt[, .SD, .SDcols = cols]
     return(dt)
 }
-
+##' Creates five point summary for faster box plots
+##'
+##' 
+##' @title five point summary by group
+##' @param mig Migration Statistics data.table
+##' @param col Name of column that is to be summarized
+##' @param by Character vector of columns that are used as group. Five
+##'     point summary is computed for every group
+##' @return data.table of five point summaries
+##' @author Konstantin
 get_box_data <- function(mig, col, by) {
     ### berechnet die 5-Punkte Zusammenfassung, welche ich für
     ### boxplots verwende. Die Zusammenfassung wird für "col"
