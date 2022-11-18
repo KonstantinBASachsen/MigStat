@@ -1,5 +1,5 @@
 read_clean_shps <- function(clean_path, type = "ags") {
-    GEN <- NULL
+    GEN <- AGS <- NULL 
     if (type %in% c("ags", "complete") == FALSE)  {
         stop("type either ags or complete")
     }

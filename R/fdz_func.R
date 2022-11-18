@@ -34,8 +34,9 @@ get_box_data <- function(mig, col, by) {
 }
 
 custom_boxplot <- function(dt, title) {
-    #### Plotted die 5 Punkte Zusammenfassung, welche mit
-    #### get_box_data() erstellt wurde.
+    ## Plotted die 5 Punkte Zusammenfassung, welche mit get_box_data()
+    ## erstellt wurde.
+    group <- NULL
     box_dist <- ggplot(dt, aes_string("year_short")) +
         geom_boxplot(aes_string(x = "year_short", min = "ymin", lower = "y25",
                      middle = "ymed", upper = "y75", max = "ymax",
@@ -78,12 +79,13 @@ get_net <- function(wins, losses) {
 
 
 plot_age_st <- function(net, lab_years) {
-  ## erstellt plot Gewinne/Verluste nach Bundesländern
+    ## erstellt plot Gewinne/Verluste nach Bundesländern
+    name_r <- NULL
   title <- sprintf("Gewinne/ Verluste der Regionen nach Bundesland \n der Jahre %s", lab_years)
   plot <- ggplot(net) +
     geom_col(aes_string("name_bl", "net", fill = "age_gr"), 
              position = "dodge") +
-    MigStat::theme_brrrp(maj.x = T) +
+    MigStat::theme_brrrp(maj.x = TRUE) +
     coord_flip() +
     labs(fill = "Alter gruppiert") +
     facet_wrap(vars(name_r)) +
@@ -95,9 +97,10 @@ plot_age_st <- function(net, lab_years) {
   return(plot)
 }
 
-plot_age_dist <- function(data, title) {
-  ## Erstellt plots mit Altersverteilung
-  plot_age <- ggplot(na.omit(dt, "grp")) +
+plot_age_dist <- function(dt, title) {
+    ## Erstellt plots mit Altersverteilung
+    grp <- NULL
+  plot_age <- ggplot(stats::na.omit(dt, "grp")) +
     geom_line(aes_string("year", "flow", colour = "age_gr")) +
     facet_wrap(vars(grp), scales = "free", drop = FALSE) +
     MigStat::theme_brrrp(leg.pos = c(0.85, 0.5), maj.y = TRUE) +
