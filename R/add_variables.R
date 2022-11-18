@@ -1,4 +1,35 @@
-group_regions <- function(mig, ags_gen) {
+add_vars <- function(mig, add_vars = c("age_gr", "year_gr", "regions_gr"), ags_gen = NULL, add_empty = TRUE) {
+    EF25 <- NULL
+    if ("age_gr" %in% add_vars) {
+        ages <- c("Kind", "Jung", "Erwachsen", "Senior")
+        mig[, "age_gr" := as.character(NA)]
+        mig[, "age_gr" := fifelse(EF25 < 18, ages[1],
+                                  fifelse(EF25 < 30, ages[2],
+                                          fifelse(EF25 < 60, ages[3], ages[4])))]
+        mes <- sprintf("Created 'age_gr' with age categories %s", paste(ages, collapse = " "))
+        message(mes)
+    }
+    if ("year_gr" %in% add_vars) {
+        yg <- c("00-10", "11-15", "16-18")
+        mig[, "year_gr" := as.character(NA)]
+        mig[, "year_gr" := fifelse(year < 2011, yg[1],
+                                   fifelse(year >= 2011 & year < 2016, yg[2], yg[3]))]
+        mes <- sprintf("Created 'year_gr' with categories %s", paste(yg, collapse = " "))
+    }
+    if ("regions_gr" %in% add_vars) {
+        if (is.null(ags_gen) == TRUE) {
+            stop("For grouping regions, please specify data.table ags_gen with pairs of AGS and GEN.")}
+        group_regions(mig, ags_gen, add_empty)
+    }
+############# Gemeindereform im Jahr 2008 #################
+    ## 2008 gab es eine große Gemeindereform in Sachsen, durch diese 
+    ## haben sich die AGS verändert. Deswegen führe ich eine Variable ein,
+    ## welche das angibt
+    ## mig[, "reform" := fifelse(year < 2008, 0, 1)]
+    return(mig)
+}
+
+group_regions <- function(mig, ags_gen, add_empty = FALSE) {
     EF03U2 <- EF02U2 <- i.GEN <- group_o <- group_d <- NULL
     ags_sachsen <- 14
     ags_bl <- 1:16
