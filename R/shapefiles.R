@@ -15,11 +15,14 @@ read_clean_shps <- function(clean_path, type = "ags") {
     }
     states <- sf::read_sf(st_path)
     data.table::setDT(states)
+    states[, "AGS" := as.integer(AGS)]
     districts <- sf::read_sf(di_path)
     data.table::setDT(districts)
+    districts[, "AGS" := as.integer(AGS)]
     districts[is.na(GEN), "GEN" := "kein Name"]
     munis <- sf::read_sf(mu_path)
     data.table::setDT(munis)
+    munis[, "AGS" := as.integer(AGS)]
     regions <- list("states" = states, "districts" = districts, "munis" = munis)
     return(regions)
 }
