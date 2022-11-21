@@ -1,6 +1,6 @@
 Package: MigStat
 Title: Research Project: Make Saxony Sexy Again
-Version: 0.3.3.0
+Version: 0.3.2.3
 Authors@R: 
     person("Konstantin", "Hoffie", , "konstantin.hoffie@ba-sachsen.de", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
