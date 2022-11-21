@@ -122,16 +122,19 @@ get_net2 <- function(wins, losses, states, ags_gen) {
     colnames(net)[colnames(net) == "flow.y"] <- "losses"
     colnames(net)[colnames(net) == "destination"] <- "region"
     colnames(net)[colnames(net) == "EF03U2"] <- "state"
+    net[ags_gen, "name_r" := i.GEN, on = .(region = AGS)]
+    net[states, "name_bl" := i.GEN, on = .(state = AGS)]
+    ## the following line makes sure that regions with different ags
+    ## are treated as one. In this case the number of groups/ rows is
+    ## not reduced
+    net <- net[, "wins" := sum(wins), by = .(age_gr, state, name_r, year)]
+    net <- net[, "losses" := sum(losses), by = .(age_gr, state, name_r, year)]
+    net <- net[, .SD[1], by = .(age_gr, state, name_r, year)]
     net[is.na(wins), "wins" := 0]
     net[is.na(losses), "losses" := 0]
     net[, "net" := wins - losses]
-    net[ags_gen, "name_r" := i.GEN, on = .(region = AGS)]
-    net[states, "name_bl" := i.GEN, on = .(state = AGS)]
-### the following line makes sure that regions with different ags are
-### treated as one. In this case the number of groups/ rows is not
-### reduced
-    net <- net[, "net" := sum(net), by = .(age_gr, state, name_r)]
-    net <- net[, .SD[1], by = .(age_gr, state, name_r)]
+    ## net <- net[, "net" := sum(net), by = .(age_gr, state, name_r, year)]
+    ## net <- net[, .SD[1], by = .(age_gr, state, name_r, year)]
 ### alternatively????
 ##    net <- net[, .(net = sum(net))]
     return(net)
