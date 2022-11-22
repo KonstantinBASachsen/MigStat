@@ -125,8 +125,11 @@ get_net2 <- function(wins, losses, states, ags_gen) {
     net[ags_gen, "name_r" := i.GEN, on = .(region = AGS)]
     net[states, "name_bl" := i.GEN, on = .(state = AGS)]
     ## the following line makes sure that regions with different ags
-    ## are treated as one. In this case the number of groups/ rows is
-    ## not reduced
+    ## are treated as one. In this case the number of groups/ rows
+    ## might be reduced. Might because if year is taken as grouping
+    ## variable than different ags for the same region correspond to
+    ## different years and because year is a group it does not reduce
+    ## the overall number of groups.
     net <- net[, "wins" := sum(wins), by = .(age_gr, state, name_r, year)]
     net <- net[, "losses" := sum(losses), by = .(age_gr, state, name_r, year)]
     net <- net[, .SD[1], by = .(age_gr, state, name_r, year)]
@@ -152,7 +155,7 @@ get_net2 <- function(wins, losses, states, ags_gen) {
 plot_age_st <- function(net, lab_years) {
     ## erstellt plot Gewinne/Verluste nach Bundesländern
     name_r <- NULL
-    title <- sprintf("Gewinne/ Verluste der Regionen nach Bundesland \n der Jahre %s", lab_years)
+    title <- sprintf("Netto Migration der Regionen nach Bundesland \n der Jahre %s", lab_years)
     plot <- ggplot2::ggplot(net) +
         ggplot2::geom_col(ggplot2::aes_string("name_bl", "net", fill = "age_gr"), 
                           position = "dodge") +
