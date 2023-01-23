@@ -15,3 +15,6 @@ Imports:
 	foreign,
 	ggplot2,
 	methods
+Suggests: 
+    tinytest 
+
