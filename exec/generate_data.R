@@ -25,7 +25,7 @@ regions <- clean_shps(shps_path, clean_path, years, "complete")
 ## fast join name of regions.
 regions <- clean_shps(shps_path, clean_path, years, "ags")
 
-
+## Why do I not save this data?
 ######################################################################
 ########################## Generate distances ########################
 
