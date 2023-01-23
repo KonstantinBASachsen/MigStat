@@ -1,4 +1,6 @@
-library(testthat)
+library(tinytest)
 library(MigStat)
 
-test_check("MigStat")
+path <- "~/Documents/MigStat"
+devtools::load_all(path)
+test_package("MigStat")
