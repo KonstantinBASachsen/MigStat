@@ -30,7 +30,16 @@ add_vars <- function(mig, add_vars = c("age_gr", "year_gr", "regions_gr"), ags_g
 }
 
 group_regions <- function(mig, ags_gen, add_empty = FALSE) {
+### It is sometimes the case that because of administrative reform the
+### AGS of some municipalities or disricts changes. If a time horizon
+### is observed where these reform took place it is important to tread
+### the municipalities as one. Thats why groups are added. Because of
+### the focus of the research project there are automatically the
+### regions west, ost and sachsen added. The other regions to be added
+### can be specified using ags_gen.
     EF03U2 <- EF02U2 <- i.GEN <- group_o <- group_d <- NULL
+    ### I think I should check column type because if it is character,
+    ### all federal states starting with a 0 are not found
     ags_sachsen <- 14
     ags_bl <- 1:16
     ags_ost <- c(12, 13, 15, 16) ### ohne Berlin, ohne Sachsen
