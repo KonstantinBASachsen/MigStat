@@ -19,6 +19,7 @@ mig[, "EF03U5" := as.integer(EF03U5)]
 mig[, "EF02U5" := as.integer(EF02U5)]
 mig <- add_vars(mig, ags_gen = ags_gen, add_empty = FALSE)
 expect_equal(uniqueN(mig[, group_o]), 5)
-expect_equal(uniqueN(mig[, group_d]), 4)
+expect_equal(uniqueN(mig[, group_d]), 5)
 expect_equal(mig[, .N, by = age_gr][, N], c(75, 90, 20, 15))
 expect_equal(mig[, .N, by = year_gr][, N], 200)
+
