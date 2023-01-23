@@ -18,7 +18,7 @@ add_vars <- function(mig, add_vars = c("age_gr", "year_gr", "regions_gr"), ags_g
     }
     if ("regions_gr" %in% add_vars) {
         if (is.null(ags_gen) == TRUE) {
-            stop("For grouping regions, please specify data.table ags_gen with pairs of AGS and GEN.")}
+            stop("For grouping regions, please specify data.table ags_gen with at least two columns: One for AGS and  one for GEN. This table specifies which ags belong to the same region.")}
         group_regions(mig, ags_gen, add_empty)
     }
 ############# Gemeindereform im Jahr 2008 #################
