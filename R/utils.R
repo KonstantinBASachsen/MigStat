@@ -234,3 +234,34 @@ return_el <- function(l, idx) {
     el <- l[[idx]]
     return(el)
 }
+
+##' Joins column from one data.table to another. Optionally performs
+##' full join.
+##'
+##' @title Joins column fast
+##' @param dt1 data.table where column is joined to
+##' @param dt2 data.table to join column from
+##' @param new_col Character, name of new column
+##' @param join_col Character, name of column to be joined
+##' @param key1 character, key in first data.table
+##' @param key2 character, key in second data.table
+##' @param full logical, if TRUE full join is done
+##' @return data.table, dt1 with joined column
+##' @author Konstantin
+do_join <- function(dt1, dt2, new_col, join_col, key1, key2 = "AGS", full = FALSE) {
+    ## performs full join
+    i.GEN <- AGS <- i.geometry <- NULL
+    if(full == TRUE) {
+        data.table::setkeyv(dt1, key1)
+        unique_keys <- unique(c(dt1[, get(key1)], dt2[, get(key2)]))
+        dtu <- dt1[unique_keys]
+    } else {
+        dtu <- dt1
+    }
+    data.table::setkeyv(dt1, key1)
+    data.table::setkeyv(dt2, key2)
+    dt1[dt2, (new_col) :=get(paste0("i.", join_col))]
+    return(dtu)
+
+}
+
