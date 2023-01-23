@@ -31,7 +31,7 @@ read_migex <- function(file) {
 def_p <- function(ds) {
     stopifnot(ds %in% c("mig", "shp"))
     mig_path <- "~/network/Rohdaten/Wanderungsdaten FDZ/Dokumente StaLa/WandZuzug_dummy_2010-2013_4480-2021.sav"
-    mig_path <- "/home/konstantin/Documents/Diss/inst/extdata/examples_fdz/WandZuzug_dummy_2010-2013_4480-2021.sav"
+    mig_path <- "~/extdata/fdz/examples_fdz/WandZuzug_dummy_2010-2013_4480-2021.sav"
 ##    shp_path <-  "/home/konstantin/Diss/inst/extdata/vg250-ew_3112.utm32s.shape.ebenen/vg250-ew_ebenen"
     shp_path <-  "~/Documents/Diss/inst/extdata/shapes/no_ewz"
     shp_path <- "~/extdata/shapes31_test/no_ewz"
