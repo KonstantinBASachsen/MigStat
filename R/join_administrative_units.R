@@ -89,29 +89,19 @@ join_units <- function(dt, us, to_join, dest, full) {
 ##' @import data.table
 ##' @export do_join
 ##' @author Konstantin
-do_join <- function(dt, shp, type, col, key1, key2 = "AGS", full = FALSE) {
-    if(! type %in% c("n", "g")) {
-        stop("Type either n for name or g for geometry")
-    }
+do_join <- function(dt1, dt2, new_col, join_col, key1, key2 = "AGS", full = FALSE) {
     ## performs full join
     i.GEN <- AGS <- i.geometry <- NULL
     if(full == TRUE) {
-        setkeyv(dt, key1)
-        unique_keys <- unique(c(dt[, get(key1)], shp[, get(key2)]))
-        dtu <- dt[unique_keys]
+        data.table::setkeyv(dt1, key1)
+        unique_keys <- unique(c(dt1[, get(key1)], dt2[, get(key2)]))
+        dtu <- dt1[unique_keys]
     } else {
-        dtu <- dt
+        dtu <- dt1
     }
-    setkeyv(dtu, key1)
-    setkeyv(shp, key2)
-    if (type == "n") {
-        dtu[shp, (col) := i.GEN]
-    }
-    if (type == "g") {
-        ### if no match is found there is still some multipolygon
-        ### returned. This seems bad
-        dtu[shp, (col) := i.geometry]
-    }
+    data.table::setkeyv(dt1, key1)
+    data.table::setkeyv(dt2, key2)
+    dt1[dt2, (new_col) :=get(paste0("i.", join_col))]
     return(dtu)
 
 }
