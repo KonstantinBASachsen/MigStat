@@ -20,8 +20,8 @@ get_box_data <- function(mig, col, by,
         stop("Excluding 'year' only one by variable is allowed currently")
     }
     ##    dt_box <- mig[, stats::fivenum(get(col)), keyby = by]
-    dt_box <- mig[, stats::quantile(get(col), probs), keyby = by]
-    stats <- c("ymin", "y25", "ymed", "y75", "ymax")
+    dt_box <- mig[, c(stats::quantile(get(col), probs), .N), keyby = by]
+    stats <- c("ymin", "y25", "ymed", "y75", "ymax", "N")
     dt_box[, `:=`("what", stats), keyby = by]
     formula <- sprintf("%s ~ what", paste(by, collapse = " + "))
     dt_box <- data.table::dcast(dt_box, formula = formula, value.var = "V1")
