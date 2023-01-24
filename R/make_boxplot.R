@@ -9,7 +9,7 @@
 ##' @param probs vector of quantiles to be displayed.
 ##' @return data.table of five point summaries
 ##' @author Konstantin
-get_box_data <- function (mig, col, by,
+get_box_data <- function(mig, col, by,
                           probs = c(0.05, 0.25, 0.5, 0.75, 0.95)) {
     ### for following functions to handle variables I rename the
     ### grouping variable (except) year to 'group'. This does not work
