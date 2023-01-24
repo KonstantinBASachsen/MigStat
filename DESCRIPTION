@@ -15,4 +15,5 @@ Imports:
 	foreign,
 	ggplot2,
 	methods,
-	openxlsx
+	openxlsx,
+	stats

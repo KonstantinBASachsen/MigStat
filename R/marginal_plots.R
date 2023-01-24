@@ -10,7 +10,7 @@
 ##' @param us Region type for calculating od-flows. Either "mu", "di"
 ##'     or "st"
 ##' @return List of data and parameters.
-##' @importFrom("stats", "sd")
+##' @import stats
 ##' @author Konstantin
 make_marg_data <- function(mig, us) {
     flow <- . <- flow_l <- NULL
