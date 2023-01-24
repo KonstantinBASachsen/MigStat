@@ -58,3 +58,18 @@ custom_boxplot <- function(dt, title) {
     ggplot2::ylab("Distanz in km")
     return(box_dist)
 }
+
+get_n_box <- function(mig, box_data, group) {
+  ### should be part of get_box_data. Also hard coding of empty factor
+  ## level is bad
+    n_o2 <- mig[, .N, keyby = c(group, "year")]
+    n_o <- n_o2[, min(N), by = c(group)]
+    n_o[, "labels" := paste(get(group), V1 - 1, sep = " n > ")]
+    ### here I enter an empty factor level because I did the same in
+    ### the mig data by calling add_variables() or so. The empty level
+    ### makes sure that the layout of the facets is how it is supposed
+    ### to be.
+    lvls <- c(n_o[1:5, labels], "", n_o[6:8, labels])
+    out <- list(lvls, n_o2)
+  return(out)
+}
