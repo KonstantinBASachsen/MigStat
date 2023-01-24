@@ -17,7 +17,7 @@
 ##'     and net migration with respect to federal states.
 ##' @author Konstantin
 get_net2 <- function(wins, losses, states, ags_gen) {
-    ## Erstellt gemeinsame data.table aus wins und losses unsberechnet
+    ## Erstellt gemeinsame data.table aus wins und losses und berechnet
     ## die Netto Migration
     i.GEN <- . <- AGS <- age_gr <- state <- name_r <- NULL
     keys_w <- colnames(wins)[! colnames(wins) %in% c("flow", "wins")]
