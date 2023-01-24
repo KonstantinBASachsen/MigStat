@@ -268,8 +268,10 @@ do_join <- function(dt1, dt2, new_col, join_col, key1, key2 = "AGS", full = FALS
 
 
 read_mig <- function(path, type) {
-    ### function assumes that the different mig versions given by type
-    ### are saved and reads the chosen one
+### function assumes that the different mig versions given by type are
+### saved and reads the chosen one. Seems a bit complicated. Maybe it
+### is better to just specify the file name?
+    
   if (! type %in% c("age", "complete", "sample", "reasonable", "simulation")) {
     stop("type either 'age', 'complete', 'sample', 'reasonable' or 'simulation'")
   }
