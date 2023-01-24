@@ -266,3 +266,26 @@ do_join <- function(dt1, dt2, new_col, join_col, key1, key2 = "AGS", full = FALS
 
 }
 
+
+read_mig <- function(path, type) {
+    ### function assumes that the different mig versions given by type
+    ### are saved and reads the chosen one
+  if (! type %in% c("age", "complete", "sample", "reasonable", "simulation")) {
+    stop("type either 'age', 'complete', 'sample', 'reasonable' or 'simulation'")
+  }
+  ## lol better with paste _type.csv
+  if(type == "age") {
+    file <- "mig.csv"
+  } else if (type == "complete") {
+    file <- "mig_complete.csv"
+  } else if (type == "reasonable") {
+    file <- "mig_reasonable.csv"
+  } else if (type == "simulation") {
+      file <- "moves_unif_year.csv"
+  } else {
+    file <- "mig_sample.csv"
+  }
+    mig <- data.table::fread(file.path(path, file),
+                           encoding = "UTF-8")
+    return(mig)
+}
