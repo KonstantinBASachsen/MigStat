@@ -179,18 +179,17 @@ return_el <- function(l, idx) {
 ##' @author Konstantin
 do_join <- function(dt1, dt2, new_col, join_col, key1, key2 = "AGS", full = FALSE) {
     ## performs full join
+    ### might be slower than setting keys and then dt1[dt2, "col" := i.col].
     i.GEN <- AGS <- i.geometry <- NULL
     if(full == TRUE) {
         data.table::setkeyv(dt1, key1)
         unique_keys <- unique(c(dt1[, get(key1)], dt2[, get(key2)]))
-        dtu <- dt1[unique_keys]
-    } else {
-        dtu <- dt1
+        dt1 <- dt1[unique_keys]
     }
     data.table::setkeyv(dt1, key1)
     data.table::setkeyv(dt2, key2)
     dt1[dt2, (new_col) :=get(paste0("i.", join_col))]
-    return(dtu)
+    return(dt1)
 
 }
 
