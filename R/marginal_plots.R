@@ -23,6 +23,17 @@ make_marg_data <- function(mig, us) {
   return(out)
 }
 
+##' Plots marginal distribution of od-flows. Expects output from
+##' make_marg_data()
+##'
+##' @title Plot marginal distribution of od-flows.
+##' @param data Output from make_marg_data()
+##' @param log logical, if true logarithm of od-flows is plotted
+##' @param bw band with for geom_density. If NULL, default band with
+##'     is used.
+##' @return ggplot object
+##' @import data.table
+##' @author Konstantin
 plot_marg <- function(data, log = TRUE, bw = NULL) {
     variable <- value <- NULL
   stopifnot(is.logical(log))
