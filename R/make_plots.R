@@ -47,18 +47,17 @@ plot_age_dist <- function(dt, title) {
         ggplot2::labs("colour" = "Alter gruppiert") +
         ggplot2::ggtitle(title) +
         ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45))
-    
   return(plot_age)
 }
 
 make_map <- function(dt, states, lbls, years) {
   cols <- colnames(dt)
   if ("group_o" %in% cols) {
-    title <- sprintf("Zielgemeinden der Wegzüge %s", years)
+    title <- sprintf("Zielgemeinden der Wegzuege %s", years)
     colnames(dt)[cols == "group_o"] <- "grp"
   }
   if ("group_d" %in% cols) {
-    title <- sprintf("Ursprungsgemeinden der Zuzüge %s", years)
+    title <- sprintf("Ursprungsgemeinden der Zuzuege %s", years)
     colnames(dt)[cols == "group_d"] <- "grp"
   }
   nice_map <- ggplot(data = set_geom(dt, F))  +
@@ -69,7 +68,7 @@ make_map <- function(dt, states, lbls, years) {
     theme(axis.text = element_blank(),
           axis.ticks = element_blank()) +
     ggtitle(title) +
-    scale_fill_continuous(name = "Wanderungsfälle",
+    scale_fill_continuous(name = "Wanderungsfaelle",
                           breaks = lbls$breaks, labels = lbls$labels)
   return(nice_map)
 }
