@@ -7,9 +7,6 @@
 ##' @param probs the vector of quantiles that work as break point
 ##' @param na.rm If true, missing values are excluded.
 ##' @return The factor created using the quantiles as break points.
-##' @examples
-##' x <- rnorm(1000, 0, 100)
-##' table(cut_on_quantiles(x, seq(0, 1, 0.2)))
 ##' @author Konstantin
 cut_on_quantiles <- function(x, probs = seq(0, 1, 0.25), na.rm = FALSE) {
     ## add check if x is numeric
@@ -53,6 +50,7 @@ quantile_labels <- function(x) {
 ##' @param data data.table
 ##' @param col Column used for cutting.
 ##' @param probs Prababilities to base quantiles upon
+##' @param by cut column separately for every group given by 'by'.
 ##' @return NULL, data.table is updated.
 ##' @import data.table
 ##' @export cols_on_quantiles
