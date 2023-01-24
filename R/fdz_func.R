@@ -24,13 +24,6 @@ make_paths <- function(p_work, p_fdz, fdz) {
     }
 }
 
-read_mig <- function(path, year) {
-  ### liest die Wanderungsdaten ein
-    dt <- data.table::fread(path, encoding = "UTF-8")
-    cols <- c("EF02U5", "EF03U5", "EF02U2", "EF03U2", "EF25")
-    dt <- dt[, .SD, .SDcols = cols]
-    return(dt)
-}
 
 
 

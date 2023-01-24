@@ -195,6 +195,14 @@ do_join <- function(dt1, dt2, new_col, join_col, key1, key2 = "AGS", full = FALS
 }
 
 
+read_mig <- function(path, year) {
+  ### liest die Wanderungsdaten ein
+    dt <- data.table::fread(path, encoding = "UTF-8")
+    cols <- c("EF02U5", "EF03U5", "EF02U2", "EF03U2", "EF25")
+    dt <- dt[, .SD, .SDcols = cols]
+    return(dt)
+}
+
 read_mig <- function(path, type) {
 ### function assumes that the different mig versions given by type are
 ### saved and reads the chosen one. Seems a bit complicated. Maybe it
