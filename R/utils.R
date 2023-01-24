@@ -244,3 +244,19 @@ make_paths <- function(p_work, p_fdz, fdz) {
         paths <- p_work
     }
 }
+
+guess_region <- function(dt) {
+### lol probably I can check easier which is appropriate like checking
+### number of characters of ags
+    
+  if(nrow(dt) < 1000) {
+    region <- "Bundesländer"
+  }
+  if(1000 < nrow(dt) & nrow(dt) < 1e+6) {
+    region <- "Kreise"
+  }
+  if (1e+6 < nrow(dt)) {
+    region <- "Gemeinden"
+  }
+  return(region)
+}
