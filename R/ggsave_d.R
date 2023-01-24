@@ -16,11 +16,16 @@
 ##'     one in the plot object. This is useful if the data called by
 ##'     ggplot() is only used to draw map and some differnt data set
 ##'     is used to fill map.
+##' @param excel logical, if true data is saved as .xlsx as opposed to
+##'     .csv. If the data to be saved is large this might take a long
+##'     time. Saving as .csv currently does not work if data is a list
+##'     of data frames.
 ##' @param ... Additional parameters passed to ggplot2::ggsave(). See
 ##'     ?ggplot2::ggsave
 ##'@return NULL. Saves plot and data to disk. Data is saved as
 ##'     .csv. Plot saved as .pdf by default but other formats can be
 ##'     used. See ?ggplot2::ggsave
+##' @import openxlsx
 ##' @export ggsave_d
 ##' @importFrom methods is
 ##' @author Konstantin
