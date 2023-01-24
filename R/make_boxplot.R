@@ -6,9 +6,11 @@
 ##' @param col Name of column that is to be summarized
 ##' @param by Character vector of columns that are used as group. Five
 ##'     point summary is computed for every group
+##' @param probs vector of quantiles to be displayed.
 ##' @return data.table of five point summaries
 ##' @author Konstantin
-get_box_data <- function (mig, col, by) {
+get_box_data <- function (mig, col, by,
+                          probs = c(0.05, 0.25, 0.5, 0.75, 0.95)) {
     ### for following functions to handle variables I rename the
     ### grouping variable (except) year to 'group'. This does not work
     ### when more than two grouping variables are given. Does also not
@@ -17,7 +19,8 @@ get_box_data <- function (mig, col, by) {
     if (length(by[by != "year"]) > 1) {
         stop("Excluding 'year' only one by variable is allowed currently")
     }
-    dt_box <- mig[, stats::fivenum(get(col)), keyby = by]
+    ##    dt_box <- mig[, stats::fivenum(get(col)), keyby = by]
+    dt_box <- mig[, stats::quantile(get(col), probs), keyby = by]
     stats <- c("ymin", "y25", "ymed", "y75", "ymax")
     dt_box[, `:=`("what", stats), keyby = by]
     formula <- sprintf("%s ~ what", paste(by, collapse = " + "))
