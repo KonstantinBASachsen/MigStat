@@ -250,7 +250,7 @@ guess_region <- function(dt) {
 ### number of characters of ags
     
   if(nrow(dt) < 1000) {
-    region <- "Bundesländer"
+    region <- "Bundeslaender"
   }
   if(1000 < nrow(dt) & nrow(dt) < 1e+6) {
     region <- "Kreise"
