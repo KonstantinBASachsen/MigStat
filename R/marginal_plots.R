@@ -38,7 +38,7 @@ plot_marg <- function(data, log = TRUE, bw = NULL) {
     variable <- value <- NULL
   stopifnot(is.logical(log))
   dt <- data[["data"]]
-  dt <- data.table::melt(data.table::na.omit(dt),
+  dt <- data.table::melt(na.omit(dt),
                          id.vars = c("origin", "destination"))
   reg <- guess_region(dt)
   title <- sprintf("Wanderungsintensitaet zwischen %sn, 2000 - 2018. \n mit Normalverteilung,
