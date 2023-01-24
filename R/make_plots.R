@@ -51,6 +51,7 @@ plot_age_dist <- function(dt, title) {
 }
 
 make_map <- function(dt, states, lbls, years) {
+    flow_cutted_num <- grp <- NULL
   cols <- colnames(dt)
   if ("group_o" %in% cols) {
     title <- sprintf("Zielgemeinden der Wegzuege %s", years)
