@@ -227,3 +227,20 @@ read_mig <- function(path, type) {
                            encoding = "UTF-8")
     return(mig)
 }
+
+##' Sets paths for current working environment
+##'
+##' @title sets paths for working at the FDZ or at work
+##' @param p_work paths for work
+##' @param p_fdz paths for FDZ
+##' @param fdz logical, working at the fdz or not?
+##' @return list with paths
+##' @author Konstantin
+make_paths <- function(p_work, p_fdz, fdz) {
+    stopifnot(is.logical(fdz))
+    if (fdz == TRUE) {
+        paths <- p_fdz
+    } else {
+        paths <- p_work
+    }
+}
