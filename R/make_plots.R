@@ -10,17 +10,17 @@
 plot_age_st <- function(net, lab_years) {
     ## erstellt plot Gewinne/Verluste nach Bundesländern
     name_r <- NULL
-    title <- sprintf("Netto Migration der Regionen nach Bundesland \n der Jahre %s", lab_years)
+    title <- sprintf("Wanderungssaldo der Regionen nach Bundesland \n der Jahre %s", lab_years)
     plot <- ggplot2::ggplot(net) +
         ggplot2::geom_col(ggplot2::aes_string("name_bl", "net", fill = "age_gr"), 
                           position = "dodge") +
-        theme_brrrp(maj.x = TRUE) +
+        MigStat::theme_brrrp(maj.x = TRUE) +
         ggplot2::coord_flip() +
         ggplot2::labs(fill = "Alter gruppiert") +
         ggplot2::facet_wrap(ggplot2::vars(name_r)) +
-        theme_brrrp(leg.pos = c(0.85, 0.2), maj.x= FALSE, 
+        MigStat::theme_brrrp(leg.pos = c(0.85, 0.2), maj.x= FALSE, 
                     maj.y = TRUE)  +
-        ggplot2::ylab("Gewinn/Verlust") +
+        ggplot2::ylab("Wanderungssaldo") +
         ggplot2::xlab("") +
         ggplot2::ggtitle(title)
     return(plot)
