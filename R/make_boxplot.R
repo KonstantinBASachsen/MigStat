@@ -47,17 +47,18 @@ get_box_data <- function(mig, col, by,
 ##' @return plot object
 ##' @author Konstantin
 ##' @import ggplot2
-custom_boxplot <- function(dt, title) {
+custom_boxplot <- function(dt, title, group = "group") {
     ## Plotted die 5 Punkte Zusammenfassung, welche mit get_box_data()
     ## erstellt wurde.
-    group <- NULL
+    dt <- make_facet_labels(dt, group)
+    dt <- reorder_lbls_levels(dt)
     box_dist <- ggplot2::ggplot(dt, ggplot2::aes_string("year_short")) +
         ggplot2::geom_boxplot(
                      ggplot2::aes_string(x = "year_short",
                                          min = "ymin", lower = "y25",
                                          middle = "ymed", upper = "y75", max = "ymax",
                                          group = "year"), stat = "identity") +
-    ggplot2::facet_wrap(ggplot2::vars(group), drop = FALSE) +
+    ggplot2::facet_wrap(ggplot2::vars(labels), drop = FALSE) +
     theme_brrrp(maj.y = TRUE) +
     ggplot2::theme(
         axis.text.x = ggplot2::element_text(angle = 45)) +
@@ -67,18 +68,19 @@ custom_boxplot <- function(dt, title) {
     return(box_dist)
 }
 
-get_n_box <- function(mig, box_data, group) {
-    N <- V1 <- NULL
-  ### should be part of get_box_data. Also hard coding of empty factor
-  ## level is bad
-    n_o2 <- mig[, .N, keyby = c(group, "year")]
-    n_o <- n_o2[, min(N), by = c(group)]
-    n_o[, "labels" := paste(get(group), V1 - 1, sep = " n > ")]
-    ### here I enter an empty factor level because I did the same in
-    ### the mig data by calling add_variables() or so. The empty level
-    ### makes sure that the layout of the facets is how it is supposed
-    ### to be.
-    lvls <- c(n_o[1:5, labels], "", n_o[6:8, labels])
-    out <- list(lvls, n_o2)
-  return(out)
+make_facet_labels <- function(dt_box, group) {
+    lbls <- dt_box[, .(paste(group, min(N), sep = " > ")), keyby = group]
+    ## The next lines I use to get the minimum n for the groups
+    dt_box <- do_join(dt_box, lbls, "labels", "V1", "group", "group")
+    return(dt_box)
+}
+
+reorder_lbls_levels <- function(dt_box) {
+    lvls <- unique(dt_box[, labels])
+    west <- grep("west", lvls, value = TRUE)
+    ost <- grep("ost", lvls, value = TRUE)
+    sachsen <- grep("sachsen", lvls, value = TRUE)
+    new_lvls <- c(as.character(lvls[!lvls %in% c(west, ost, sachsen)]), "", sachsen, ost, west)
+    dt_box[, "labels" := factor(labels, levels = new_lvls)]
+    return(dt_box)
 }
