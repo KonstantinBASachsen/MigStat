@@ -8,23 +8,28 @@
 ##'     point summary is computed for every group
 ##' @return data.table of five point summaries
 ##' @author Konstantin
-get_box_data <- function(mig, col, by) {
-    ### berechnet die 5-Punkte Zusammenfassung, welche ich für
-    ### boxplots verwende. Die Zusammenfassung wird für "col"
-    ### berechnet. Jeweils für alle Gruppen welche durch "by". Kann
-    ### auch ggplot automatisch machen, dauert dann aber deutlich
-### länger.
-
-    ## replace fivenum with boxplot.stats?
-    dt_box <- mig[, stats::fivenum(get(col)), by = by]
+get_box_data <- function (mig, col, by) {
+    ### for following functions to handle variables I rename the
+    ### grouping variable (except) year to 'group'. This does not work
+    ### when more than two grouping variables are given. Does also not
+    ### work when two grouping variables are given and both are not
+### year.
+    if (length(by[by != "year"]) > 1) {
+        stop("Excluding 'year' only one by variable is allowed currently")
+    }
+    dt_box <- mig[, stats::fivenum(get(col)), keyby = by]
     stats <- c("ymin", "y25", "ymed", "y75", "ymax")
-    dt_box[, "what" := stats, by = by]
+    dt_box[, `:=`("what", stats), keyby = by]
     formula <- sprintf("%s ~ what", paste(by, collapse = " + "))
     dt_box <- data.table::dcast(dt_box, formula = formula, value.var = "V1")
-    dt_box[, "year_short" := substr(as.factor(year), 3, 4)]
-### bad but works for now, bc custom_boxplot() expects "group" col
+    if ("year" %in% by) {
+        ### dont know if this is a good idea. maybe just hand in
+        ### year_short directly if desired
+        dt_box[, `:=`("year_short", substr(as.factor(year), 3, 4))]
+    }
     cols <- colnames(dt_box)
-    cols[grepl("group", cols)] <- "group"
+    gr <- by[by != "year"]
+    cols[grepl(gr, cols)] <- "group"
     colnames(dt_box) <- cols
     return(dt_box)
 }
