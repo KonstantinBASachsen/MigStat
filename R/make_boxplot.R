@@ -44,6 +44,7 @@ get_box_data <- function(mig, col, by,
 ##' @title Boxplot with facets
 ##' @param dt data.table returned by get_box_data()
 ##' @param title Plot title
+##' @param group variable used for faceting
 ##' @return plot object
 ##' @author Konstantin
 ##' @import ggplot2
@@ -69,6 +70,7 @@ custom_boxplot <- function(dt, title, group = "group") {
 }
 
 make_facet_labels <- function(dt_box, group) {
+     . <- N <- NULL
     lbls <- dt_box[, .(paste(group, min(N), sep = " > ")), keyby = group]
     ## The next lines I use to get the minimum n for the groups
     dt_box <- do_join(dt_box, lbls, "labels", "V1", "group", "group")
