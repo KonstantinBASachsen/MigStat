@@ -247,6 +247,7 @@ return_el <- function(l, idx) {
 ##' @param key2 character, key in second data.table
 ##' @param full logical, if TRUE full join is done
 ##' @return data.table, dt1 with joined column
+##' @export do_join
 ##' @author Konstantin
 do_join <- function(dt1, dt2, new_col, join_col, key1, key2 = "AGS", full = FALSE) {
     ## performs full join
