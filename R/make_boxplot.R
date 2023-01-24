@@ -60,6 +60,7 @@ custom_boxplot <- function(dt, title) {
 }
 
 get_n_box <- function(mig, box_data, group) {
+    N <- V1 <- NULL
   ### should be part of get_box_data. Also hard coding of empty factor
   ## level is bad
     n_o2 <- mig[, .N, keyby = c(group, "year")]
