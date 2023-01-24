@@ -24,11 +24,18 @@
 ##' @export ggsave_d
 ##' @importFrom methods is
 ##' @author Konstantin
-ggsave_d <- function(plot, plot_name, path, data = NULL, ...) {
+ggsave_d <- function(plot, plot_name, path, data = NULL, excel = TRUE, ...) {
     ### now filename and plot args are swapped compared to
 ### ggplot2::ggsave
+  
+  ## dont know anymore why I call copy
+  
+  ## either make saving data optional or make usage similar to ggplot::ggsave()
+  ## so this can be used without struggle if data is not to be saved
 
-    ### checking name for file ending would be nice
+### checking name for file ending would be nice
+
+    ### I think I added the option to save the data as excel file
     if (methods::is(plot) != "gg") {
         stop("Plot should be result from ggplot()")
     }
@@ -46,7 +53,6 @@ ggsave_d <- function(plot, plot_name, path, data = NULL, ...) {
         message(sprintf("Directory to save data from plot created: %s", data_path))
     }
     ggplot2::ggsave(filename = paste0(plot_name, ".pdf"), plot = plot, path = plot_path, ...)
-    fpath <- file.path(data_path, paste0(plot_name, ".csv"))
     if (is.null(data)) {
         if(ncol(plot$data) <= 1) {
             warning("looks like in plot$data is no actual data! Did you use different data set in plot as well? If so, specify using data argument")
@@ -64,9 +70,15 @@ ggsave_d <- function(plot, plot_name, path, data = NULL, ...) {
     if ("geometry" %in% colnames(dt)) {
         dt[, "geometry" := NULL]
         message("geometry column dropped before saving")
-}
-    data.table::fwrite(x = dt, file = fpath)
+    }
+    if (excel == TRUE) {
+      fpath <- file.path(data_path, paste0(plot_name, ".xlsx"))
+      openxlsx::write.xlsx(x = dt, fpath)
+    } else {
+      fpath <- file.path(data_path, paste0(plot_name, ".csv"))
+      data.table::fwrite(x = dt, file = fpath) 
+    }
     if(file.exists(fpath)) {
-        message("csv of plot data written to disk")}
+        message("plot data written to disk")}
     ## not save bc file might exists and is not created anew
 }
