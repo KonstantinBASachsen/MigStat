@@ -51,3 +51,25 @@ plot_age_dist <- function(dt, title) {
   return(plot_age)
 }
 
+make_map <- function(dt, states, lbls, years) {
+  cols <- colnames(dt)
+  if ("group_o" %in% cols) {
+    title <- sprintf("Zielgemeinden der Wegzüge %s", years)
+    colnames(dt)[cols == "group_o"] <- "grp"
+  }
+  if ("group_d" %in% cols) {
+    title <- sprintf("Ursprungsgemeinden der Zuzüge %s", years)
+    colnames(dt)[cols == "group_d"] <- "grp"
+  }
+  nice_map <- ggplot(data = set_geom(dt, F))  +
+    geom_sf(data = set_geom(states), fill = "white") +
+    geom_sf(aes(fill = flow_cutted_num), colour = NA) +
+    facet_wrap(vars(grp)) +
+    MigStat::theme_brrrp(leg.pos = c(0.8, 0.2)) +
+    theme(axis.text = element_blank(),
+          axis.ticks = element_blank()) +
+    ggtitle(title) +
+    scale_fill_continuous(name = "Wanderungsfälle",
+                          breaks = lbls$breaks, labels = lbls$labels)
+  return(nice_map)
+}
