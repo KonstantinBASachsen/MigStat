@@ -37,6 +37,7 @@ get_box_data <- function(mig, col, by,
     return(dt_box)
 }
 
+
 ##' Makes a boxplot from table returned by get_box_data(). Expects
 ##' "year_short" as x-axis and "group" as faceting variable
 ##'
