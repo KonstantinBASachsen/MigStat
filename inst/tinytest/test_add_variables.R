@@ -1,4 +1,3 @@
-## library("tinytest")
 ex_dat <- MigStat:::read_examples() ## still reads AGS cols as character...
 mig <- ex_dat$mig
 shps <- ex_dat$shps

@@ -1,5 +1,3 @@
-library("MigStat")
-library("tinytest")
 clean_path <- "~/extdata/shapes31simple/"
 regions <- MigStat:::read_clean_shps(clean_path)
 

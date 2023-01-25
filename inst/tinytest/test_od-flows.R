@@ -1,5 +1,3 @@
-library("MigStat")
-library("tinytest")
 ex_dat <- MigStat:::read_examples()
 mig <- ex_dat$mig
 ### Here I create additional variables to check if the summary of

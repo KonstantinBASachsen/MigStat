@@ -1,5 +1,3 @@
-library("MigStat")
-library("tinytest")
 ### could be deleted because I do not use the functions anymore
 ex_dat <- MigStat:::read_examples()
 shps <- ex_dat$shps

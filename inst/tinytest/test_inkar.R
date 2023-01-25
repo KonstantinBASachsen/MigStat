@@ -1,6 +1,3 @@
-library("MigStat")
-library("tinytest")
-
 inkar_csv <- "/home/konstantin/Downloads/inkar_2021.csv"
 inkar <- MigStat::read_inkar(inkar_csv)
 ex_dat <- MigStat:::read_examples()
