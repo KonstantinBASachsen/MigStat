@@ -1,6 +1,9 @@
+library("MigStat")
+library("tinytest")
+
 inkar_csv <- "/home/konstantin/Downloads/inkar_2021.csv"
 inkar <- MigStat::read_inkar(inkar_csv)
-ex_dat <- read_examples()
+ex_dat <- MigStat:::read_examples()
 ######################################################################
 ###################### test read_inkar() #############################
 
@@ -22,13 +25,12 @@ expect_equal(nrow(inkar[ones][ Kennziffer != "0"]), 0)
 
 us <- "st"
 zb <- "2013"
-rb <- get_raumbezug(us)
-shp <- clean_shp(ex_dat$shps, us, keep = c("AGS", "GEN"))
+rb <- MigStat:::get_raumbezug(us)
+shp <- MigStat:::clean_shp(ex_dat$shps, us, keep = c("AGS", "GEN"))
 shp_cols <- ncol(shp)
 indic <- unique(inkar[, Indikator])
 idx <- c(428, 86, 344, 196, 193, 419, 240, 161, 153, 480)
 vars <- indic[idx]
-avail <- unlist(lapply(vars, function(x) check_availability(inkar, rb, zb, x)))
-shp <- join_inkar_vars(shp, inkar, vars, us, zb)
+avail <- unlist(lapply(vars, function(x) MigStat:::check_availability(inkar, rb, zb, x)))
+shp <- MigStat:::join_inkar_vars(shp, inkar, vars, us, zb)
 expect_equal(ncol(shp), shp_cols + length(vars[avail != 0]))
-
