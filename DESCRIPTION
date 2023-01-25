@@ -17,3 +17,7 @@ Imports:
 	methods,
 	openxlsx,
 	stats
+	methods
+Suggests: 
+    tinytest 
+
