@@ -1,4 +1,5 @@
-
+library("MigStat")
+library("tinytest")
 shp_path <- "~/extdata/shapes31_test/no_ewz"
 shapes <- read_shapes(shp_path)
 
