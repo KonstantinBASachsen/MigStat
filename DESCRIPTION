@@ -14,9 +14,8 @@ Imports:
 	sf,
 	foreign,
 	ggplot2,
-	methods,
 	openxlsx,
-	stats
+	stats,
 	methods
 Suggests: 
     tinytest 
