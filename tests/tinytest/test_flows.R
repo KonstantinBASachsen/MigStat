@@ -1,4 +1,6 @@
-ex_dat <- read_examples()
+library("MigStat")
+library("tinytest")
+ex_dat <- MigStat:::read_examples()
 mig <- ex_dat$mig
 shps <- ex_dat$shps
 mig$gender <- sample(c("m", "f"), nrow(mig), replace = TRUE)
@@ -9,12 +11,12 @@ mig$age_gr <- sample(c("0-6", "7-16", "16-99"), nrow(mig), replace = TRUE)
 ################################################################################
 
 us <- "mu"
-shp <- clean_shp(shps, us = us)
-flows <- get_flows(dt = mig, us = us)
-losses <- get_losses(flows)
+shp <- MigStat:::clean_shp(shps, us = us)
+flows <- MigStat::get_flows(dt = mig, us = us)
+losses <- MigStat:::get_losses(flows)
 expect_equal(losses[region == "09162000", losses], 6)
 
-wins <- get_wins(flows)
+wins <- MigStat:::get_wins(flows)
 expect_equal(wins[region == "11000000", wins], 6)
 
 ### add test if sum flows after get_flows equals rows of data.table
@@ -46,9 +48,9 @@ expect_equal(wins[, sum(wins)], nrow(mig))
 
 all_regions <- unique(c(mig[, EF03U2], mig[, EF02U2]))
 values <- list("origin" = all_regions, "destination" = all_regions)
-flows <- get_flows(dt = mig, us = "st", values = values)
+flows <- MigStat::get_flows(dt = mig, us = "st", values = values)
 
-net <- get_net(flows)
+net <- MigStat::get_net(flows)
 expect_equal(net[, sum(net)], 0)
 expect_equal(net[, sum(losses)], 200)
 expect_equal(net[, sum(wins)], 200)
@@ -67,13 +69,13 @@ expect_equal(nrow(net), 17)
 ########################### get_net() grouped operations #######################
 ################################################################################
 us <- "st"
-all_regions <- get_regions(mig, shps, us, "all")
+all_regions <- MigStat:::get_regions(mig, shps, us, "all")
 
 values <- list("origin" = all_regions, "destination" = all_regions,
                "gender" = c("m", "f"), "age_gr" = c("0-6", "7-16", "16-99"))
 
-flows <- get_flows(dt = mig, us = us, by = c("gender", "age_gr"), values = values)
-net <- get_net(flows)
+flows <- MigStat::get_flows(dt = mig, us = us, by = c("gender", "age_gr"), values = values)
+net <- MigStat::get_net(flows)
 
 expected <- net[region == "05", wins]
 actual <- mig[EF02U2 == "05", .N, by = .( gender, age_gr)][, N]
@@ -82,5 +84,4 @@ expect_equal(intersect(expected, actual),union(expected, actual) )
 expected <- net[region == "05", losses]
 actual <- mig[EF03U2 == "05", .N, by = .( gender, age_gr)][, N]
 expect_equal(intersect(expected, actual), union(expected, actual) )
-
 
