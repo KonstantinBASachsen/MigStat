@@ -1,6 +1,6 @@
 library("MigStat")
 library("tinytest")
-
+### could be deleted because I do not use the functions anymore
 ex_dat <- MigStat:::read_examples()
 shps <- ex_dat$shps
 mig <- ex_dat$mig
@@ -27,4 +27,3 @@ expect_equal(length(setdiff(actual_cols, needed_cols)), 0)
 
 rows <- MigStat:::n_new_rows(mig, shps, "st", "mu", 10)
 expect_equal(nrow(rows), 10)
-
