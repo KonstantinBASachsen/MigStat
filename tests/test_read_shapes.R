@@ -8,3 +8,4 @@ shapes <- read_shapes(shp_path)
 units <- c("federal_states", "districts", "municipalities")
 
 expect_equal(length(shapes), length(units)) 
+### script does not increase test coverage
