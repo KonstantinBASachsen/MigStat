@@ -58,7 +58,7 @@ get_losses <- function(flows, by = NULL) {
 }
 
 get_grouped <- function(flows, reg, by = NULL) {
-    flow <- NULL
+    flow <- . <- NULL
     stopifnot(reg %in% c("origin", "destination"))
     if(reg == "origin") {
         type <- "losses"
