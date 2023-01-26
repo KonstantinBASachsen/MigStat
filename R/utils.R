@@ -178,16 +178,17 @@ return_el <- function(l, idx) {
 ##' @export do_join
 ##' @author Konstantin
 do_join <- function(dt1, dt2, join_col, key1, key2 = "AGS", new_col, ...) {
-    ### passing arguments in this way to merge...?
-    ..keep <- NULL
-    keep <- c(key2, join_col)
+### passing arguments in this way to merge...?
+    if (!is.null(new_col)) {
+        cols <- colnames(dt2)
+        colnames(dt2)[grep(join_col, cols)] <- new_col
+        keep <- c(key2, new_col)
+    } else {
+        keep <- c(key2, join_col)
+    }
     dt1 <- data.table::merge.data.table(dt1,
                                         dt2[, .SD, .SDcols = keep],
                                         by.x = key1, by.y = key2, ...)
-    if (!is.null(new_col)) {
-        cols <- colnames(dt1)
-        colnames(dt1)[grep(join_col, cols)] <- new_col
-    }
     return(dt1)
 }
 
