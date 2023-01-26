@@ -7,7 +7,9 @@ shps <- MigStat:::read_clean_shps("/home/konstantin/extdata/shapes31simple2", ty
 #### testing do_join
 n_cols <- ncol(mig)
 mig[, "EF02U2" := as.integer(EF02U2)]
-MigStat:::do_join(mig, shps$states, "st_o", "GEN", key1, "AGS")
+MigStat:::do_join(mig, shps$states, "st_o", "GEN", "EF02U2", "AGS")
 n_st <- data.table::uniqueN(mig[, EF02U2])
-expect_equal(ncol(mig), n_cols + 1) ### column was joined
-expect_equal(data.table::uniqueN(mig[, st_o]), n_st) ## all values were joined
+mes <- "Wrong number of cols after join"
+expect_equal(ncol(mig), n_cols + 1, info = mes) ### column was joined
+mes <- "Not all names of federal states joined"
+expect_equal(data.table::uniqueN(mig[, st_o]), n_st, info = mes) ## all values were joined
