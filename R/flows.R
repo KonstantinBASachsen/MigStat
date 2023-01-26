@@ -130,10 +130,13 @@ get_grouped <- function(flows, reg, by = NULL) {
     if (!is.null(by)) {
         message(sprintf("%s grouped by '%s'", type, paste(by, collapse = ", ")))
     }
-    dt <- dt[, paste(type) := sum(flow), by = c(reg, by)]
-    dt <- dt[, .SD[1], by = c(reg, by), .SDcols = c(type)]
+    if (reg == "origin") {
+        dt <- dt[, .("losses" = sum(flow)), keyby = c(reg, by)]
+    }
+    if (reg == "destination") {
+        dt <- dt[, .("wins" = sum(flow)), keyby = c(reg, by)]
+    }
     colnames(dt)[colnames(dt) %in% c("origin", "destination")]  <- "region"
-    
     return(dt)
 }
 
