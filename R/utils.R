@@ -177,7 +177,7 @@ return_el <- function(l, idx) {
 ##' @return data.table, dt1 with joined column
 ##' @export do_join
 ##' @author Konstantin
-do_join <- function(dt1, dt2, join_col, key1, key2 = "AGS", new_col, ...) {
+do_join <- function(dt1, dt2, join_col, key1, key2 = "AGS", new_col = NULL, ...) {
 ### passing arguments in this way to merge...?
     if (!is.null(new_col)) {
         cols <- colnames(dt2)
