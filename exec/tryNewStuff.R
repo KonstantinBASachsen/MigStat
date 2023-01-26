@@ -40,40 +40,39 @@ shps <- MigStat:::read_clean_shps(paths$shps, type = "ags")
 dist <- data.table::fread(file.path(paths$dist, "distances_mu.csv"))
 mig <- add_vars(mig, add_vars = "age_gr")
 flows <- get_flows(mig, "st", by = "age_gr")
-losses <- flows[, .("losses" = sum(flow)), by = origin]
-wins <- flows[, .("wins" = sum(flow)), by = destination]
+losses <- get_losses(flows)
+wins <- get_wins(flows)
 
+net <- do_join(dt1 = wins, dt2 = losses, join_col = "losses",
+               key1 = key1, key2 = key2)
+
+get_net <- function(flows) {
+    #### add by option to choose grouping columns and ignore all else?
+    losses <- get_losses(flows)
+    wins <- get_wins(flows)
+    ### is this check necessary?
+    key1 <- setdiff(colnames(wins), "wins")
+    key2 <- setdiff(colnames(losses), "losses")
+    if (sum(key1 == key2) != length(key1)) {
+        stop("group columns in wins and losses different")
+    }
+    net <- do_join(dt1 = wins, dt2 = losses, join_col = "losses",
+                   key1 = key1, key2 = key1, all = TRUE)
+    net[is.na(wins), "wins" := 0]
+    net[is.na(losses), "losses" := 0]
+    net[, "net" := wins - losses]
+    return(net)
+}
+
+net <- get_net(flows)
 
 do_join(dt1 = wins, dt2 = losses, join_col = "N",
                   key1 = "EF02U2", key2 = "EF03U2", new_col = "losses")
-### lets check if losses are correctly displayed if one region is
-### missing in wins
-wins <- wins[- 16, ]
-#### gives wrong answer
-do_join(dt1 = wins, dt2 = losses, join_col = "N",
-                  key1 = "EF02U2", key2 = "EF03U2", new_col = "losses")
-### gives correct answer
-do_join(dt1 = wins, dt2 = losses, join_col = "N",
-                  key1 = "EF02U2", key2 = "EF03U2", new_col = "losses", all = TRUE)
-
-### lets check if losses are correctly displayed if one region is
-### missing in losses
-losses <- losses[- 16, ]
-#### gives wrong answer
-do_join(dt1 = wins, dt2 = losses, join_col = "N",
-                  key1 = "EF02U2", key2 = "EF03U2", new_col = "losses")
-### gives correct answer
-do_join(dt1 = wins, dt2 = losses, join_col = "N",
-                  key1 = "EF02U2", key2 = "EF03U2", new_col = "losses", all = TRUE)
 
 
 key1 <- c("region", "age_gr")
 key2 <- c("region", "age_gr")
 
-losses <- get_losses(flows)
-wins <- get_wins(flows)
-net <- do_join(dt1 = wins, dt2 = losses, join_col = "losses",
-               key1 = key1, key2 = key2)
 net[is.na(wins), "wins" := 0]
 net[is.na(losses), "losses" := 0]
 net[, "net" := wins - losses]
