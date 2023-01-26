@@ -1,11 +1,9 @@
 library("data.table")
+library("MigStat")
 ex_dat <- read_examples()
 mig <- ex_dat$mig
 mig$gender <- sample(c("m", "f"), nrow(mig), replace = TRUE)
 mig$age_gr <- sample(c("0-6", "7-16", "16-99"), nrow(mig), replace = TRUE)
-
-
-
 
     
 us <- "st"
@@ -40,3 +38,58 @@ shps <- MigStat:::read_clean_shps(paths$shps, type = "ags")
 ## distances_mu.csv enthält alle paarweisen Distanzen zwischen allen
 ## Gemeindepaaren
 dist <- data.table::fread(file.path(paths$dist, "distances_mu.csv"))
+mig <- add_vars(mig, add_vars = "age_gr")
+flows <- get_flows(mig, "st", by = "age_gr")
+losses <- flows[, .("losses" = sum(flow)), by = origin]
+wins <- flows[, .("wins" = sum(flow)), by = destination]
+
+
+do_join(dt1 = wins, dt2 = losses, join_col = "N",
+                  key1 = "EF02U2", key2 = "EF03U2", new_col = "losses")
+### lets check if losses are correctly displayed if one region is
+### missing in wins
+wins <- wins[- 16, ]
+#### gives wrong answer
+do_join(dt1 = wins, dt2 = losses, join_col = "N",
+                  key1 = "EF02U2", key2 = "EF03U2", new_col = "losses")
+### gives correct answer
+do_join(dt1 = wins, dt2 = losses, join_col = "N",
+                  key1 = "EF02U2", key2 = "EF03U2", new_col = "losses", all = TRUE)
+
+### lets check if losses are correctly displayed if one region is
+### missing in losses
+losses <- losses[- 16, ]
+#### gives wrong answer
+do_join(dt1 = wins, dt2 = losses, join_col = "N",
+                  key1 = "EF02U2", key2 = "EF03U2", new_col = "losses")
+### gives correct answer
+do_join(dt1 = wins, dt2 = losses, join_col = "N",
+                  key1 = "EF02U2", key2 = "EF03U2", new_col = "losses", all = TRUE)
+
+
+key1 <- c("region", "age_gr")
+key2 <- c("region", "age_gr")
+
+losses <- get_losses(flows)
+wins <- get_wins(flows)
+net <- do_join(dt1 = wins, dt2 = losses, join_col = "losses",
+               key1 = key1, key2 = key2)
+net[is.na(wins), "wins" := 0]
+net[is.na(losses), "losses" := 0]
+net[, "net" := wins - losses]
+
+#### does it work when rows are missing?
+losses <- get_losses(flows)
+losses <- losses[- c(61:64)]
+wins <- get_wins(flows)
+wins <- wins[- c(61:64)]
+net <- do_join(dt1 = wins, dt2 = losses, join_col = "losses",
+               key1 = key1, key2 = key2, all = TRUE)
+net[is.na(wins), "wins" := 0]
+net[is.na(losses), "losses" := 0]
+net[, "net" := wins - losses]
+
+
+### filling observations does not work when same observations are
+### missing. Is that a problem?
+
