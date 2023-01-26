@@ -173,7 +173,7 @@ return_el <- function(l, idx) {
 ##' @param join_col Character, name of column to be joined
 ##' @param key1 character, key in first data.table
 ##' @param key2 character, key in second data.table
-##' @param full logical, if TRUE full join is done
+##' @param full logical, if TRUE full join is performed.
 ##' @return data.table, dt1 with joined column
 ##' @export do_join
 ##' @author Konstantin
@@ -188,7 +188,7 @@ do_join <- function(dt1, dt2, new_col, join_col, key1, key2 = "AGS", full = FALS
     }
     data.table::setkeyv(dt1, key1)
     data.table::setkeyv(dt2, key2)
-    dt1[dt2, (new_col) :=get(paste0("i.", join_col))]
+    dt1[dt2, (new_col) := get(paste0("i.", join_col))]
     return(dt1)
 
 }
