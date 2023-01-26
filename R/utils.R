@@ -173,7 +173,7 @@ return_el <- function(l, idx) {
 ##' @param join_col Character, name of column to be joined
 ##' @param key1 character, key in first data.table
 ##' @param key2 character, key in second data.table
-##' @param full logical, if TRUE full join is performed.
+##' @param ... Optional arguments passed to merge.
 ##' @return data.table, dt1 with joined column
 ##' @export do_join
 ##' @author Konstantin
