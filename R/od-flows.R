@@ -81,10 +81,18 @@ get_flows <- function(dt, us, by = NULL, fill = c("none", "groups", "all"),
     ### anymore why I needed this. Probably for gravity sampling
     flow <- NULL
     fill <- match.arg(fill)
+    if (fill != "none") {
+        stopifnot("If you want to fill missing observation please specify values." =
+                      !is.null(values))
+        stopifnot("'values' should be a list" = is.list(values))
+        needed <- c("origin", "destination", by)
+        n_names <- length(names(values))
+        stopifnot("'values' must be a named list" = n_names != 0) ### does not work
+        stopifnot("Elements of 'values' must contain 'origin', 'destination' and all variables specified in 'by'" = names(values) == needed)
+    }
+
     flows <- get_flows_only(dt = dt, by = by, us = us)
     if (fill != "none") {
-##        stopifnot("values must be a list" = is.list(values))
-        ##        flows <- join_missing_regions(flows = flows, shp = shp)
         flows <- include_missing_obs(flows, fill = fill, values = values)
     }
     ## if (dist == TRUE) {
