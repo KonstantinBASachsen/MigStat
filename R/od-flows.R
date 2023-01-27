@@ -39,7 +39,7 @@
 ##' @import data.table
 ##' @export get_flows
 ##' @author Konstantin
-get_flows <- function(dt, us, by = NULL, values = NULL) {
+get_flows <- function(dt, us, by = NULL, fill, values = NULL) {
     ### I think it might be good if the function returns all regions
     ### and fills empty flows with 0's
 
@@ -119,10 +119,31 @@ get_regions <- function(dt, shps, us, type) {
 ##     dtfull <- dtfull[is.na(get(mc)), paste(mc)  := 0]
 ##     return(dtfull)
 ## }
-include_missing_obs <- function(flows, values) {
-    flow <- NULL
+## include_missing_obs <- function(flows, values) {
+##     flow <- NULL
+##     values <- do.call(data.table::CJ, values)
+##     key <- names(values)
+##     data.table::setkeyv(flows, key)
+##     data.table::setkeyv(values, key)
+##     flows <- flows[values]
+##     flows[is.na(flow), "flow" := 0]
+##     return(flows)
+## }
+include_missing_obs <- function(flows, values, fill) {
+    flow <- origin <- destination <- NULL
     values <- do.call(data.table::CJ, values)
     key <- names(values)
+    if (fill == "groups") {
+        #### data.table::CJ produces all combinations of all
+        #### values. So all od pairs as well. Many od-pairs might not
+        #### be in flows and sometimes they should not be added to the
+        #### data. This code here removes all rows of od-pairs that
+        #### are not part of the original data.
+        orig_od <- unique(flows[, .(origin, destination)])
+        data.table::setkeyv(values, c("origin", "destination"))
+        data.table::setkeyv(orig_od, c("origin", "destination"))    
+        values <- values[orig_od]
+    }
     data.table::setkeyv(flows, key)
     data.table::setkeyv(values, key)
     flows <- flows[values]
