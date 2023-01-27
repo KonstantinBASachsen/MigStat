@@ -109,10 +109,11 @@ get_regions <- function(dt, shps, us, type) {
 
 
 include_missing_obs <- function(dt, values, missing_col) {
+    #### looks very slow
     mc <- missing_col
     stopifnot("missing_col not in data.table" = mc %in% colnames(dt))
     keys <- do.call(data.table::CJ, values)
-    setkeyv(dt, names(values))
+    data.table::setkeyv(dt, names(values))
     dtfull <- dt[keys, ]
     dtfull <- dtfull[order(mget(names(values)))]
     dtfull <- dtfull[is.na(get(mc)), paste(mc)  := 0]
