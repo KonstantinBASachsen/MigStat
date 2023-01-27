@@ -7,7 +7,7 @@ mig[, "age_gr" := data.table::fifelse(EF25 < 35, "0-35", ">35")]
 shp <- MigStat:::clean_shp(ex_dat$shps, "st", keep = c("AGS"))
 all_regions <- c(shp[, AGS], "00")
 values <- list("origin" = all_regions, "destination" = all_regions)
-flows <- MigStat::get_flows(dt = mig,  us = "st", values = values)
+flows <- MigStat::get_flows(dt = mig,  us = "st", values = values, fill = "all")
 ### all rows should be included in flows
 expect_equal(flows[, sum(flow)], 200)
 expect_equal(flows[origin == "08" & destination == "09", flow], 11)
@@ -36,7 +36,7 @@ all_regions3 <- unique(c(all_regions, all_regions2))
 ## setdiff(all_regions2, all_regions)
 
 values <- list("origin" = all_regions3, "destination" = all_regions3)
-flows <- MigStat::get_flows(dt = mig, us = "di", values = values)
+flows <- MigStat::get_flows(dt = mig, us = "di", values = values, fill = "all")
 ### all rows should be included in flows
 expect_equal(flows[, sum(flow)], 200)
 
@@ -100,3 +100,4 @@ n_combinations <- n_ods * n_age_gr * n_gender
 flows <- get_flows(mig, "st", by = c("gender", "age_gr"),
                         fill = "groups", values = values)
 expect_equal(nrow(flows), n_combinations)
+
