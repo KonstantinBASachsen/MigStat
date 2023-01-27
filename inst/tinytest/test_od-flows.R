@@ -85,14 +85,16 @@ flows_orig <- get_flows(mig, "st", by = c("gender", "age_gr"))
 original_od <- unique(flows_orig[, .(origin, destination)])
 flows <- get_flows(mig, "st", by = c("gender", "age_gr"), values = values)
 
-include_missing_obs <- function(flows, values) {
+include_missing_obs <- function(flows, values, fill_regions = FALSE) {
     flow <- NULL
-    orig_od <- unique(flows[, .(origin, destination)])
     values <- do.call(data.table::CJ, values)
     key <- names(values)
-    data.table::setkeyv(values, c("origin", "destination"))
-    data.table::setkeyv(orig_od, c("origin", "destination"))    
-    values <- values[orig_od]
+    if (fill_regions == FALSE) {
+        orig_od <- unique(flows[, .(origin, destination)])
+        data.table::setkeyv(values, c("origin", "destination"))
+        data.table::setkeyv(orig_od, c("origin", "destination"))    
+        values <- values[orig_od]
+    }
     data.table::setkeyv(flows, key)
     data.table::setkeyv(values, key)
     flows <- flows[values]
@@ -100,6 +102,4 @@ include_missing_obs <- function(flows, values) {
     return(flows)
 }
 
-
-
-
+flows <- include_missing_obs(flows_orig, values, TRUE)
