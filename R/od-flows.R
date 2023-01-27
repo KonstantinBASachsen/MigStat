@@ -41,8 +41,13 @@
 ##' @author Konstantin
 get_flows <- function(dt, us, by = NULL, fill = c("none", "groups", "all"),
                       values = NULL) {
-    ### I think it might be good if the function returns all regions
-    ### and fills empty flows with 0's
+    ### Add check for !is.null(values) if fill != "none". Also check
+    ### names(values) and probably also that origin and destination
+    ### have at least all the elements that are in the data in origin
+    ### and destination
+
+    ### I think it might be good if the function
+    ### returns all regions and fills empty flows with 0's
 
     ### I think I should not compute and join the distances
     ### here. Maybe this belongs to some other function
