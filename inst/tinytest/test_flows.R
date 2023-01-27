@@ -83,3 +83,29 @@ expected <- net[region == "05", losses]
 actual <- mig[EF03U2 == "05", .N, by = .( gender, age_gr)][, N]
 expect_equal(intersect(expected, actual), union(expected, actual) )
 
+
+###################### get_net() filling missing rows ################
+######################################################################
+
+### Lets say a region has only wins and no losses. In this case it is
+### important that in the net table there is a line where losses is
+### set to 0. In the test data, this is true for example region 02.
+### region 00 instead has no wins but losses. The regions in the net
+### table should always be the union of origin and destination in the
+### mig data.
+
+regions <- union(mig[, EF02U2], mig[, EF03U2])
+flows <- get_flows(mig, "st")
+net <- get_net(flows)
+mes <- "Number regions in net equals number regions in union of origin and destination"
+expect_equal(data.table::uniqueN(net[, region]), length(regions),
+             info = mes)
+
+
+## flows <- get_flows(mig, "st", by = "age_gr")
+## net <- get_net(flows)
+
+## net[, .N, by = region]
+## net[region == "04"]
+
+## mig[EF02U2 == "04" | EF03U2 == "04"]
