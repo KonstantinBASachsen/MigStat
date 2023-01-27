@@ -75,10 +75,31 @@ mig <- MigStat:::add_vars(mig, add_vars = c("age_gr"))
 shp <- MigStat:::clean_shp(ex_dat$shps, "st", keep = c("AGS"))
 values <- list("gender" = c("m", "f"),
                "age_gr" = c("Kind", "Jung", "Erwachsen", "Senior"),
-               "origin" = shp[, AGS],
+               "origin" = c(shp[, AGS], "00"),
                "destination" = shp[, AGS])
 n_combinations <- nrow(do.call(data.table::CJ, values))
 flows <- get_flows(mig, "st", by = c("gender", "age_gr"), values = values)
 expect_equal(nrow(flows), n_combinations)
+
+flows_orig <- get_flows(mig, "st", by = c("gender", "age_gr"))
+original_od <- unique(flows_orig[, .(origin, destination)])
+flows <- get_flows(mig, "st", by = c("gender", "age_gr"), values = values)
+
+include_missing_obs <- function(flows, values) {
+    flow <- NULL
+    orig_od <- unique(flows[, .(origin, destination)])
+    values <- do.call(data.table::CJ, values)
+    key <- names(values)
+    data.table::setkeyv(values, c("origin", "destination"))
+    data.table::setkeyv(orig_od, c("origin", "destination"))    
+    values <- values[orig_od]
+    data.table::setkeyv(flows, key)
+    data.table::setkeyv(values, key)
+    flows <- flows[values]
+    flows[is.na(flow), "flow" := 0]
+    return(flows)
+}
+
+
 
 
