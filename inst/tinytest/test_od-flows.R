@@ -66,27 +66,19 @@ expect_equal(flows[origin == "08" & destination == "09", flow], c(3, 3, 1, 4))
 ########## testing if filling of empty group combination works #######
 ######################################################################
 
-ex_dat <- read_examples()
+ex_dat <- MigStat:::read_examples()
 mig <- ex_dat$mig
 ### Here I create additional variables to check if the summary of
 ### flows between regions also works when data is grouped
 mig[, "gender" := c(rep("m", 100), rep("f", 100))]
-mig <- add_vars(mig, add_vars = c("age_gr"))
-shp <- clean_shp(ex_dat$shps, "st", keep = c("AGS"))
-
-
-flows <- get_flows(mig, "st", by = c("gender", "age_gr"))
+mig <- MigStat:::add_vars(mig, add_vars = c("age_gr"))
+shp <- MigStat:::clean_shp(ex_dat$shps, "st", keep = c("AGS"))
 values <- list("gender" = c("m", "f"),
                "age_gr" = c("Kind", "Jung", "Erwachsen", "Senior"),
                "origin" = shp[, AGS],
                "destination" = shp[, AGS])
+n_combinations <- nrow(do.call(data.table::CJ, values))
+flows <- get_flows(mig, "st", by = c("gender", "age_gr"), values = values)
+expect_equal(nrow(flows), n_combinations)
 
-include_missing_obs <- function(flows, values) {
-    values <- do.call(data.table::CJ, values)
-    key <- names(values)
-    data.table::setkeyv(flows, key)
-    data.table::setkeyv(values, key)
-    flows <- flows[values]
-    return(flows)
-}
 
