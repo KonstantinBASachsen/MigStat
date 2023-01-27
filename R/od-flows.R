@@ -136,30 +136,8 @@ get_regions <- function(dt, shps, us, type) {
     return(all_regions)
 }
 
-
-## include_missing_obs <- function(dt, values, missing_col) {
-##     #### looks very slow
-##     mc <- missing_col
-##     stopifnot("missing_col not in data.table" = mc %in% colnames(dt))
-##     keys <- do.call(data.table::CJ, values)
-##     data.table::setkeyv(dt, names(values))
-##     dtfull <- dt[keys, ]
-##     dtfull <- dtfull[order(mget(names(values)))]
-##     dtfull <- dtfull[is.na(get(mc)), paste(mc)  := 0]
-##     return(dtfull)
-## }
-## include_missing_obs <- function(flows, values) {
-##     flow <- NULL
-##     values <- do.call(data.table::CJ, values)
-##     key <- names(values)
-##     data.table::setkeyv(flows, key)
-##     data.table::setkeyv(values, key)
-##     flows <- flows[values]
-##     flows[is.na(flow), "flow" := 0]
-##     return(flows)
-## }
 include_missing_obs <- function(flows, fill, values) {
-    flow <- origin <- destination <- NULL
+    flow <- origin <- destination <- . <- NULL
     values <- do.call(data.table::CJ, values)
     key <- names(values)
     if (fill == "groups") {
