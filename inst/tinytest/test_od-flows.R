@@ -61,3 +61,32 @@ expect_equal(flows[origin == "08" & destination == "09", flow], c(3, 3, 1, 4))
 
 ## flows[origin == "08" & destination == "09", ]
 ## mig[EF03U2 == "08" & EF02U2 == "09", .(gender, age_gr)]
+
+
+########## testing if filling of empty group combination works #######
+######################################################################
+
+ex_dat <- read_examples()
+mig <- ex_dat$mig
+### Here I create additional variables to check if the summary of
+### flows between regions also works when data is grouped
+mig[, "gender" := c(rep("m", 100), rep("f", 100))]
+mig <- add_vars(mig, add_vars = c("age_gr"))
+shp <- clean_shp(ex_dat$shps, "st", keep = c("AGS"))
+
+
+flows <- get_flows(mig, "st", by = c("gender", "age_gr"))
+values <- list("gender" = c("m", "f"),
+               "age_gr" = c("Kind", "Jung", "Erwachsen", "Senior"),
+               "origin" = shp[, AGS],
+               "destination" = shp[, AGS])
+
+include_missing_obs <- function(flows, values) {
+    values <- do.call(data.table::CJ, values)
+    key <- names(values)
+    data.table::setkeyv(flows, key)
+    data.table::setkeyv(values, key)
+    flows <- flows[values]
+    return(flows)
+}
+
