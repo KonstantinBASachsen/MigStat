@@ -58,6 +58,7 @@ get_flows <- function(dt, us, by = NULL, fill = c("none", "groups", "all"),
     ### I don't like join_populations() in here and I don't know
     ### anymore why I needed this. Probably for gravity sampling
     flow <- NULL
+    fill <- match.arg(fill)
     flows <- get_flows_only(dt = dt, by = by, us = us)
     if (fill != "none") {
 ##        stopifnot("values must be a list" = is.list(values))
