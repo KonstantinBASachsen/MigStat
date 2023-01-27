@@ -89,10 +89,14 @@ expect_equal(nrow(flows), n_combinations)
 ### od-pairs remain as they are. That is no od-pairs are added but to
 ### every od-pair there is, all combinations of the grouping variables
 ### are added.
-flows_orig <- get_flows(mig, "st", by = c("gender", "age_gr"))
-original_od <- unique(flows_orig[, .(origin, destination)])
-flows <- get_flows(mig, "st", by = c("gender", "age_gr"), values = values)
 
-
-
-?match.arg
+### just to get the od-pairs 
+flows <- get_flows(mig, "st", by = c("gender", "age_gr"),
+                   fill = "none")
+n_ods <- data.table::uniqueN(flows[, .(origin, destination)])
+n_age_gr <- length(values$age_gr)
+n_gender <- length(values$gender)
+n_combinations <- n_ods * n_age_gr * n_gender
+flows <- get_flows(mig, "st", by = c("gender", "age_gr"),
+                        fill = "groups", values = values)
+expect_equal(nrow(flows), n_combinations)
