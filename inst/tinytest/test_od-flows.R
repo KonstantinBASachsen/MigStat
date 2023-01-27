@@ -68,22 +68,31 @@ expect_equal(flows[origin == "08" & destination == "09", flow], c(3, 3, 1, 4))
 
 ex_dat <- MigStat:::read_examples()
 mig <- ex_dat$mig
-### Here I create additional variables to check if the summary of
-### flows between regions also works when data is grouped
 mig[, "gender" := c(rep("m", 100), rep("f", 100))]
 mig <- MigStat:::add_vars(mig, add_vars = c("age_gr"))
 shp <- MigStat:::clean_shp(ex_dat$shps, "st", keep = c("AGS"))
+### I check if the filling of missing observations works. First I
+### check if the filling of ALL missing observations works. That is, a
+### table is returned where all origin-destination pairs and all
+### combinations of the grouping variables are returned for every od
+### pair.
 values <- list("gender" = c("m", "f"),
                "age_gr" = c("Kind", "Jung", "Erwachsen", "Senior"),
                "origin" = c(shp[, AGS], "00"),
                "destination" = shp[, AGS])
 n_combinations <- nrow(do.call(data.table::CJ, values))
-flows <- get_flows(mig, "st", by = c("gender", "age_gr"), values = values)
+flows <- get_flows(mig, "st", by = c("gender", "age_gr"), fill = "all",
+                   values = values)
 expect_equal(nrow(flows), n_combinations)
 
+### Now I check if the filling of the grous works, whereas the
+### od-pairs remain as they are. That is no od-pairs are added but to
+### every od-pair there is, all combinations of the grouping variables
+### are added.
 flows_orig <- get_flows(mig, "st", by = c("gender", "age_gr"))
 original_od <- unique(flows_orig[, .(origin, destination)])
 flows <- get_flows(mig, "st", by = c("gender", "age_gr"), values = values)
 
 
-flows <- include_missing_obs(flows_orig, values, TRUE)
+
+?match.arg
