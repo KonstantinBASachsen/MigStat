@@ -32,10 +32,32 @@
 ##'     summarized. If for example "gender" is given the flows of
 ##'     males between regions is returned and the flow of females
 ##'     between regions.
-##'@param values A named list of variable values. These values are
+##' @param fill Character specifying which missing observations are to
+##'     be filled. See details.
+##' @param values A named list of variable values. These values are
 ##'     used to fill missing flows.
 ##' @return data.table with columns: origin id, destination id, the
 ##'     group columns, the flow between regions
+##' @details fill: Let's assume the od-flows are grouped by
+##'     gender. Then there might be origin destination pairs where
+##'     only females migrate. fill can be used to add the missing
+##'     observation "male" and specify a flow of 0.
+##'
+##'     If fill == "groups" all missing combinations of the grouping
+##'     variables are added but no new origin-destination pairs.
+##'
+##'     If fill == "all" origin-destination pairs and all
+##'     grouping combinations are added.
+##'
+##'     If fill == "none" no observations are added.
+##'
+##'     The combinations to be added are taken from the "values"
+##'     argument.
+##'
+##'    values: A named list with the first order elements
+##'    corresponding to the grouping variables as well as "origin" and
+##'    "destination". The second order elements are used to fill the
+##'    missing observations
 ##' @import data.table
 ##' @export get_flows
 ##' @author Konstantin
