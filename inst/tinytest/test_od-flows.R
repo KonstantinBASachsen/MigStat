@@ -132,3 +132,26 @@ values <- list("gender" = c("m", "f"),
 callf <- quote(get_flows(mig, "st", by = c("gender", "age_gr"),
                         fill = "groups", values = values))
 expect_error(eval(callf), "same type")
+
+
+###### test if warning is thrown if not all origins that are in data
+###### are in values as well
+values <- list("gender" = c("m", "f"),
+               "age_gr" = c("Kind", "Jung", "Erwachsen", "Senior"),
+               "origin" = shp[, AGS],
+               "destination" =  shp[, AGS])
+callf <- quote(get_flows(mig, "st", by = c("gender", "age_gr"),
+                         fill = "all", values = values))
+expect_warning(eval(callf), "00")
+
+
+###### test if warning is thrown if not all origins that are in data
+###### are in values as well
+values <- list("gender" = c("m", "f"),
+               "age_gr" = c("Kind", "Jung", "Erwachsen", "Senior"),
+               "origin" = shp[, AGS],
+               "destination" =  shp[, AGS])
+values$destination <- values$destination[- c(1, 2, 3)]
+callf <- quote(get_flows(mig, "st", by = c("gender", "age_gr"),
+                         fill = "all", values = values))
+expect_warning(eval(callf), "01, 10, 07")
