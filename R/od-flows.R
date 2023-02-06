@@ -73,7 +73,7 @@ get_flows <- function(dt, us = c("st", "di", "mu"), by = NULL,
         stopifnot("Elements of 'values' must contain 'origin', 'destination' and all variables specified in 'by'" =n_intersect == length(needed)) ## hint which variables are missing
     }
     flows <- get_flows_only(dt = dt, by = by, us = us)
-    if (fill == "all") {
+    if (fill != "none") {
         origins_data <- unique(flows[, origin])
         origins_values <- unique(values[["origin"]])
         dest_data <- unique(flows[, destination])
@@ -102,8 +102,6 @@ get_flows <- function(dt, us = c("st", "di", "mu"), by = NULL,
                            paste(not_in_values, collapse = ", "))
             warning(mes)
         }
-    }
-    if (fill != "none") {
         flows <- include_missing_obs(flows, fill = fill, values = values)
     }
     return(flows)
