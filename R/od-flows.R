@@ -55,11 +55,13 @@
 ##' @import data.table
 ##' @export get_flows
 ##' @author Konstantin
-get_flows <- function(dt, us, by = NULL, fill = c("none", "groups", "all"),
+get_flows <- function(dt, us = c("st", "di", "mu"), by = NULL,
+                      fill = c("none", "groups", "all"),
                       values = NULL) {
     ### check that origin and destination have at least all the
     ### elements that are in the data in origin and destination
     flow <- NULL
+    us <- match.arg(us)
     fill <- match.arg(fill)
     if (fill != "none") {
         stopifnot("If you want to fill missing observation please specify values." =

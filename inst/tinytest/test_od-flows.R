@@ -113,3 +113,4 @@ flows <- get_flows(mig, "st", by = c("gender", "age_gr"),
                         fill = "groups", values = values)
 expect_equal(nrow(flows), n_combinations)
 
+get_flows
