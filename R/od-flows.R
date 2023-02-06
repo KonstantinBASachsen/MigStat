@@ -57,22 +57,8 @@
 ##' @author Konstantin
 get_flows <- function(dt, us, by = NULL, fill = c("none", "groups", "all"),
                       values = NULL) {
-    ### Add check for !is.null(values) if fill != "none". Also check
-    ### names(values) and probably also that origin and destination
-    ### have at least all the elements that are in the data in origin
-    ### and destination
-
-    ### I think it might be good if the function
-    ### returns all regions and fills empty flows with 0's
-
-    ### I think I should not compute and join the distances
-    ### here. Maybe this belongs to some other function
-
-### Don't know why this function needs state_o and so on cols
-
-    ### shp only needed for pops. Should be removed
-    ### I don't like join_populations() in here and I don't know
-    ### anymore why I needed this. Probably for gravity sampling
+    ### check that origin and destination have at least all the
+    ### elements that are in the data in origin and destination
     flow <- NULL
     fill <- match.arg(fill)
     if (fill != "none") {
@@ -84,29 +70,12 @@ get_flows <- function(dt, us, by = NULL, fill = c("none", "groups", "all"),
         n_intersect <- length(intersect(names(values), needed))
         stopifnot("Elements of 'values' must contain 'origin', 'destination' and all variables specified in 'by'" =n_intersect == length(needed)) ## hint which variables are missing
     }
-
+    
     flows <- get_flows_only(dt = dt, by = by, us = us)
     if (fill != "none") {
         flows <- include_missing_obs(flows, fill = fill, values = values)
     }
-    ## if (dist == TRUE) {
-    ##         dist <- get_distances(shp)
-    ##         flows <- join_distances(flows, dist)
-    ##         flows[, "od" := NULL] ### don't know why I need to do this
-    ## }
-    ### I think the next two lines I implemented to obtain the data
-    ### structure needed for spflow
-##    flows[, c("destination", "origin") := lapply(.SD, as.numeric), .SDcols = c("destination", "origin")]
-##    flows[, c("destination", "origin") := lapply(.SD, as.factor), .SDcols = c("destination", "origin")] 
-##    flows <- flows[, .SD, .SDcols = c("destination", "origin", "flow", "distance")]
-    ## if (pops == TRUE) {
-    ##     flows <- join_populations(flows, shp)
-    ## }
-    ## if (na_to_0) { flows[is.na(flow), flow := 0] } ### do I still need this?
     return(flows)
-
-    ### probably the functions below do too much like adding columns I
-    ### dont use. Maybe copying data.tables is also too much
 }
 
 get_flows_only <- function(dt, us, by = NULL) {
