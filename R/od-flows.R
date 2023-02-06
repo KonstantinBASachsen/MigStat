@@ -58,23 +58,36 @@
 get_flows <- function(dt, us = c("st", "di", "mu"), by = NULL,
                       fill = c("none", "groups", "all"),
                       values = NULL) {
-    ### check that origin and destination have at least all the
+    ### add check that origin and destination have at least all the
     ### elements that are in the data in origin and destination
-    flow <- NULL
+    flow <- destination <- origin <- NULL
     us <- match.arg(us)
     fill <- match.arg(fill)
     if (fill != "none") {
         stopifnot("If you want to fill missing observation please specify values." =
                       !is.null(values))
         stopifnot("'values' should be a list" = is.list(values))
-        stopifnot("'values' must be a named list with names corresponding to variables specified by 'by' as well as 'origin' and 'destination'." = !is.null(names(values))) ### does not work
+        stopifnot("'values' must be a named list with names corresponding to variables specified by 'by' as well as 'origin' and 'destination'." = !is.null(names(values)))
         needed <- c("origin", "destination", by)
         n_intersect <- length(intersect(names(values), needed))
         stopifnot("Elements of 'values' must contain 'origin', 'destination' and all variables specified in 'by'" =n_intersect == length(needed)) ## hint which variables are missing
     }
-    
     flows <- get_flows_only(dt = dt, by = by, us = us)
     if (fill != "none") {
+        origins_data <- unique(flows[, origin])
+        origins_values <- unique(values[["origin"]])
+        dest_data <- unique(flows[, destination])
+        dest_values <- unique(values[["destination"]])
+        if (class(origins_data) != class(origins_values)) {
+            mes <- sprintf("Origin in data is of type %s, origin in values of type %s. Must be of same type.",
+                           class(origins_data), class(origins_values))
+            stop(mes)
+        }
+        if (class(dest_data) != class(dest_values)) {
+            mes <- sprintf("Destination in data is of type %s, destination in values of type %s. Must be of same type",
+                           class(dest_data), class(dest_values))
+            stop(mes)
+        }
         flows <- include_missing_obs(flows, fill = fill, values = values)
     }
     return(flows)
