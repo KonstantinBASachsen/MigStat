@@ -23,7 +23,7 @@ expect_equal(length(unique(nchar(flows$destination))), 1)
 ### squared. This is because get_flows() is supposed to add region
 ### pairs even if there is no flow. Here it might seem I can test for
 ### equality but in the data sometimes the origin is unknown. These I
-### keep so there are region pairs that are not actually regions. They
+n### keep so there are region pairs that are not actually regions. They
 ### result because origin is unknown.
 
 n_regions <- length(unique(shp[, AGS]))
@@ -112,3 +112,23 @@ n_combinations <- n_ods * n_age_gr * n_gender
 flows <- get_flows(mig, "st", by = c("gender", "age_gr"),
                         fill = "groups", values = values)
 expect_equal(nrow(flows), n_combinations)
+
+########## tests if error is thrown if origin in data and origin in
+########## values are of different types.
+values <- list("gender" = c("m", "f"),
+               "age_gr" = c("Kind", "Jung", "Erwachsen", "Senior"),
+               "origin" = as.numeric(c(shp[, AGS], "00")),
+               "destination" = shp[, AGS])
+callf <- quote(get_flows(mig, "st", by = c("gender", "age_gr"),
+                        fill = "groups", values = values))
+expect_error(eval(callf), "same type")
+
+########## tests if error is thrown if destination in data and
+########## destination in values are of different types.
+values <- list("gender" = c("m", "f"),
+               "age_gr" = c("Kind", "Jung", "Erwachsen", "Senior"),
+               "origin" =c(shp[, AGS], "00"),
+               "destination" =  as.numeric(shp[, AGS]))
+callf <- quote(get_flows(mig, "st", by = c("gender", "age_gr"),
+                        fill = "groups", values = values))
+expect_error(eval(callf), "same type")
