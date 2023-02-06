@@ -76,6 +76,18 @@ shp <- MigStat:::clean_shp(ex_dat$shps, "st", keep = c("AGS"))
 ### table is returned where all origin-destination pairs and all
 ### combinations of the grouping variables are returned for every od
 ### pair.
+callf <- quote(get_flows(mig, "st", by = c("gender", "age_gr"), fill = "all",
+                   values = list(c(1, 2))))
+expect_error(eval(callf), "named list")
+
+values <- list("gender" = c("m", "f"),
+##               "age_gr" = c("Kind", "Jung", "Erwachsen", "Senior"),
+               "origin" = c(shp[, AGS], "00"),
+               "destination" = shp[, AGS])
+callf <- quote(get_flows(mig, "st", by = c("gender", "age_gr"), fill = "all",
+                   values = values))
+expect_error(eval(callf), pattern = "all variables")
+
 values <- list("gender" = c("m", "f"),
                "age_gr" = c("Kind", "Jung", "Erwachsen", "Senior"),
                "origin" = c(shp[, AGS], "00"),
