@@ -23,7 +23,7 @@ expect_equal(length(unique(nchar(flows$destination))), 1)
 ### squared. This is because get_flows() is supposed to add region
 ### pairs even if there is no flow. Here it might seem I can test for
 ### equality but in the data sometimes the origin is unknown. These I
-n### keep so there are region pairs that are not actually regions. They
+### keep so there are region pairs that are not actually regions. They
 ### result because origin is unknown.
 
 n_regions <- length(unique(shp[, AGS]))
