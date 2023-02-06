@@ -60,6 +60,8 @@ get_flows <- function(dt, us = c("st", "di", "mu"), by = NULL,
                       values = NULL) {
     ### add check that origin and destination have at least all the
     ### elements that are in the data in origin and destination
+
+    ### Maybe put input checks into functions. Looks messy right now.
     flow <- destination <- origin <- NULL
     us <- match.arg(us)
     fill <- match.arg(fill)
@@ -67,10 +69,14 @@ get_flows <- function(dt, us = c("st", "di", "mu"), by = NULL,
         stopifnot("If you want to fill missing observation please specify values." =
                       !is.null(values))
         stopifnot("'values' should be a list" = is.list(values))
-        stopifnot("'values' must be a named list with names corresponding to variables specified by 'by' as well as 'origin' and 'destination'." = !is.null(names(values)))
+        stopifnot("'values' must be a named list with names corresponding to
+                  variables specified by 'by' as well as 'origin' and 'destination'."
+                  = !is.null(names(values)))
         needed <- c("origin", "destination", by)
         n_intersect <- length(intersect(names(values), needed))
-        stopifnot("Elements of 'values' must contain 'origin', 'destination' and all variables specified in 'by'" =n_intersect == length(needed)) ## hint which variables are missing
+        stopifnot("Elements of 'values' must contain 'origin', 'destination'
+                  and all variables specified in 'by'"
+                  = n_intersect == length(needed)) ## hint which variables are missing
     }
     flows <- get_flows_only(dt = dt, by = by, us = us)
     if (fill != "none") {
