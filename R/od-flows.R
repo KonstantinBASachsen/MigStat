@@ -84,9 +84,23 @@ get_flows <- function(dt, us = c("st", "di", "mu"), by = NULL,
             stop(mes)
         }
         if (class(dest_data) != class(dest_values)) {
-            mes <- sprintf("Destination in data is of type %s, destination in values of type %s. Must be of same type",
-                           class(dest_data), class(dest_values))
+            mes <- sprintf("Destination in data is of type %s, destination in values of type %s.
+                           Must be of same type", class(dest_data), class(dest_values))
             stop(mes)
+        }
+        not_in_values <- setdiff(origins_data, origins_values)
+        if (length(not_in_values) > 0) {
+            mes <- sprintf("There are origins in the data that are not in values.
+                           Flows from %s will be omitted although they are in the data.",
+                           paste(not_in_values, collapse = ", "))
+            warning(mes)
+        }
+        not_in_values <- setdiff(dest_data, dest_values)
+        if (length(not_in_values) > 0) {
+            mes <- sprintf("There are destination in the data that are not in values.
+                           Flows to %s will be omitted although they are in the data.",
+                           paste(not_in_values, collapse = ", "))
+            warning(mes)
         }
     }
     if (fill != "none") {
