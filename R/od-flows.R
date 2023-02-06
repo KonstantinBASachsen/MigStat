@@ -85,11 +85,10 @@ get_flows <- function(dt, us, by = NULL, fill = c("none", "groups", "all"),
         stopifnot("If you want to fill missing observation please specify values." =
                       !is.null(values))
         stopifnot("'values' should be a list" = is.list(values))
+        stopifnot("'values' must be a named list with names corresponding to variables specified by 'by' as well as 'origin' and 'destination'." = !is.null(names(values))) ### does not work
         needed <- c("origin", "destination", by)
-        n_names <- length(names(values))
-        n_actual <- length(intersect(names(values), needed))
-        stopifnot("'values' must be a named list" = n_names != 0) ### does not work
-        stopifnot("Elements of 'values' must contain 'origin', 'destination' and all variables specified in 'by'" =n_actual == length(needed)) ## hint which variables are missing
+        n_intersect <- length(intersect(names(values), needed))
+        stopifnot("Elements of 'values' must contain 'origin', 'destination' and all variables specified in 'by'" =n_intersect == length(needed)) ## hint which variables are missing
     }
 
     flows <- get_flows_only(dt = dt, by = by, us = us)
