@@ -1,44 +1,38 @@
 ##' get_flows() returns the sum of flows between every
-##' origin-destination pair. These flows can be splitted across groups
-##' to obtain the flows between regions of people with certain
-##' characteristics.  Optionally the distances between the centroids
-##' of origin and destination are returned. Also, od pairs without
-##' flow can be added.
-##'
-##' The function needs two tables. One with the regional information
-##' and the other with the flows between those pairs.
-##'
-##' The first is based on a shapefile from the
-##' "Bundesamt für Karthographie und Geodäsie". This holds region
-##' identifier and geometry.
-##'
-##' The other holds the flows between regions. This is the migration
-##' statistics.
-##'
-##' Currently the function returnes all flows between the od pairs of
-##' a given type. The types are specified via the argument "us" and
-##' refer to federal states, districts or municipalities.
+##' origin-destination pair. These flows can be splitted by groups to
+##' obtain the flows between regions group wise. Missing flows can be
+##' added and filled with 0's.
 ##' 
-##' @title Origin-destination flows and distances from migration
-##'     statistics
+##' @title Compute origin-destination flows from migration statistics.
 ##' @param dt Migration Statistics data.table where every row is one
-##'     migration.
+##'     migration case.
 ##' @param us "unit simple" between regions of which type are flows to
 ##'     be computed? Takes one of the following strings:
 ##'
 ##' "st": federal states "di": districts "mu": municipalities
-##' @param by Character vector. For all values of the given variables
-##'     the number of people that moved between regions is
-##'     summarized. If for example "gender" is given the flows of
-##'     males between regions is returned and the flow of females
-##'     between regions.
+##' @param by Character vector. Specifies the grouping
+##'     variables. Origin-destination flows are returned for every
+##'     combination of the grouping variables. See details.
 ##' @param fill Character specifying which missing observations are to
-##'     be filled. See details.
-##' @param values A named list of variable values. These values are
-##'     used to fill missing flows.
+##'     be filled. Can be either 'none', 'groups' or 'all'. See
+##'     details.
+##' @param values A named list. This list is used if fill != 'none' to
+##'     fill missing flows with 0 flows. The names of the list must
+##'     correspond to 'origin', 'destination' and all variables
+##'     specified by 'by'. The values of the elements specify the
+##'     combinations that are to be filled with 0 flows. For example
+##'     if values <- list("gender" = c("f", "m")) that every od pair
+##'     has two rows, "m" and "f". If no males migrated from o to d a
+##'     row is added to the od-flows that says 0 for gender "m".
 ##' @return data.table with columns: origin id, destination id, the
 ##'     group columns, the flow between regions
-##' @details fill: Let's assume the od-flows are grouped by
+##' @details
+##'
+##' by:  can be used to return od-flows for different groups. If for
+##' example by = c("gender", "marital status") flows will be returned
+##' for every combination of gender and marital status together.
+##' 
+##' fill: Let's assume the od-flows are grouped by
 ##'     gender. Then there might be origin destination pairs where
 ##'     only females migrate. fill can be used to add the missing
 ##'     observation "male" and specify a flow of 0.
