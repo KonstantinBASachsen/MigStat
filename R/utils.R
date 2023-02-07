@@ -114,45 +114,6 @@ create_od <- function(o, d) {
     return(m)
 }
 
-##' Custom ggplot theme
-##'
-##' This theme makes it easy to specify the desired grid for a ggplot
-##' object. Inspired by https://www.youtube.com/watch?v=48-ymyX6PlU
-##' @title Own brrrp theme
-##' @param leg.pos legend position as coordinates like c(0.1, 0.7) for
-##'     upper left or c(0.8, 0.2) for lower right
-##' @param maj.x major x grid, logical
-##' @param maj.y major y grid, logical
-##' @param min.x minor x grid, logical
-##' @param min.y minor y grid, logical
-##' @return theme for ggplot object
-##' @import ggplot2
-##' @export theme_brrrp
-##' @author Konstantin
-theme_brrrp <- function(leg.pos = NULL, maj.x = FALSE, maj.y = FALSE, min.x = FALSE, min.y = FALSE) {
-    if (inherits(c(maj.x, maj.y, min.x, min.y), "logical") == FALSE ) {
-        stop("maj.x, maj.y, min.x, min.y all have to be TRUE or FALSE (logical)")
-    }
-    brrrp <- ggplot2::theme_bw()
-    if(!maj.x) {
-        brrrp <- brrrp + ggplot2::theme(panel.grid.major.x = ggplot2::element_blank())
-    } 
-    if(!maj.y) {
-        brrrp <- brrrp + ggplot2::theme(panel.grid.major.y = ggplot2::element_blank())
-    } 
-    if(!min.x) {
-        brrrp <- brrrp + ggplot2::theme(panel.grid.minor.x = ggplot2::element_blank())
-    } 
-    if(!min.y) {
-        brrrp <- brrrp + ggplot2::theme(panel.grid.minor.y = ggplot2::element_blank())
-    }
-    if (!is.null(leg.pos)) {
-        brrrp <- brrrp + theme(legend.position = leg.pos)
-    }
-    brrrp <- brrrp + theme(plot.title = element_text(colour = "blue", face = "bold",
-                                                     hjust = 0.5))
-    return(brrrp)
-}
 
 unload_migstat <- function() {
     detach("package:MigStat", unload = TRUE)
