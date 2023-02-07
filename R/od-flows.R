@@ -126,21 +126,21 @@ get_flows_only <- function(dt, us, by = NULL) {
     return(dt)
 }
 
-## get_regions <- function(dt, shps, us, type) {
-##     AGS <- NULL
-##     stopifnot(type %in% c("data", "all"))
-##     ags_o <- get_agscol(get_unitcol(us, F))
-##     ags_d <- get_agscol(get_unitcol(us, T))
-##     shp <- shps[[get_shp_unit(us)]] ### not sure if this works though
-##     shp <- clean_shp(shp, keep = "AGS")
-##     if (type == "data") {
-##         all_regions <- unique(c(dt[, get(ags_o)], dt[, get(ags_d)]))
-##     }
-##     if (type == "all") {
-##         all_regions <- unique(c(shp[, AGS], dt[, get(ags_o)], dt[, get(ags_d)]))
-##     }
-##     return(all_regions)
-## }
+get_regions <- function(dt, shps, us, type) {
+    AGS <- NULL
+    stopifnot(type %in% c("data", "all"))
+    ags_o <- get_agscol(get_unitcol(us, F))
+    ags_d <- get_agscol(get_unitcol(us, T))
+    shp <- shps[[get_shp_unit(us)]] ### not sure if this works though
+    shp <- clean_shp(shp, keep = "AGS")
+    if (type == "data") {
+        all_regions <- unique(c(dt[, get(ags_o)], dt[, get(ags_d)]))
+    }
+    if (type == "all") {
+        all_regions <- unique(c(shp[, AGS], dt[, get(ags_o)], dt[, get(ags_d)]))
+    }
+    return(all_regions)
+}
 
 include_missing_obs <- function(flows, fill, values) {
     flow <- origin <- destination <- . <- NULL
