@@ -66,17 +66,7 @@ get_flows <- function(dt, us = c("st", "di", "mu"), by = NULL,
     us <- match.arg(us)
     fill <- match.arg(fill)
     if (fill != "none") {
-        stopifnot("If you want to fill missing observation please specify values." =
-                      !is.null(values))
-        stopifnot("'values' should be a list" = is.list(values))
-        stopifnot("'values' must be a named list with names corresponding to
-                  variables specified by 'by' as well as 'origin' and 'destination'."
-                  = !is.null(names(values)))
-        needed <- c("origin", "destination", by)
-        n_intersect <- length(intersect(names(values), needed))
-        stopifnot("Elements of 'values' must contain 'origin', 'destination'
-                  and all variables specified in 'by'"
-                  = n_intersect == length(needed)) ## hint which variables are missing
+        check_values(values, by)
     }
     flows <- get_flows_only(dt = dt, by = by, us = us)
     if (fill != "none") {
@@ -191,3 +181,17 @@ sum_flows <- function(flows, by) {
     return(dt)
 }
 
+check_values <- function(values, by) {
+    stopifnot("If you want to fill missing observation please specify values." =
+                  !is.null(values))
+    stopifnot("'values' should be a list" = is.list(values))
+    stopifnot("'values' must be a named list with names corresponding to
+                  variables specified by 'by' as well as 'origin' and 'destination'."
+              = !is.null(names(values)))
+    needed <- c("origin", "destination", by)
+    n_intersect <- length(intersect(names(values), needed))
+    stopifnot("Elements of 'values' must contain 'origin', 'destination'
+                  and all variables specified in 'by'"
+              = n_intersect == length(needed)) ## hint which variables are missing
+    return(NULL)
+}
