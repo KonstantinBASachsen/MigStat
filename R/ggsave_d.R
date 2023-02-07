@@ -12,6 +12,7 @@
 ##'     "regions_flow.pdf"
 ##' @param path Directory where "plots" and "data_plots"
 ##'     subdirectories are created
+##' @param save_data logical. If FALSE plot data is not saved.
 ##' @param data Optional. If given this data is saved instead of the
 ##'     one in the plot object. This is useful if the data called by
 ##'     ggplot() is only used to draw map and some differnt data set
@@ -67,7 +68,6 @@ ggsave_d <- function(plot, plot_name, path, save_data = FALSE,
     } else {
         dt <- copy(data)
     }
-    
     if ("geom" %in% colnames(dt)) {
         dt[, "geom" := NULL]
         message("geom column dropped before saving")
