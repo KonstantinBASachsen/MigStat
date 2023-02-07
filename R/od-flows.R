@@ -164,15 +164,6 @@ check_input_values <- function(values, by) {
     return(NULL)
 }
 
-##' .. content for \description{} (no empty lines) ..
-##'
-##' .. content for \details{} ..
-##' @title 
-##' @param flows 
-##' @param values 
-##' @return
-##' @import data.table
-##' @author Konstantin
 check_input_elements_of_values <- function(values, flows) {
     origin <- destination <- NULL
     origins_data <- unique(flows[, origin])
