@@ -23,13 +23,14 @@
 ##' @param ... Additional parameters passed to ggplot2::ggsave(). See
 ##'     ?ggplot2::ggsave
 ##'@return NULL. Saves plot and data to disk. Data is saved as
-##'     .csv. Plot saved as .pdf by default but other formats can be
+##'     .csv or .xlsx. Plot saved as .pdf by default but other formats can be
 ##'     used. See ?ggplot2::ggsave
 ##' @import openxlsx
 ##' @export ggsave_d
 ##' @importFrom methods is
 ##' @author Konstantin
-ggsave_d <- function(plot, plot_name, path, data = NULL, excel = TRUE, ...) {
+ggsave_d <- function(plot, plot_name, path, save_data = FALSE,
+                     data = NULL, excel = TRUE, ...) {
     ### now filename and plot args are swapped compared to
 ### ggplot2::ggsave
   
@@ -40,7 +41,6 @@ ggsave_d <- function(plot, plot_name, path, data = NULL, excel = TRUE, ...) {
 
 ### checking name for file ending would be nice
 
-    ### I think I added the option to save the data as excel file
     if (methods::is(plot) != "gg") {
         stop("Plot should be result from ggplot()")
     }
@@ -63,7 +63,7 @@ ggsave_d <- function(plot, plot_name, path, data = NULL, excel = TRUE, ...) {
             warning("looks like in plot$data is no actual data! Did you use different data set in plot as well? If so, specify using data argument")
         }
         dt <- copy(plot$data)
-        message("data from plot object is saved")
+##        message("data from plot object is saved") seems wrong place for this message
     } else {
         dt <- copy(data)
     }
@@ -76,12 +76,14 @@ ggsave_d <- function(plot, plot_name, path, data = NULL, excel = TRUE, ...) {
         dt[, "geometry" := NULL]
         message("geometry column dropped before saving")
     }
-    if (excel == TRUE) {
+    if (excel == TRUE & save_data == TRUE) {
       fpath <- file.path(data_path, paste0(plot_name, ".xlsx"))
       openxlsx::write.xlsx(x = dt, fpath)
-    } else {
+    } else if (excel == FALSE & save_data == TRUE) {
       fpath <- file.path(data_path, paste0(plot_name, ".csv"))
       data.table::fwrite(x = dt, file = fpath) 
+    } else if (save_data == FALSE) {
+        message("plot data not saved")
     }
     if(file.exists(fpath)) {
         message("plot data written to disk")}
