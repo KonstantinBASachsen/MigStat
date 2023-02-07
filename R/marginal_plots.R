@@ -69,3 +69,19 @@ plot_marg <- function(data, log = TRUE, bw = NULL) {
     ylab("Dichte") 
   return(plot_marg)
 }
+
+guess_region <- function(dt) {
+### lol probably I can check easier which is appropriate like checking
+### number of characters of ags
+    
+  if(nrow(dt) < 1000) {
+    region <- "Bundeslaender"
+  }
+  if(1000 < nrow(dt) & nrow(dt) < 1e+6) {
+    region <- "Kreise"
+  }
+  if (1e+6 < nrow(dt)) {
+    region <- "Gemeinden"
+  }
+  return(region)
+}
