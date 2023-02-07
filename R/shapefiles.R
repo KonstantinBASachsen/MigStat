@@ -389,3 +389,8 @@ right_crs <- function(shp) {
     }
     return(shp)
 }
+
+return_el <- function(l, idx) {
+    el <- l[[idx]]
+    return(el)
+}
