@@ -71,16 +71,34 @@ get_flows <- function(dt, us = c("st", "di", "mu"), by = NULL,
     return(flows)
 }
 
-get_flows_only <- function(dt, us, by = NULL) {
+get_flows_only <- function(dt, us_o = NULL, us_d = NULL, by = NULL) {
     . <- flow <- NULL
-    unit_o <- get_unitcol(us, FALSE)
-    unit_d <- get_unitcol(us, TRUE)
-    ags_o <- get_agscol(unit_o)
-    ags_d <- get_agscol(unit_d)
-    dt <- dt[, .(flow = .N), by = c(ags_o, ags_d, by)]
-    dt[, c("origin", "destination") := .(get(ags_o), get(ags_d))]
-    dt[, c(ags_o, ags_d) := NULL]
-    data.table::setcolorder(dt, c("origin", "destination", by, "flow"))
+    if (!is.null(us_o) & !is.null(us_d)) {
+        unit_o <- get_unitcol(us_o, FALSE)
+        unit_d <- get_unitcol(us_d, TRUE)
+        ags_o <- get_agscol(unit_o)
+        ags_d <- get_agscol(unit_d)
+        dt <- dt[, .(flow = .N), by = c(ags_o, ags_d, by)]
+        dt[, c("origin", "destination") := .(get(ags_o), get(ags_d))]
+        dt[, c(ags_o, ags_d) := NULL] ## just trying to rename columns?
+        data.table::setcolorder(dt, c("origin", "destination", by, "flow"))
+    }
+    if (!is.null(us_o) & is.null(us_d)) {
+        unit_o <- get_unitcol(us_o, FALSE)
+        ags_o <- get_agscol(unit_o)
+        dt <- dt[, .(losses = .N), by = c(ags_o, by)]
+        dt[, c("origin") := .(get(ags_o))]
+        dt[, c(ags_o) := NULL] ## just trying to rename columns?
+        data.table::setcolorder(dt, c("origin", by, "losses"))
+    }
+    if (is.null(us_o) & !is.null(us_d)) {
+        unit_d <- get_unitcol(us_d, FALSE)
+        ags_d <- get_agscol(unit_d)
+        dt <- dt[, .(wins = .N), by = c(ags_d, by)]
+        dt[, c("destination") := .(get(ags_d))]
+        dt[, c(ags_d) := NULL] ## just trying to rename columns?
+        data.table::setcolorder(dt, c("destination", by, "wins"))
+    }
     return(dt)
 }
 
