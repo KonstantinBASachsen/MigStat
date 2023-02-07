@@ -55,15 +55,19 @@
 ##' @import data.table
 ##' @export get_flows
 ##' @author Konstantin
-get_flows <- function(dt, us = c("st", "di", "mu"), by = NULL,
+get_flows <- function(dt,
+                      us_o = c("st", "di", "mu", NULL),
+                      us_d = c("st", "di", "mu", NULL),
+                      by = NULL,
                       fill = c("none", "groups", "all"),
                       values = NULL) {
-    us <- match.arg(us)
+    us_o <- match.arg(us_o)
+    us_d <- match.arg(us_d)
     fill <- match.arg(fill)
     if (fill != "none") {
         check_input_values(values = values, by = by)
     }
-    flows <- get_flows_only(dt = dt, by = by, us = us)
+    flows <- get_flows_only(dt = dt, by = by, us_o = us_o, us_d = us_d)
     if (fill != "none") {
         check_input_elements_of_values(values = values, flows = flows)
         flows <- include_missing_obs(flows, fill = fill, values = values)
@@ -92,7 +96,7 @@ get_flows_only <- function(dt, us_o = NULL, us_d = NULL, by = NULL) {
         data.table::setcolorder(dt, c("origin", by, "losses"))
     }
     if (is.null(us_o) & !is.null(us_d)) {
-        unit_d <- get_unitcol(us_d, FALSE)
+        unit_d <- get_unitcol(us_d, TRUE)
         ags_d <- get_agscol(unit_d)
         dt <- dt[, .(wins = .N), by = c(ags_d, by)]
         dt[, c("destination") := .(get(ags_d))]
@@ -173,7 +177,8 @@ check_input_values <- function(values, by) {
     stopifnot("'values' should be a list" = is.list(values))
     stopifnot("'values' must be a named list with names corresponding to
                   variables specified by 'by' as well as 'origin' and 'destination'."
-              = !is.null(names(values)))
+              = !is.null(names(values))) ## should check if "groups"
+                                         ## used as fill but no 'by' specified
     needed <- c("origin", "destination", by)
     n_intersect <- length(intersect(names(values), needed))
     stopifnot("Elements of 'values' must contain 'origin', 'destination'
