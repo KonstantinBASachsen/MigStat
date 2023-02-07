@@ -58,46 +58,14 @@
 get_flows <- function(dt, us = c("st", "di", "mu"), by = NULL,
                       fill = c("none", "groups", "all"),
                       values = NULL) {
-    ### add check that origin and destination have at least all the
-    ### elements that are in the data in origin and destination
-
-    ### Maybe put input checks into functions. Looks messy right now.
-    flow <- destination <- origin <- NULL
     us <- match.arg(us)
     fill <- match.arg(fill)
     if (fill != "none") {
-        check_values(values, by)
+        check_input_values(values = values, by = by)
     }
     flows <- get_flows_only(dt = dt, by = by, us = us)
     if (fill != "none") {
-        origins_data <- unique(flows[, origin])
-        origins_values <- unique(values[["origin"]])
-        dest_data <- unique(flows[, destination])
-        dest_values <- unique(values[["destination"]])
-        if (class(origins_data) != class(origins_values)) {
-            mes <- sprintf("Origin in data is of type %s, origin in values of type %s. Must be of same type.",
-                           class(origins_data), class(origins_values))
-            stop(mes)
-        }
-        if (class(dest_data) != class(dest_values)) {
-            mes <- sprintf("Destination in data is of type %s, destination in values of type %s.
-                           Must be of same type", class(dest_data), class(dest_values))
-            stop(mes)
-        }
-        not_in_values <- setdiff(origins_data, origins_values)
-        if (length(not_in_values) > 0) {
-            mes <- sprintf("There are origins in the data that are not in values.
-                           Flows from %s will be omitted although they are in the data.",
-                           paste(not_in_values, collapse = ", "))
-            warning(mes)
-        }
-        not_in_values <- setdiff(dest_data, dest_values)
-        if (length(not_in_values) > 0) {
-            mes <- sprintf("There are destination in the data that are not in values.
-                           Flows to %s will be omitted although they are in the data.",
-                           paste(not_in_values, collapse = ", "))
-            warning(mes)
-        }
+        check_input_elements_of_values(values = values, flows = flows)
         flows <- include_missing_obs(flows, fill = fill, values = values)
     }
     return(flows)
@@ -181,7 +149,7 @@ sum_flows <- function(flows, by) {
     return(dt)
 }
 
-check_values <- function(values, by) {
+check_input_values <- function(values, by) {
     stopifnot("If you want to fill missing observation please specify values." =
                   !is.null(values))
     stopifnot("'values' should be a list" = is.list(values))
@@ -194,4 +162,45 @@ check_values <- function(values, by) {
                   and all variables specified in 'by'"
               = n_intersect == length(needed)) ## hint which variables are missing
     return(NULL)
+}
+
+##' .. content for \description{} (no empty lines) ..
+##'
+##' .. content for \details{} ..
+##' @title 
+##' @param flows 
+##' @param values 
+##' @return
+##' @import data.table
+##' @author Konstantin
+check_input_elements_of_values <- function(values, flows) {
+    origin <- destination <- NULL
+    origins_data <- unique(flows[, origin])
+    origins_values <- unique(values[["origin"]])
+    dest_data <- unique(flows[, destination])
+    dest_values <- unique(values[["destination"]])
+    if (class(origins_data) != class(origins_values)) {
+        mes <- sprintf("Origin in data is of type %s, origin in values of type %s. Must be of same type.",
+                       class(origins_data), class(origins_values))
+        stop(mes)
+    }
+    if (class(dest_data) != class(dest_values)) {
+        mes <- sprintf("Destination in data is of type %s, destination in values of type %s.
+                           Must be of same type", class(dest_data), class(dest_values))
+        stop(mes)
+    }
+    not_in_values <- setdiff(origins_data, origins_values)
+    if (length(not_in_values) > 0) {
+        mes <- sprintf("There are origins in the data that are not in values.
+                           Flows from %s will be omitted although they are in the data.",
+                       paste(not_in_values, collapse = ", "))
+        warning(mes)
+    }
+    not_in_values <- setdiff(dest_data, dest_values)
+    if (length(not_in_values) > 0) {
+        mes <- sprintf("There are destination in the data that are not in values.
+                           Flows to %s will be omitted although they are in the data.",
+                       paste(not_in_values, collapse = ", "))
+        warning(mes)
+    }
 }
