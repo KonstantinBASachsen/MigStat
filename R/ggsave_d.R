@@ -85,7 +85,14 @@ ggsave_d <- function(plot, plot_name, path, save_data = FALSE,
     } else if (save_data == FALSE) {
         message("plot data not saved")
     }
-    if(file.exists(fpath)) {
-        message("plot data written to disk")}
+    if (save_data == TRUE) {
+        if (file.exists(fpath)) {
+            message("plot data written to disk")
+        } else {
+            warning("plot data not written to disk although it should have")
+            ## badly done because fpath might not exist so it can not be
+            ## checked if file was written to disk
+        }
+    }
     ## not save bc file might exists and is not created anew
 }
