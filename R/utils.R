@@ -7,10 +7,8 @@ get_unitcol <- function(us, dest) {
     stopifnot(us %in% c("st", "di", "mu"))    
     stopifnot(is.logical(dest))
     unit <- get_shp_unit(us)
-
     if (dest == TRUE) {unit <- paste0(unit, "_d")}
     if (dest == FALSE) {unit <- paste0(unit, "_o")}
-
     return(unit)
 }
 
@@ -31,52 +29,16 @@ get_agscol<- function(unit) {
     type_num <- NA
     if(type == "d") {type_num <- "02"}
     if(type == "o") {type_num <- "03"}
-
     ags_col <- paste0("EF", type_num, "U", unit_num)
-
     return(ags_col)
-    
 }
 
-##' normalize() adds two numbers and returns the fraction of the first.
-##'
-##' This function simply adds two numbers and returns the fraction of
-##' the first number of the sum.
-##' @title return fraction of first number of sum
-##' @param x first scalar
-##' @param y second scalar
-##' @return numeric
-##' @export normalize
-##' @author Konstantin
-normalize <- function(x, y) {
-
-    n <- x / sum(x,y)
-    return(n)
-}
-
-
-search_vec <- function(phrase, vec) {
-    res <- grep(phrase, vec, value = T)
-    return(res)
-}
 
 keep_cols <- function(dt, keep) {
     stopifnot(is.data.table(dt))
     dt_clean <- dt[, .SD, .SDcols = keep]
     return(dt_clean)
-
 }
-
-
-## fpath <- function(path, fname, type = NULL) {
-##     ### probably not working under windows
-##     fullpath <- file.path(path, fname)
-##     if (!is.null(type)) {
-##         fullpath <- paste(fullpath, type, sep = ".")
-##         }
-##     return(fullpath)
-## }
-
 
 ##' Looks in data.table for "geometry" column and uses it to create
 ##' simple features object.
@@ -97,7 +59,6 @@ set_geom <- function(dt, geom_only = T) {
     if (geom_only == TRUE) {
         dtgeom <- sf::st_geometry(dtgeom)
     }
-
     return(dtgeom)
 }
 
@@ -117,11 +78,6 @@ create_od <- function(o, d) {
 
 unload_migstat <- function() {
     detach("package:MigStat", unload = TRUE)
-}
-
-return_el <- function(l, idx) {
-    el <- l[[idx]]
-    return(el)
 }
 
 ##' Joins column from one data.table to another. Optionally performs
@@ -154,19 +110,10 @@ do_join <- function(dt1, dt2, join_col, key1, key2 = "AGS", new_col = NULL, ...)
 }
 
 
-read_mig <- function(path, year) {
-  ### liest die Wanderungsdaten ein
-    dt <- data.table::fread(path, encoding = "UTF-8")
-    cols <- c("EF02U5", "EF03U5", "EF02U2", "EF03U2", "EF25")
-    dt <- dt[, .SD, .SDcols = cols]
-    return(dt)
-}
-
 read_mig <- function(path, type) {
 ### function assumes that the different mig versions given by type are
 ### saved and reads the chosen one. Seems a bit complicated. Maybe it
 ### is better to just specify the file name?
-    
   if (! type %in% c("age", "complete", "sample", "reasonable", "simulation")) {
     stop("type either 'age', 'complete', 'sample', 'reasonable' or 'simulation'")
   }
@@ -185,37 +132,4 @@ read_mig <- function(path, type) {
     mig <- data.table::fread(file.path(path, file),
                            encoding = "UTF-8")
     return(mig)
-}
-
-## ##' Sets paths for current working environment
-## ##'
-## ##' @title sets paths for working at the FDZ or at work
-## ##' @param p_work paths for work
-## ##' @param p_fdz paths for FDZ
-## ##' @param fdz logical, working at the fdz or not?
-## ##' @return list with paths
-## ##' @author Konstantin
-## make_paths <- function(p_work, p_fdz, fdz) {
-##     stopifnot(is.logical(fdz))
-##     if (fdz == TRUE) {
-##         paths <- p_fdz
-##     } else {
-##         paths <- p_work
-##     }
-## }
-
-guess_region <- function(dt) {
-### lol probably I can check easier which is appropriate like checking
-### number of characters of ags
-    
-  if(nrow(dt) < 1000) {
-    region <- "Bundeslaender"
-  }
-  if(1000 < nrow(dt) & nrow(dt) < 1e+6) {
-    region <- "Kreise"
-  }
-  if (1e+6 < nrow(dt)) {
-    region <- "Gemeinden"
-  }
-  return(region)
 }
