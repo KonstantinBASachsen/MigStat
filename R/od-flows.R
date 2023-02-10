@@ -69,12 +69,32 @@ get_flows <- function(dt,
     if (fill != "none") {
         check_input_values(values = values, by = by)
     }
-    flows <- get_flows_only(dt = dt, by = by, us_o = us_o, us_d = us_d)
+    if (us_o != "none" & us_d != "none") {
+        flows <- get_flows_only(dt = dt, by = by, us_o = us_o, us_d = us_d)
+    }
+    if (us_o == "none" & us_d != "none" | us_o != "none" & us_d == "none") {
+        us <- c(us_o, us_d)
+        us <- us[us != "none"]
+         flows <- get_net(dt = dt, us = us, by = by)
+    }
     if (fill != "none") {
         check_input_elements_of_values(values = values, flows = flows)
         flows <- include_missing_obs(flows, fill = fill, values = values)
     }
     return(flows)
+}
+
+get_net <- function(dt, us = c("st", "di", "mu"), by = NULL) {
+    wins <- get_flows_only(mig, us_o = "none", us_d = us, by = by)
+    keyw <- colnames(wins)[colnames(wins) != "wins"]
+    losses <- get_flows_only(mig, us_o = us, us_d = "none", by = by)
+    keyl <- colnames(losses)[colnames(losses) != "losses"]
+    net <- do_join(dt1 = wins, dt2 = losses, join_col = "losses",
+                   key1 = keyw, key2 = keyl, all = TRUE)
+    net[is.na(wins), "wins" := 0]
+    net[is.na(losses), "losses" := 0]
+    net[, "net" := wins - losses]
+    return(net)
 }
 
 get_flows_only <- function(dt, us_o = NULL, us_d = NULL, by = NULL) {
@@ -128,7 +148,7 @@ include_missing_obs <- function(flows, fill, values) {
     flow <- origin <- destination <- . <- NULL
     values <- do.call(data.table::CJ, values)
     key <- names(values)
-    if (fill == "groups") {
+    if (fill == "groups") { ## != "none"?
         #### data.table::CJ produces all combinations of all
         #### values. So all od pairs as well. Many od-pairs might not
         #### be in flows and sometimes they should not be added to the
