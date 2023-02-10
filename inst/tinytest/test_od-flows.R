@@ -7,7 +7,8 @@ mig[, "age_gr" := data.table::fifelse(EF25 < 35, "0-35", ">35")]
 shp <- MigStat:::clean_shp(ex_dat$shps, "st", keep = c("AGS"))
 all_regions <- c(shp[, AGS], "00")
 values <- list("origin" = all_regions, "destination" = all_regions)
-flows <- MigStat::get_flows(dt = mig,  us = "st", values = values, fill = "all")
+flows <- MigStat::get_flows(dt = mig,  us_o = "st", us_d = "st",
+                            values = values, fill = "all")
 ### all rows should be included in flows
 expect_equal(flows[, sum(flow)], 200)
 expect_equal(flows[origin == "08" & destination == "09", flow], 11)
@@ -36,7 +37,8 @@ all_regions3 <- unique(c(all_regions, all_regions2))
 ## setdiff(all_regions2, all_regions)
 
 values <- list("origin" = all_regions3, "destination" = all_regions3)
-flows <- MigStat::get_flows(dt = mig, us = "di", values = values, fill = "all")
+flows <- MigStat::get_flows(dt = mig, us_o = "di", us_d = "di",
+                            values = values, fill = "all")
 ### all rows should be included in flows
 expect_equal(flows[, sum(flow)], 200)
 
@@ -50,10 +52,12 @@ expect_true(nrow(flows) >= n_regions^2, info = sprintf("expected %s, got %s", n_
 ######################################################################
 
 ## mig[EF02U2 == "09" & EF03U2 == "08"]
-flows <- MigStat::get_flows(dt = mig, by = "gender", us = "st")
+flows <- MigStat::get_flows(dt = mig, by = "gender", us_o = "st",
+                            us_d = "st")
 expect_equal(flows[origin == "08" & destination == "09", flow], c(6, 5))
 
-flows <- get_flows(dt = mig, us = "st", by = c("gender", "age_gr"))
+flows <- get_flows(dt = mig, us_o = "st", us_d = "st",
+                   by = c("gender", "age_gr"))
 
 ### dont know whats going on here. One time I got in mig different group sizes
 ## expect_equal(flows[origin == "08" & destination == "09", ][order(gender, age_gr), flow], c(2, 1, 3, 2, 1, 2))
@@ -76,8 +80,9 @@ shp <- MigStat:::clean_shp(ex_dat$shps, "st", keep = c("AGS"))
 ### table is returned where all origin-destination pairs and all
 ### combinations of the grouping variables are returned for every od
 ### pair.
-callf <- quote(get_flows(mig, "st", by = c("gender", "age_gr"), fill = "all",
-                   values = list(c(1, 2))))
+callf <- quote(get_flows(mig, us_o = "st", us_d = "st",
+                         by = c("gender", "age_gr"), fill = "all",
+                         values = list(c(1, 2))))
 expect_error(eval(callf), "named list")
 
 values <- list("gender" = c("m", "f"),
@@ -93,7 +98,8 @@ values <- list("gender" = c("m", "f"),
                "origin" = c(shp[, AGS], "00"),
                "destination" = shp[, AGS])
 n_combinations <- nrow(do.call(data.table::CJ, values))
-flows <- get_flows(mig, "st", by = c("gender", "age_gr"), fill = "all",
+flows <- get_flows(mig, us_o = "st", us_d = "st",
+                   by = c("gender", "age_gr"), fill = "all",
                    values = values)
 expect_equal(nrow(flows), n_combinations)
 
@@ -103,14 +109,16 @@ expect_equal(nrow(flows), n_combinations)
 ### are added.
 
 ### just to get the od-pairs 
-flows <- get_flows(mig, "st", by = c("gender", "age_gr"),
+flows <- get_flows(mig, us_o = "st", us_d = "st",
+                   by = c("gender", "age_gr"),
                    fill = "none")
 n_ods <- data.table::uniqueN(flows[, .(origin, destination)])
 n_age_gr <- length(values$age_gr)
 n_gender <- length(values$gender)
 n_combinations <- n_ods * n_age_gr * n_gender
-flows <- get_flows(mig, "st", by = c("gender", "age_gr"),
-                        fill = "groups", values = values)
+flows <- get_flows(mig, us_o = "st", us_d = "st",
+                   by = c("gender", "age_gr"),
+                   fill = "groups", values = values)
 expect_equal(nrow(flows), n_combinations)
 
 ########## tests if error is thrown if origin in data and origin in
@@ -119,7 +127,8 @@ values <- list("gender" = c("m", "f"),
                "age_gr" = c("Kind", "Jung", "Erwachsen", "Senior"),
                "origin" = as.numeric(c(shp[, AGS], "00")),
                "destination" = shp[, AGS])
-callf <- quote(get_flows(mig, "st", by = c("gender", "age_gr"),
+callf <- quote(get_flows(mig, us_o = "st", us_d = "st",
+                         by = c("gender", "age_gr"),
                         fill = "groups", values = values))
 expect_error(eval(callf), "same type")
 
@@ -129,8 +138,9 @@ values <- list("gender" = c("m", "f"),
                "age_gr" = c("Kind", "Jung", "Erwachsen", "Senior"),
                "origin" =c(shp[, AGS], "00"),
                "destination" =  as.numeric(shp[, AGS]))
-callf <- quote(get_flows(mig, "st", by = c("gender", "age_gr"),
-                        fill = "groups", values = values))
+callf <- quote(get_flows(mig, us_o = "st", us_d = "st",
+                         by = c("gender", "age_gr"),
+                         fill = "groups", values = values))
 expect_error(eval(callf), "same type")
 
 
@@ -140,7 +150,8 @@ values <- list("gender" = c("m", "f"),
                "age_gr" = c("Kind", "Jung", "Erwachsen", "Senior"),
                "origin" = shp[, AGS],
                "destination" =  shp[, AGS])
-callf <- quote(get_flows(mig, "st", by = c("gender", "age_gr"),
+callf <- quote(get_flows(mig, us_o = "st", us_d = "st",
+                         by = c("gender", "age_gr"),
                          fill = "all", values = values))
 expect_warning(eval(callf), "00")
 
@@ -152,6 +163,7 @@ values <- list("gender" = c("m", "f"),
                "origin" = shp[, AGS],
                "destination" =  shp[, AGS])
 values$destination <- values$destination[- c(1, 2, 3)]
-callf <- quote(get_flows(mig, "st", by = c("gender", "age_gr"),
+callf <- quote(get_flows(mig, us_o = "st", us_d = "st",
+                         by = c("gender", "age_gr"),
                          fill = "all", values = values))
 expect_warning(eval(callf), "01, 10, 07")
