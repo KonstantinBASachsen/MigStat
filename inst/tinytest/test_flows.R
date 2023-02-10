@@ -4,25 +4,6 @@ shps <- ex_dat$shps
 mig$gender <- sample(c("m", "f"), nrow(mig), replace = TRUE)
 mig$age_gr <- sample(c("0-6", "7-16", "16-99"), nrow(mig), replace = TRUE)
 
-
-#################### get_wins() and get_losses() ###############################
-################################################################################
-
-## us <- "mu"
-## shp <- MigStat:::clean_shp(shps, us = us)
-## flows <- MigStat::get_flows(dt = mig, us = us)
-## losses <- MigStat:::get_losses(flows)
-## expect_equal(losses[region == "09162000", losses], 6)
-
-## wins <- MigStat:::get_wins(flows)
-## expect_equal(wins[region == "11000000", wins], 6)
-
-## ### add test if sum flows after get_flows equals rows of data.table
-## expect_equal(losses[, sum(losses)], nrow(mig))
-## expect_equal(wins[, sum(wins)], nrow(mig))
-## ### add test if nrow(get_flows()) == n_regions^2!
-
-
 ########################### get_net() ##########################################
 ################################################################################
 
@@ -46,7 +27,8 @@ mig$age_gr <- sample(c("0-6", "7-16", "16-99"), nrow(mig), replace = TRUE)
 
 all_regions <- unique(c(mig[, EF03U2], mig[, EF02U2]))
 values <- list("origin" = all_regions, "destination" = all_regions)
-net <- MigStat::get_net(mig, "st", values = values)
+values <- list("region" = all_regions)
+net <- MigStat::get_flows(mig, us_o = "st", fill = "groups", values = values)
 expect_equal(net[, sum(net)], 0)
 expect_equal(net[, sum(losses)], 200)
 expect_equal(net[, sum(wins)], 200)
