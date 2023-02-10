@@ -27,23 +27,43 @@
 ##' @import data.table
 ##' @export get_net
 ##' @author Konstantin
-get_net <- function(flows) {
-    #### add by option to choose grouping columns and ignore all else?
-    losses <- get_losses(flows)
-    wins <- get_wins(flows)
-    ### is this check necessary?
-    key1 <- setdiff(colnames(wins), "wins")
-    key2 <- setdiff(colnames(losses), "losses")
-    if (sum(key1 == key2) != length(key1)) {
-        stop("group columns in wins and losses different")
-    }
+##'
+get_net <- function(mig, us = c("st", "di", "mu"), by = NULL,
+                    fill = c("none", "group", "all"), values) {
+    us <- match.arg(us)
+    fill <- match.arg(fill)
+    wins <- get_flows(mig, us_d = us, by = by, fill = fill,
+                      values = values)
+    keyw <- colnames(wins)[colnames(wins) != "wins"]
+    losses <- get_flows(mig, us_o = us, by = by, fill = fill,
+                        values = values)
+    keyl <- colnames(losses)[colnames(losses) != "losses"]
+
     net <- do_join(dt1 = wins, dt2 = losses, join_col = "losses",
-                   key1 = key1, key2 = key1, all = TRUE)
+                   key1 = keyw, key2 = keyl, all = TRUE)
     net[is.na(wins), "wins" := 0]
     net[is.na(losses), "losses" := 0]
     net[, "net" := wins - losses]
     return(net)
 }
+
+## get_net <- function(flows) {
+##     #### add by option to choose grouping columns and ignore all else?
+##     losses <- get_losses(flows)
+##     wins <- get_wins(flows)
+##     ### is this check necessary?
+##     key1 <- setdiff(colnames(wins), "wins")
+##     key2 <- setdiff(colnames(losses), "losses")
+##     if (sum(key1 == key2) != length(key1)) {
+##         stop("group columns in wins and losses different")
+##     }
+##     net <- do_join(dt1 = wins, dt2 = losses, join_col = "losses",
+##                    key1 = key1, key2 = key1, all = TRUE)
+##     net[is.na(wins), "wins" := 0]
+##     net[is.na(losses), "losses" := 0]
+##     net[, "net" := wins - losses]
+##     return(net)
+## }
 
 
 get_wins <- function(flows, by = NULL) {
