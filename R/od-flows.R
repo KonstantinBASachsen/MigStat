@@ -6,10 +6,12 @@
 ##' @title Compute origin-destination flows from migration statistics.
 ##' @param dt Migration Statistics data.table where every row is one
 ##'     migration case.
-##' @param us "unit simple" between regions of which type are flows to
-##'     be computed? Takes one of the following strings:
-##'
-##' "st": federal states "di": districts "mu": municipalities
+##' @param us_o "unit simple origin" Type of regions for
+##'     'origin'. Either "st": federal states "di": districts "mu":
+##'     municipalities.
+##' @param us_d "unit simple destination" Type of regions for
+##'     'destination'. Either "st": federal states "di": districts "mu":
+##'     municipalities.
 ##' @param by Character vector. Specifies the grouping
 ##'     variables. Origin-destination flows are returned for every
 ##'     combination of the grouping variables. See details.
