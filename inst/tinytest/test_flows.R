@@ -28,7 +28,7 @@ mig$age_gr <- sample(c("0-6", "7-16", "16-99"), nrow(mig), replace = TRUE)
 all_regions <- unique(c(mig[, EF03U2], mig[, EF02U2]))
 values <- list("origin" = all_regions, "destination" = all_regions)
 values <- list("region" = all_regions)
-net <- MigStat::get_flows(mig, us_o = "st", fill = "groups", values = values)
+net <- MigStat::get_flows(mig, us_d = "st", fill = "groups", values = values)
 expect_equal(net[, sum(net)], 0)
 expect_equal(net[, sum(losses)], 200)
 expect_equal(net[, sum(wins)], 200)
@@ -49,9 +49,10 @@ expect_equal(nrow(net), 17)
 us <- "st"
 all_regions <- MigStat:::get_regions(mig, shps, us, "all")
 
-values <- list("origin" = all_regions, "destination" = all_regions,
-               "gender" = c("m", "f"), "age_gr" = c("0-6", "7-16", "16-99"))
-net <- MigStat::get_net(mig, us = us, by = c("gender", "age_gr"), values = values)
+values <- list("region" = all_regions, "gender" = c("m", "f"),
+               "age_gr" = c("0-6", "7-16", "16-99"))
+net <- MigStat::get_flows(mig, us_o = us, by = c("gender", "age_gr"),
+                          fill = "groups", values = values)
 expected <- net[region == "05", wins]
 actual <- mig[EF02U2 == "05", .N, by = .( gender, age_gr)][, N]
 expect_equal(intersect(expected, actual),union(expected, actual) )
