@@ -66,28 +66,35 @@ get_flows <- function(dt,
     us_o <- match.arg(us_o)
     us_d <- match.arg(us_d)
     fill <- match.arg(fill)
-    if (fill != "none") {
-        check_input_values(values = values, by = by)
-    }
     if (us_o != "none" & us_d != "none") {
-        flows <- get_flows_only(dt = dt, by = by, us_o = us_o, us_d = us_d)
+        type  <- "od"
     }
     if (us_o == "none" & us_d != "none" | us_o != "none" & us_d == "none") {
+        type <- "net"
+    }
+    if (fill != "none") {
+        check_input_values(values = values, type = type, by = by)
+    }
+    if (type == "od") {
+        flows <- get_flows_only(dt = dt, by = by, us_o = us_o, us_d = us_d)
+    }
+    if (type == "net") {
         us <- c(us_o, us_d)
         us <- us[us != "none"]
          flows <- get_net(dt = dt, us = us, by = by)
     }
     if (fill != "none") {
-        check_input_elements_of_values(values = values, flows = flows)
-        flows <- include_missing_obs(flows, fill = fill, values = values)
+        check_input_elements(values = values, flows = flows, type)
+        flows <- include_missing_obs(flows, fill = fill,
+                                     values = values, type = type)
     }
     return(flows)
 }
 
 get_net <- function(dt, us = c("st", "di", "mu"), by = NULL) {
-    wins <- get_flows_only(mig, us_o = "none", us_d = us, by = by)
+    wins <- get_flows_only(dt, us_o = "none", us_d = us, by = by)
     keyw <- colnames(wins)[colnames(wins) != "wins"]
-    losses <- get_flows_only(mig, us_o = us, us_d = "none", by = by)
+    losses <- get_flows_only(dt, us_o = us, us_d = "none", by = by)
     keyl <- colnames(losses)[colnames(losses) != "losses"]
     net <- do_join(dt1 = wins, dt2 = losses, join_col = "losses",
                    key1 = keyw, key2 = keyl, all = TRUE)
@@ -99,6 +106,7 @@ get_net <- function(dt, us = c("st", "di", "mu"), by = NULL) {
 
 get_flows_only <- function(dt, us_o = NULL, us_d = NULL, by = NULL) {
     . <- flow <- NULL
+    #### maybe update code such that it uses 'type'
     if (us_o != "none" & us_d != "none") {
         unit_o <- get_unitcol(us_o, FALSE)
         unit_d <- get_unitcol(us_d, TRUE)
@@ -144,8 +152,8 @@ get_regions <- function(dt, shps, us, type) {
     return(all_regions)
 }
 
-include_missing_obs <- function(flows, fill, values) {
-    flow <- origin <- destination <- . <- NULL
+include_missing_obs <- function(flows, fill, values, type) {
+    flow <- origin <- destination <- . <- region<- NULL
     values <- do.call(data.table::CJ, values)
     key <- names(values)
     if (fill == "groups") { ## != "none"?
@@ -154,10 +162,18 @@ include_missing_obs <- function(flows, fill, values) {
         #### be in flows and sometimes they should not be added to the
         #### data. This code here removes all rows of od-pairs that
         #### are not part of the original data.
-        orig_od <- unique(flows[, .(origin, destination)])
-        data.table::setkeyv(values, c("origin", "destination"))
-        data.table::setkeyv(orig_od, c("origin", "destination"))    
-        values <- values[orig_od]
+        if (type == "od") {
+            orig_od <- unique(flows[, .(origin, destination)])
+            data.table::setkeyv(values, c("origin", "destination"))
+            data.table::setkeyv(orig_od, c("origin", "destination"))
+            values <- values[orig_od]
+        }
+        if (type == "net") {
+            orig_od <- unique(flows[, .(region)])
+            data.table::setkeyv(values, "region")
+            data.table::setkeyv(orig_od, "region")
+            values <- values[orig_od]
+        }
     }
     data.table::setkeyv(flows, key)
     data.table::setkeyv(values, key)
@@ -193,23 +209,41 @@ sum_flows <- function(flows, by) {
     return(dt)
 }
 
-check_input_values <- function(values, by) {
+check_input_values <- function(values, type, by) {
     stopifnot("If you want to fill missing observation please specify values." =
                   !is.null(values))
     stopifnot("'values' should be a list" = is.list(values))
     stopifnot("'values' must be a named list with names corresponding to
                   variables specified by 'by' as well as 'origin' and 'destination'."
               = !is.null(names(values))) ## should check if "groups"
-                                         ## used as fill but no 'by' specified
-    needed <- c("origin", "destination", by)
-    n_intersect <- length(intersect(names(values), needed))
-    stopifnot("Elements of 'values' must contain 'origin', 'destination'
-                  and all variables specified in 'by'"
-              = n_intersect == length(needed)) ## hint which variables are missing
+    ## used as fill but no 'by' specified
+    if (type == "od") {
+        needed <- c("origin", "destination", by)
+        n_intersect <- length(intersect(names(values), needed))
+        stopifnot("Elements of 'values' must contain 'origin', 'destination'
+                  and all variables specified in 'by'" = n_intersect == length(needed)) ## hint which variables are missing
+    }
+    if (type == "net") {
+        needed <- c("region", by)
+        n_intersect <- length(intersect(names(values), needed))
+        stopifnot("Elements of 'values' must contain 'region', and all variables specified in 'by'" = n_intersect == length(needed)) ## hint which variables are missing
     return(NULL)
+    }
 }
 
-check_input_elements_of_values <- function(values, flows) {
+check_input_elements <- function(values, flows, type) {
+    if (type == "od") {
+        check_input_elements_type_od()
+    }
+    if (type == "net") {
+        check_input_elements_type_net()
+    }
+    if (! type %in% c("od", "net")) {
+        stop("Type neither 'net' nor 'od'!")
+    }
+}
+
+check_input_elements_type_od <- function(values, flows) {
     origin <- destination <- NULL
     origins_data <- unique(flows[, origin])
     origins_values <- unique(values[["origin"]])
@@ -236,6 +270,24 @@ check_input_elements_of_values <- function(values, flows) {
     if (length(not_in_values) > 0) {
         mes <- sprintf("There are destination in the data that are not in values.
                            Flows to %s will be omitted although they are in the data.",
+                       paste(not_in_values, collapse = ", "))
+        warning(mes)
+    }
+}
+
+check_input_elements_type_net <- function(values, flows) {
+    region <- NULL
+    region_data <- unique(flows[, region])
+    region_values <- unique(values[["region"]])
+    if (class(regions_data) != class(regions_values)) {
+        mes <- sprintf("Region in data is of type %s, region in values of type %s. Must be of same type.",
+                       class(region_data), class(region_values))
+        stop(mes)
+    }
+    not_in_values <- setdiff(region_data, region_values)
+    if (length(not_in_values) > 0) {
+        mes <- sprintf("There are regions in the data that are not in values.
+                           Flows from %s will be omitted although they are in the data.",
                        paste(not_in_values, collapse = ", "))
         warning(mes)
     }
