@@ -56,8 +56,8 @@
 ##' @export get_flows
 ##' @author Konstantin
 get_flows <- function(dt,
-                      us_o = c("st", "di", "mu", NULL),
-                      us_d = c("st", "di", "mu", NULL),
+                      us_o = c("none", "st", "di", "mu"),
+                      us_d = c("none", "st", "di", "mu"),
                       by = NULL,
                       fill = c("none", "groups", "all"),
                       values = NULL) {
@@ -77,7 +77,7 @@ get_flows <- function(dt,
 
 get_flows_only <- function(dt, us_o = NULL, us_d = NULL, by = NULL) {
     . <- flow <- NULL
-    if (!is.null(us_o) & !is.null(us_d)) {
+    if (us_o != "none" & us_d != "none") {
         unit_o <- get_unitcol(us_o, FALSE)
         unit_d <- get_unitcol(us_d, TRUE)
         ags_o <- get_agscol(unit_o)
@@ -87,21 +87,21 @@ get_flows_only <- function(dt, us_o = NULL, us_d = NULL, by = NULL) {
         dt[, c(ags_o, ags_d) := NULL] ## just trying to rename columns?
         data.table::setcolorder(dt, c("origin", "destination", by, "flow"))
     }
-    if (!is.null(us_o) & is.null(us_d)) {
+    if (us_o != "none" & us_d == "none") {
         unit_o <- get_unitcol(us_o, FALSE)
         ags_o <- get_agscol(unit_o)
         dt <- dt[, .(losses = .N), by = c(ags_o, by)]
-        dt[, c("origin") := .(get(ags_o))]
+        dt[, c("region") := .(get(ags_o))]
         dt[, c(ags_o) := NULL] ## just trying to rename columns?
-        data.table::setcolorder(dt, c("origin", by, "losses"))
+        data.table::setcolorder(dt, c("region", by, "losses"))
     }
-    if (is.null(us_o) & !is.null(us_d)) {
+    if (us_o == "none" & us_d != "none") {
         unit_d <- get_unitcol(us_d, TRUE)
         ags_d <- get_agscol(unit_d)
         dt <- dt[, .(wins = .N), by = c(ags_d, by)]
-        dt[, c("destination") := .(get(ags_d))]
+        dt[, c("region") := .(get(ags_d))]
         dt[, c(ags_d) := NULL] ## just trying to rename columns?
-        data.table::setcolorder(dt, c("destination", by, "wins"))
+        data.table::setcolorder(dt, c("region", by, "wins"))
     }
     return(dt)
 }
