@@ -20,8 +20,12 @@
 ##' future version.
 ##'
 ##' @title Net migration, wins and losses.
-##' @param flows output from get_flows() or data.table with at least
-##'     two columns: origin and destination
+##' @param mig data.table of migration statistics
+##' @param us character, either "st" or "di" or "mu" for regional unit
+##'     to get the net migration
+##' @param by character, groups to get net migration for
+##' @param fill fill missing group and/ or region combinations?
+##' @param values used if fill != "none"
 ##' @return data.table with net-migration, wins and losses for all
 ##'     regions and groups.
 ##' @import data.table
