@@ -47,7 +47,7 @@ expect_equal(nrow(net), 17)
 ########################### get_net() grouped operations #######################
 ################################################################################
 us <- "st"
-all_regions <- MigStat:::get_regions(mig, shps, us, "all")
+all_regions <- MigStat:::get_regions(dt = mig, shps = shps, us = us, type = "all")
 
 values <- list("region" = all_regions, "gender" = c("m", "f"),
                "age_gr" = c("0-6", "7-16", "16-99"))
