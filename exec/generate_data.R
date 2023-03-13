@@ -45,11 +45,42 @@ data.table::fwrite(dist_mu, file.path(dist_path, "distances_mu.csv"))
 ex_dat <- MigStat:::read_examples()
 shps <- MigStat:::read_clean_shps(ps$shps)
 dist <- read_distances(file.path(ps$dist, "distances_st.csv")) ## should only take path and "us" arg
-inkar <- read_inkar(file.path(ps$inkar, "inkar_2021.csv"))
+inkar <- read_inkar(file.path(ps$inkar, "inkar_2021.csv"), leading_0 = FALSE)
 
 ### samples new Migstat rows
 new_rows <- n_new_rows(ex_dat$mig, ex_dat$shps, "mu", "mu", 100)
 
 
 ## samples flows between regions
-samples <- samples_gravity(shps$st, 100, dist)
+
+districts <- MigStat:::read_clean_shps(paths$shps, "complete")[["districts"]] ## rename function and export
+districts <- districts[year == 2017]
+dist <- MigStat:::read_distances(file.path(paths$dist, "distances_di.csv")) ## takes file not path, confusing
+inkar <- fread(paths$ink, dec = ",")
+
+flows <- data.table::CJ(districts[, AGS], districts[, AGS])
+colnames(flows) <- c("origin", "destination")
+
+inkar <- inkar[Raumbezug == "Kreise" & Zeitbezug == 2017]
+bev <- "Bevölkerung gesamt"
+pred_dt <- inkar[Indikator == bev, ]
+pred_dt <- dcast(pred_dt, Kennziffer ~ Indikator, value.var = "Wert")
+
+key <- c("origin", "destination")
+flows <- do_join(flows, dist, "distance", key, key)
+flows <- do_join(flows, pred_dt, "Bevölkerung gesamt", "origin", "Kennziffer", "pop_o")
+flows <- do_join(flows, pred_dt, "Bevölkerung gesamt", "destination", "Kennziffer", "pop_d")
+setcolorder(flows, c("origin", "destination", "distance", "pop_o", "pop_d"))
+flows[distance == 0, "distance" := 20]
+
+coefs <- c(0.5, 0.5, -3)
+vars <- c("log(pop_o)", "log(pop_d)", "log(distance)")
+
+
+formula <- get_formula(coefs, vars)
+?rnegbin
+set.seed(123)
+flows[, "linpred" := eval(parse(text = formula))]
+flows[, "flow" := rpois(nrow(flows), exp(linpred))]
+flows[, "flow2" := rnegbin(nrow(flows), exp(linpred), theta = 1e2)]
+
