@@ -136,7 +136,7 @@ get_flows_only <- function(dt, us_o = NULL, us_d = NULL, by = NULL) {
     return(dt)
 }
 
-get_regions <- function(dt, shps, us = c("us", "di", "mu"),
+get_regions <- function(dt, shps, us = c("st", "di", "mu"),
                         type = c("data", "all")) {
     AGS <- NULL
     us <- match.arg(us)
