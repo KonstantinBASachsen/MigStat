@@ -26,22 +26,6 @@ beware when joining other data. still it is preferred because it saves memory."
     return(dist)
 }
 
-join_distances <- function(region_pairs, distances) {
-    i.distance <- origin <- destination <- NULL
-    ### maybe I should remove those copy because of memory
-    combs <- copy(region_pairs)
-    dist <- copy(distances)
-    ## combs <- combs[, "od" := create_od(origin, destination)]
-    ## dist <- dist[, "od" := create_od(origin, destination)]
-    ## setkeyv(combs, "od")
-    ## setkeyv(dist, "od")
-    setkeyv(combs, c("origin", "destination"))
-    setkeyv(dist, c("origin", "destination"))
-    combs[dist, "distance" := i.distance]
-    return(combs)
-    
-}
-
 get_distances <- function(shp) {
     #### there is room for improvement. I compute all pairwise
     #### distances, without using symmetrie. This is especially bad
