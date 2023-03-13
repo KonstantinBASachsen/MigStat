@@ -1,7 +1,15 @@
-read_distances <- function(file, type = "int") {
-    if (!type %in% c("int", "cha")) {
-        stop("type either int for ags as integer or cha as character")
-    }
+##' Reads distances from .csv.
+##'
+##' @title Reads distances from .csv
+##' @param file Full path to filw
+##' @param type character, eiter "int" or "cha". If "int", colums are
+##'     read as integers, if "cha", columns are read as character.
+##' @return data.tale with distances
+##' @export read_distances
+##' @import data.table
+##' @author Konstantin
+read_distances <- function(file, type = c("int", "cha")) {
+    type <- match.arg(type)
     if (type == "int") {
         col_types <- c("integer", "integer", "integer")
         dist <- data.table::fread(file, colClasses=col_types)
