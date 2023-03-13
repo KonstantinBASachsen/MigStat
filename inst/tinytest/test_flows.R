@@ -28,7 +28,7 @@ mig$age_gr <- sample(c("0-6", "7-16", "16-99"), nrow(mig), replace = TRUE)
 all_regions <- unique(c(mig[, EF03U2], mig[, EF02U2]))
 values <- list("origin" = all_regions, "destination" = all_regions)
 values <- list("region" = all_regions)
-net <- MigStat::get_flows(mig, us_d = "st", fill = "groups", values = values)
+net <- get_flows(dt = mig, us_o = "none", us_d = "st", fill = "all", values = values)
 expect_equal(net[, sum(net)], 0)
 expect_equal(net[, sum(losses)], 200)
 expect_equal(net[, sum(wins)], 200)
@@ -73,7 +73,7 @@ expect_equal(intersect(expected, actual), union(expected, actual) )
 ### mig data.
 
 regions <- union(mig[, EF02U2], mig[, EF03U2])
-net <- get_net(mig, us = "st")
+net <- get_flows(mig, us_o = "none", us_d = "st")
 mes <- "Number regions in net equals number regions in union of origin and destination"
 expect_equal(data.table::uniqueN(net[, region]), length(regions),
              info = mes)
