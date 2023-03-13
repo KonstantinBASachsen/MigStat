@@ -85,7 +85,7 @@ get_flows <- function(dt,
     }
     if (fill != "none") {
         check_input_elements(values = values, flows = flows, type)
-        flows <- include_missing_obs(flows, fill = fill,
+        flows <- include_missing_obs(flows = flows, fill = fill,
                                      values = values, type = type)
     }
     return(flows)
@@ -136,9 +136,11 @@ get_flows_only <- function(dt, us_o = NULL, us_d = NULL, by = NULL) {
     return(dt)
 }
 
-get_regions <- function(dt, shps, us, type) {
+get_regions <- function(dt, shps, us = c("us", "di", "mu"),
+                        type = c("data", "all")) {
     AGS <- NULL
-    stopifnot(type %in% c("data", "all"))
+    us <- match.arg(us)
+    type <- match.arg(type)
     ags_o <- get_agscol(get_unitcol(us, F))
     ags_d <- get_agscol(get_unitcol(us, T))
     shp <- shps[[get_shp_unit(us)]] ### not sure if this works though
@@ -231,15 +233,13 @@ check_input_values <- function(values, type, by) {
     }
 }
 
-check_input_elements <- function(values, flows, type) {
+check_input_elements <- function(values, flows, type = c("od", "net")) {
+    type  <- match.arg(type)
     if (type == "od") {
-        check_input_elements_type_od()
+        check_input_elements_type_od(values = values, flows = flows)
     }
     if (type == "net") {
-        check_input_elements_type_net()
-    }
-    if (! type %in% c("od", "net")) {
-        stop("Type neither 'net' nor 'od'!")
+        check_input_elements_type_net(values = values, flows = flows)
     }
 }
 
@@ -279,7 +279,7 @@ check_input_elements_type_net <- function(values, flows) {
     region <- NULL
     region_data <- unique(flows[, region])
     region_values <- unique(values[["region"]])
-    if (class(regions_data) != class(regions_values)) {
+    if (class(region_data) != class(region_values)) {
         mes <- sprintf("Region in data is of type %s, region in values of type %s. Must be of same type.",
                        class(region_data), class(region_values))
         stop(mes)
