@@ -1,8 +1,6 @@
-read_clean_shps <- function(clean_path, type = "ags") {
+read_clean_shps <- function(clean_path, type = c("ags", "complete")) {
     GEN <- AGS <- NULL 
-    if (type %in% c("ags", "complete") == FALSE)  {
-        stop("type either ags or complete")
-    }
+    type <- match.arg(type)
     if (type == "ags") {
         st_path <- file.path(clean_path, "states.shp")
         di_path <- file.path(clean_path, "districts.shp")
