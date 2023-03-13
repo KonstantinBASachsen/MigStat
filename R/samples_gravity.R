@@ -19,12 +19,17 @@
 ##' @import data.table
 ##' @export samples_gravity
 ##' @author Konstantin
-samples_gravity <- function(shp, size, dist = NULL, probs = FALSE) {
+samples_gravity <- function(shps, inkar, us = c("st", "di", "mu"),
+                            size, dist = NULL, probs = FALSE) {
     destination <- origin <- AGS <- i.distance <- NULL
     if (is.null(dist)) { dist <- get_distances(shp) }
     ### I want to return o_name and d_name as well. get_distances()
 ### returns those so maybe I can say join_distances() to keep them.
+    us <- match.arg(us)
     message("distances done")
+    unit <- get_shp_unit(us)
+    unit <- paste0(unit, "s") ## in shps all in plural
+    shp <- shps[[unit]]
     ags <- shp[order(AGS), AGS]
     message("creating sample space")
     combs <- create_region_combs(ags)
@@ -34,7 +39,7 @@ samples_gravity <- function(shp, size, dist = NULL, probs = FALSE) {
     setkeyv(dist, c("origin", "destination"))
     combs[dist, "distance" := i.distance]
     message("distances joined")
-    combs <- join_populations(combs, shp)
+    combs <- join_inkar_vars(shp, inkar, "Bevölkerung gesamt", us, "2017")
     message("populations joined")
     combs <- gravity_probs(combs)
     message("sample probabilities created")
@@ -115,25 +120,25 @@ join_samples <- function(reg_combinations, samples, na_to_0 = TRUE) {
     }
 
 
-join_populations <- function(flows, shp) {
-    ### joins population sizes based on flows object. This function
-    ### has no own full = TRUE argument. That is, it takes the keys
-    ### from the flow object. The standard in get_flows() is to call
-    ### join_distances with full = TRUE. If population sizes are
-    ### joined afterwards it joins sizes to empty flows as well.
+## join_populations <- function(flows, shp) {
+##     ### joins population sizes based on flows object. This function
+##     ### has no own full = TRUE argument. That is, it takes the keys
+##     ### from the flow object. The standard in get_flows() is to call
+##     ### join_distances with full = TRUE. If population sizes are
+##     ### joined afterwards it joins sizes to empty flows as well.
 
-### It seems to be not really intuitive to first call get flows to
-### simulate random draws then. Maybe I change it at some point.
-### not sure what happens if there should be populations missing
-    i.EWZ <- rn <- NULL
-    flows_pop <- copy(flows)
-    flows_pop[, "rn" := 1:nrow(flows_pop)]
-    setkeyv(flows_pop, "origin")
-    setkeyv(shp, "AGS")
-    flows_pop[shp, "pop_o" := i.EWZ]
-    setkeyv(flows_pop, "destination")
-    flows_pop[shp, "pop_d" := i.EWZ]
-    flows_pop <- flows_pop[order(rn)]
-    flows_pop[, "rn" := NULL]
-    return(flows_pop)
-}
+## ### It seems to be not really intuitive to first call get flows to
+## ### simulate random draws then. Maybe I change it at some point.
+## ### not sure what happens if there should be populations missing
+##     i.EWZ <- rn <- NULL
+##     flows_pop <- copy(flows)
+##     flows_pop[, "rn" := 1:nrow(flows_pop)]
+##     setkeyv(flows_pop, "origin")
+##     setkeyv(shp, "AGS")
+##     flows_pop[shp, "pop_o" := i.EWZ]
+##     setkeyv(flows_pop, "destination")
+##     flows_pop[shp, "pop_d" := i.EWZ]
+##     flows_pop <- flows_pop[order(rn)]
+##     flows_pop[, "rn" := NULL]
+##     return(flows_pop)
+## }
