@@ -1,13 +1,14 @@
 library("MigStat")
 library("data.table")
 
+ps <- make_paths("work")
+ps$inkar <- "~/extdata/"
 shps_path <- "~/extdata/shapes31_test/no_ewz"
 clean_path <- "~/extdata/shapes31simple2/"
 dist_path <- "~/extdata/distances"
 
 ######################################################################
 ####################### Generate clean shapefiles ####################
-
 ## The following lines assume that the shapefiles are downloaded and
 ## preprocessed. These steps are done by download_shapes.R in
 ## Diss/exec. I plan to write some function that does this and which
@@ -26,9 +27,9 @@ regions <- clean_shps(shps_path, clean_path, years, "complete")
 regions <- clean_shps(shps_path, clean_path, years, "ags")
 
 ## Why do I not save this data?
+
 ######################################################################
 ########################## Generate distances ########################
-
 if (!dir.exists(dist_path)) {
     dir.create(dist_path)
 }
@@ -38,3 +39,17 @@ dist_di <- get_distances(regions$districts)
 data.table::fwrite(dist_di, file.path(dist_path, "distances_di.csv"))
 dist_mu <- get_distances(regions$munis)
 data.table::fwrite(dist_mu, file.path(dist_path, "distances_mu.csv"))
+
+######################################################################
+######################### Simulating moves ###########################
+ex_dat <- MigStat:::read_examples()
+shps <- MigStat:::read_clean_shps(ps$shps)
+dist <- read_distances(file.path(ps$dist, "distances_st.csv")) ## should only take path and "us" arg
+inkar <- read_inkar(file.path(ps$inkar, "inkar_2021.csv"))
+
+### samples new Migstat rows
+new_rows <- n_new_rows(ex_dat$mig, ex_dat$shps, "mu", "mu", 100)
+
+
+## samples flows between regions
+samples <- samples_gravity(shps$st, 100, dist)
