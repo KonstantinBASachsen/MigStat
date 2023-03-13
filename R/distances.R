@@ -26,7 +26,7 @@ beware when joining other data. still it is preferred because it saves memory."
     return(dist)
 }
 
-get_distances <- function(shp) {
+get_distances <- function(shp, type = c("point_on_surface", "centroid")) {
     #### there is room for improvement. I compute all pairwise
     #### distances, without using symmetrie. This is especially bad
     #### because half of diskspace and more importantly of memory
@@ -34,8 +34,13 @@ get_distances <- function(shp) {
     geometry <- centers <- AGS <- distance <- NULL
     ### computes pair wise distances between all units of type
 ### "us". Maybe I only need it for pairs with non zero flows?
+    type <- match.arg(type)
     shp_dist <- copy(shp)
-    shp_dist[, "centers" := sf::st_centroid(geometry)]
+    if (type == "point_on_surface") {
+        shp_dist[, "centers" := sf::st_point_on_surface(geometry)]
+    } else {
+        shp_dist[, "centers" := sf::st_centroid(geometry)]
+    }
     distances <- round(sf::st_distance(shp_dist[, centers] / 1000), 0) 
     keys <- shp_dist[, AGS]
     colnames(distances) <- keys
@@ -45,6 +50,6 @@ get_distances <- function(shp) {
     setDT(distances)
     colnames(distances) <- c("destination", "origin", "distance")
     distances[, "distance" := as.integer(distance)]
-    message("If reading distances from disk")
     return(distances)
 }
+
