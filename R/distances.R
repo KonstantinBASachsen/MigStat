@@ -35,7 +35,7 @@ get_distances <- function(shp, type = c("point_on_surface", "centroid")) {
     ### computes pair wise distances between all units of type
 ### "us". Maybe I only need it for pairs with non zero flows?
     type <- match.arg(type)
-    shp_dist <- copy(shp)
+    shp_dist <- data.table::copy(shp) ##better to CJ od-pairs? copy necessary?
     if (type == "point_on_surface") {
         shp_dist[, "centers" := sf::st_point_on_surface(geometry)]
     } else {
@@ -43,12 +43,14 @@ get_distances <- function(shp, type = c("point_on_surface", "centroid")) {
     }
     distances <- round(sf::st_distance(shp_dist[, centers] / 1000), 0) 
     keys <- shp_dist[, AGS]
+    ## bc distances matrix with rows and cols numbered consecutively
+    ## but AGS not necessarily (I guess).
     colnames(distances) <- keys
     rownames(distances) <- keys
     distances <- as.table(distances)
     distances <- data.table::data.table(distances)
-    colnames(distances) <- c("origin", "destination", "distance")
-    cols <- colnames(distances)
+    cols <- c("origin", "destination", "distance")
+    colnames(distances) <- cols
     distances[, (cols) := lapply(.SD, as.integer), .SDcols = cols]
     return(distances)
 }
