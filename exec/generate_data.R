@@ -34,9 +34,9 @@ regions <- clean_shps(shps_path, clean_path, years, "ags")
 if (!dir.exists(dist_path)) {
     dir.create(dist_path)
 }
-dist_st <- get_distances(regions$states)
+dist_st <- get_distances(regions$states, type = "point_on_surface")
 data.table::fwrite(dist_st, file.path(dist_path, "distances_st.csv"))
-dist_di <- get_distances(regions$districts)
+dist_di <- get_distances(regions$districts, type = "point_on_surface")
 data.table::fwrite(dist_di, file.path(dist_path, "distances_di.csv"))
 dist_mu <- get_distances(regions$munis)
 data.table::fwrite(dist_mu, file.path(dist_path, "distances_mu.csv"))
@@ -91,6 +91,8 @@ gravity_samples <- function(shps, inkar, dist_p, us = c("st", "di", "mu"),
     return(flows)
 }
 
-samples <- gravity_samples(shps, inkar, ps$dist, us = "di",
+samples <- gravity_samples(shps, inkar, ps$dist, us = "st",
                            params = c(0.6, 0.7, -3), period = 2017)
+q <- quantile(samples$flow, 0.9)
+plot(density(samples$flow), xlim = c(0, q))
 
