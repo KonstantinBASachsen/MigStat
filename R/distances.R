@@ -28,14 +28,12 @@ beware when joining other data. still it is preferred because it saves memory."
 
 get_distances <- function(shp, type = c("point_on_surface", "centroid")) {
     #### there is room for improvement. I compute all pairwise
-    #### distances, without using symmetrie. This is especially bad
+    #### distances, without using symmetry. This is especially bad
     #### because half of diskspace and more importantly of memory
     #### could be saved
     geometry <- centers <- AGS <- distance <- .SD <- NULL
-    ### computes pair wise distances between all units of type
-### "us". Maybe I only need it for pairs with non zero flows?
     type <- match.arg(type)
-    shp_dist <- data.table::copy(shp) ##better to CJ od-pairs? copy necessary?
+    shp_dist <- data.table::copy(shp) ## without copy centers in shp
     if (type == "point_on_surface") {
         shp_dist[, "centers" := sf::st_point_on_surface(geometry)]
     } else {
@@ -51,6 +49,7 @@ get_distances <- function(shp, type = c("point_on_surface", "centroid")) {
     distances <- data.table::data.table(distances)
     cols <- c("origin", "destination", "distance")
     colnames(distances) <- cols
+    ### integer needs about half of diskspace/memory
     distances[, (cols) := lapply(.SD, as.integer), .SDcols = cols]
     return(distances)
 }
