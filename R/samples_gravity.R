@@ -8,14 +8,20 @@
 ##' It returns a data.table. Every row is one move between two regions.
 ##' 
 ##' @title Random data based on gravity model
-##' @param shp The shapefile of desired regions. Either all states,
-##'     all districts or all municipalities.
+##' @param shps data.table The shapefile of all regions including
+##'     states districts and municipalities. (Will be changed in
+##'     future)
+##' @param inkar data.table INKAR data set used to obtain the
+##'     predictors.
+##' @param us character, Oberservational unit, c("st", "di", "mu") for
+##'     "states", "districts" or "municipalities."
 ##' @param size Sample size.
 ##' @param dist Vector of pairwise distances. If not provided it is
 ##'     created. This can take a long time.
 ##' @param probs If TRUE, probabilites of every od-pair to be sampled
-##'     are returned. Useful for debugging. 
-##' @return It returns a data.table. Every row is one move between two regions.
+##'     are returned. Useful for debugging.
+##' @return It returns a data.table. Every row is one move between two
+##'     regions.
 ##' @import data.table
 ##' @export samples_gravity
 ##' @author Konstantin
@@ -39,7 +45,7 @@ samples_gravity <- function(shps, inkar, us = c("st", "di", "mu"),
     setkeyv(dist, c("origin", "destination"))
     combs[dist, "distance" := i.distance]
     message("distances joined")
-    combs <- join_inkar_vars(shp, inkar, "Bevölkerung gesamt", us, "2017")
+    combs <- join_inkar_vars(shp, inkar, "Bev\u00F6lkerung gesamt", us, "2017")
     message("populations joined")
     combs <- gravity_probs(combs)
     message("sample probabilities created")
