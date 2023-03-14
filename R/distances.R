@@ -31,7 +31,7 @@ get_distances <- function(shp, type = c("point_on_surface", "centroid")) {
     #### distances, without using symmetrie. This is especially bad
     #### because half of diskspace and more importantly of memory
     #### could be saved
-    geometry <- centers <- AGS <- distance <- NULL
+    geometry <- centers <- AGS <- distance <- .SD <- NULL
     ### computes pair wise distances between all units of type
 ### "us". Maybe I only need it for pairs with non zero flows?
     type <- match.arg(type)
@@ -46,10 +46,10 @@ get_distances <- function(shp, type = c("point_on_surface", "centroid")) {
     colnames(distances) <- keys
     rownames(distances) <- keys
     distances <- as.table(distances)
-    distances <- as.data.frame(distances)
-    setDT(distances)
-    colnames(distances) <- c("destination", "origin", "distance")
-    distances[, "distance" := as.integer(distance)]
+    distances <- data.table::data.table(distances)
+    colnames(distances) <- c("origin", "destination", "distance")
+    cols <- colnames(distances)
+    distances[, (cols) := lapply(.SD, as.integer), .SDcols = cols]
     return(distances)
 }
 
