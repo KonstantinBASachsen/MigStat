@@ -112,24 +112,24 @@ do_join <- function(dt1, dt2, join_col, key1, key2 = "AGS", new_col = NULL, ...)
 
 read_mig <- function(path,
                      type = c("age", "complete", "sample",
-                              "reasonable", "simulation") {
+                              "reasonable", "simulation")) {
 ### function assumes that the different mig versions given by type are
 ### saved and reads the chosen one. Seems a bit complicated. Maybe it
 ### is better to just specify the file name?
-  type <- match.arg(type)
+    type <- match.arg(type)
   ## lol better with paste _type.csv
-  if(type == "age") {
-    file <- "mig.csv"
-  } else if (type == "complete") {
-    file <- "mig_complete.csv"
-  } else if (type == "reasonable") {
-    file <- "mig_reasonable.csv"
-  } else if (type == "simulation") {
-      file <- "moves_unif_year.csv"
-  } else {
-    file <- "mig_sample.csv"
-  }
+    if(type == "age") {
+        file <- "mig.csv"
+    } else if (type == "complete") {
+        file <- "mig_complete.csv"
+    } else if (type == "reasonable") {
+        file <- "mig_reasonable.csv"
+    } else if (type == "simulation") {
+        file <- "moves_unif_year.csv"
+    } else {
+        file <- "mig_sample.csv"
+    }
     mig <- data.table::fread(file.path(path, file),
-                           encoding = "UTF-8")
+                             encoding = "UTF-8")
     return(mig)
 }
