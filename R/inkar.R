@@ -14,17 +14,24 @@
 ##' @param vars character vector with variable names from inkar data
 ##'     that are to be joined.
 ##' @param us unit_simple: "st", "di" or "mu".
-##' @param zb The year which is to be joined. Assumed to be a
+##' @param year The year which is to be joined. Assumed to be a
 ##'     character .
+##' @param check logical, if TRUE, availability of vars for us and
+##'     year is checked and if unavailable warning returned
 ##' @return data.table with joined variables.
 ##' @import data.table
 ##' @export join_inkar_vars
 ##' @author Konstantin
-join_inkar_vars <- function(shp, inkar, vars, us, zb) {
+join_inkar_vars <- function(shp, inkar, vars,
+                            us = c("st", "di", "mu"), year,
+                            check = FALSE) {
+    us <- match.arg(us)
     rb <- get_raumbezug(us)
-    avail <- unlist(lapply(vars, function(x) check_availability(inkar, rb, zb, x)))
-    vars <- vars[avail != 0]
-    ink <- get_inkar_vars(inkar, vars, rb, zb)
+    if (check == TRUE) { ## cause really slow
+        avail <- unlist(lapply(vars, function(x) check_availability(inkar, rb, year, x)))
+        vars <- vars[avail != 0]
+    }
+    ink <- get_inkar_vars(inkar, vars, rb, year)
     shp_ink <- join_inkar(shp, ink)
     return(shp_ink)
 }
@@ -46,20 +53,18 @@ join_inkar <- function(shp, ink) {
     data.table::setkeyv(ink, "Kennziffer")
     shp_joined <- shp[ink]
     return(shp_joined)
-
 }
 
 get_inkar_vars <- function(inkar, vars, rb, zb, wide = TRUE) {
     Raumbezug <- Zeitbezug <- Indikator <- NULL
     Kennziffer <- Wert  <- . <- NULL
-        
     ink <- inkar[Raumbezug == rb & Zeitbezug == zb & Indikator %in% vars, ]
-    ink <- ink[, .SD[1], by = c("Indikator", "Wert")]
+##    ink <- ink[, .SD[1], by = c("Indikator", "Wert")] ## purpose?
     ink <- ink[, .(Kennziffer, Indikator, Wert)]
-    if(wide == TRUE) {
-        ink <- data.table::dcast(ink, Kennziffer ~ Indikator, value.var = "Wert")
+    if (wide == TRUE) {
+        ink <- data.table::dcast(ink, Kennziffer ~ Indikator,
+                                 value.var = "Wert")
     }
-
     return(ink)
 }
 
