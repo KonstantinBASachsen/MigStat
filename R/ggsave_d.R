@@ -59,19 +59,12 @@ ggsave_d <- function(plot, plot_name, path, save_data = FALSE,
     } else {
         dt <- copy(data)
     }
-    if ("geom" %in% colnames(dt)) {
-        dt[, "geom" := NULL]
-        message("geom column dropped before saving")
-    }
-    if ("geometry" %in% colnames(dt)) {
-        dt[, "geometry" := NULL]
-        message("geometry column dropped before saving")
-    }
+    dt <- drop_geometry(dt)
     if (excel == TRUE & save_data == TRUE) {
-      fpath <- file.path(data_path, paste0(plot_name, ".xlsx"))
+      fpath <- file.path(ps$data_path, paste0(plot_name, ".xlsx"))
       openxlsx::write.xlsx(x = dt, fpath)
     } else if (excel == FALSE & save_data == TRUE) {
-      fpath <- file.path(data_path, paste0(plot_name, ".csv"))
+      fpath <- file.path(ps$data_path, paste0(plot_name, ".csv"))
       data.table::fwrite(x = dt, file = fpath) 
     } else if (save_data == FALSE) {
         message("plot data not saved")
@@ -87,3 +80,33 @@ ggsave_d <- function(plot, plot_name, path, save_data = FALSE,
     }
     ## not save bc file might exists and is not created anew
 }
+
+
+make_plot_dirs <- function(path) {
+        plot_path <- file.path(path, "plots")
+        data_path <- file.path(path, "plot_data")
+        if (! dir.exists(plot_path)) {
+            dir.create(plot_path, recursive = TRUE)
+            message(sprintf("Directory to save plot created: %s", plot_path))
+        }
+        if (! dir.exists(data_path)) {
+            dir.create(data_path, recursive = TRUE)
+            message(sprintf("Directory to save data from plot created: %s", data_path))
+        }
+        ps <- list("plot_path" = plot_path, "data_path" = data_path)
+        return(ps)
+}
+
+drop_geometry <- function(dt) {
+    data.table::setDT(dt) ## save to do it?
+    if ("geom" %in% colnames(dt)) {
+        dt[, "geom" := NULL]
+        message("geom column dropped before saving")
+    }
+    if ("geometry" %in% colnames(dt)) {
+        dt[, "geometry" := NULL]
+        message("geometry column dropped before saving")
+    }
+    return(dt)
+}
+
