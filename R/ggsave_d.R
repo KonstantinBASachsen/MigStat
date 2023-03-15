@@ -50,15 +50,7 @@ ggsave_d <- function(plot, plot_name, path, save_data = FALSE,
     ## } Apparently "." tests for any character
     ps <- make_plot_dirs(path)
     ggplot2::ggsave(filename = paste0(plot_name, ".pdf"), plot = plot, path = ps$plot_path, ...)
-    if (is.null(data)) { ## better in function
-        if(ncol(plot$data) <= 1) {
-            warning("looks like in plot$data is no actual data! Did you use different data set in plot as well? If so, specify using data argument")
-        }
-        dt <- data.table::copy(plot$data)
-##        message("data from plot object is saved") seems wrong place for this message
-    } else {
-        dt <- data.table::copy(data)
-    }
+    dt <- return_data(plot = plot, data = data)
     dt <- drop_geometry(dt)
     saving_plot_data(dt = dt, save_data = save_data, excel = excel,
                      plot_name = plot_name, paths = ps)
@@ -79,6 +71,19 @@ make_plot_dirs <- function(path) {
         }
         ps <- list("plot_path" = plot_path, "data_path" = data_path)
         return(ps)
+}
+
+return_data <- function(plot, data) {
+    if (is.null(data)) { ## better in function
+        if(ncol(plot$data) <= 1) {
+            warning("looks like in plot$data is no actual data! Did you use different data set in plot as well? If so, specify using data argument")
+        }
+        dt <- data.table::copy(plot$data)
+        ##        message("data from plot object is saved") seems wrong place for this message
+    } else {
+        dt <- data.table::copy(data)
+    }
+    return(dt)
 }
 
 drop_geometry <- function(dt) {
