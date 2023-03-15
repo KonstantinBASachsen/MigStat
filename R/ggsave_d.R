@@ -54,30 +54,14 @@ ggsave_d <- function(plot, plot_name, path, save_data = FALSE,
         if(ncol(plot$data) <= 1) {
             warning("looks like in plot$data is no actual data! Did you use different data set in plot as well? If so, specify using data argument")
         }
-        dt <- copy(plot$data)
+        dt <- data.table::copy(plot$data)
 ##        message("data from plot object is saved") seems wrong place for this message
     } else {
-        dt <- copy(data)
+        dt <- data.table::copy(data)
     }
     dt <- drop_geometry(dt)
-    if (excel == TRUE & save_data == TRUE) {
-      fpath <- file.path(ps$data_path, paste0(plot_name, ".xlsx"))
-      openxlsx::write.xlsx(x = dt, fpath)
-    } else if (excel == FALSE & save_data == TRUE) {
-      fpath <- file.path(ps$data_path, paste0(plot_name, ".csv"))
-      data.table::fwrite(x = dt, file = fpath) 
-    } else if (save_data == FALSE) {
-        message("plot data not saved")
-    }
-    if (save_data == TRUE) {
-        if (file.exists(fpath)) {
-            message("plot data written to disk")
-        } else {
-            warning("plot data not written to disk although it should have")
-            ## badly done because fpath might not exist so it can not be
-            ## checked if file was written to disk
-        }
-    }
+    saving_plot_data(dt = dt, save_data = save_data, excel = excel,
+                     plot_name = plot_name, paths = ps)
     ## not save bc file might exists and is not created anew
 }
 
@@ -110,3 +94,25 @@ drop_geometry <- function(dt) {
     return(dt)
 }
 
+saving_plot_data <- function(dt, save_data, excel, plot_name, paths) {
+    ps <- paths
+    if (excel == TRUE & save_data == TRUE) {
+        fpath <- file.path(ps$data_path, paste0(plot_name, ".xlsx"))
+        openxlsx::write.xlsx(x = dt, fpath)
+    } else if (excel == FALSE & save_data == TRUE) {
+        fpath <- file.path(ps$data_path, paste0(plot_name, ".csv"))
+        data.table::fwrite(x = dt, file = fpath) 
+    } else if (save_data == FALSE) {
+        message("plot data not saved")
+    }
+    if (save_data == TRUE) { ## Why do I do this?
+        if (file.exists(fpath)) {
+            message("plot data written to disk")
+        } else {
+            warning("plot data not written to disk although it should have")
+            ## badly done because fpath might not exist so it can not be
+            ## checked if file was written to disk
+        }
+    }
+    return(NULL)
+}
