@@ -42,7 +42,7 @@ ggsave_d <- function(plot, plot_name, path, save_data = FALSE,
 
 ### checking name for file ending would be nice
 
-    if (methods::is(plot) != "gg") {
+    if ("gg" %in% methods::is(plot) == FALSE) {
         stop("Plot should be result from ggplot()")
     }
     ## if (grepl(".", plot_name) == TRUE) {
@@ -74,7 +74,9 @@ make_plot_dirs <- function(path) {
 }
 
 return_data <- function(plot, data) {
-    if (is.null(data)) { ## better in function
+    ## is called by ggsave_d and save_d. If data is NULL and plot is
+    ## no ggplot, doesn't work, so check
+    if (is.null(data)) {
         if(ncol(plot$data) <= 1) {
             warning("looks like in plot$data is no actual data! Did you use different data set in plot as well? If so, specify using data argument")
         }
@@ -87,7 +89,7 @@ return_data <- function(plot, data) {
 }
 
 drop_geometry <- function(dt) {
-    data.table::setDT(dt) ## save to do it?
+    data.table::setDT(dt) ## save to do this?
     if ("geom" %in% colnames(dt)) {
         dt[, "geom" := NULL]
         message("geom column dropped before saving")
