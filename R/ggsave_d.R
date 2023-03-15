@@ -48,18 +48,9 @@ ggsave_d <- function(plot, plot_name, path, save_data = FALSE,
     ## if (grepl(".", plot_name) == TRUE) {
     ##     warning("Did you specify file ending in plot_name. Better without ending")
     ## } Apparently "." tests for any character
-    plot_path <- file.path(path, "plots")
-    data_path <- file.path(path, "plot_data")
-    if (! dir.exists(plot_path)) {
-        dir.create(plot_path, recursive = TRUE)
-        message(sprintf("Directory to save plot created: %s", plot_path))
-    }
-    if (! dir.exists(data_path)) {
-        dir.create(data_path, recursive = TRUE)
-        message(sprintf("Directory to save data from plot created: %s", data_path))
-    }
-    ggplot2::ggsave(filename = paste0(plot_name, ".pdf"), plot = plot, path = plot_path, ...)
-    if (is.null(data)) {
+    ps <- make_plot_dirs(path)
+    ggplot2::ggsave(filename = paste0(plot_name, ".pdf"), plot = plot, path = ps$plot_path, ...)
+    if (is.null(data)) { ## better in function
         if(ncol(plot$data) <= 1) {
             warning("looks like in plot$data is no actual data! Did you use different data set in plot as well? If so, specify using data argument")
         }
