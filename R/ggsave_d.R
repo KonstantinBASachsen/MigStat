@@ -57,6 +57,10 @@ ggsave_d <- function(plot, plot_name, path, save_data = FALSE,
     ## not save bc file might exists and is not created anew
 }
 
+save_d <- function(plot, plot_name, path, save_data = FALSE,
+                   data = NULL, excel = TRUE) {
+}
+
 
 make_plot_dirs <- function(path) {
         plot_path <- file.path(path, "plots")
