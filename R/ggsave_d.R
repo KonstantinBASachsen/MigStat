@@ -32,52 +32,61 @@
 ##' @author Konstantin
 ggsave_d <- function(plot, plot_name, path, save_data = FALSE,
                      data = NULL, excel = TRUE, ...) {
-    ### now filename and plot args are swapped compared to
-### ggplot2::ggsave
-  
-  ## dont know anymore why I call copy
-  
-  ## either make saving data optional or make usage similar to ggplot::ggsave()
-  ## so this can be used without struggle if data is not to be saved
-
-### checking name for file ending would be nice
-
-    if ("gg" %in% methods::is(plot) == FALSE) {
-        stop("Plot should be result from ggplot()")
+    ## now filename and plot args are swapped compared to
+    ## ggplot2::ggsave
+    ## dont know anymore why I call copy
+    ## either make saving data optional or make usage similar to ggplot::ggsave()
+    ## so this can be used without struggle if data is not to be saved
+    ## checking name for file ending would be nice
+    if (is.null(plot)) {
+        stop("Please specify plot as either object (only ggplots) or function call (both base-r and ggplot).")
     }
-    ## if (grepl(".", plot_name) == TRUE) {
-    ##     warning("Did you specify file ending in plot_name. Better without ending")
-    ## } Apparently "." tests for any character
+    if (grepl("\\.", plot_name) == TRUE) {
+        stop("Detected '.' in plot_name. Please specify without file ending.")
+    }
     ps <- make_plot_dirs(path)
-    ggplot2::ggsave(filename = paste0(plot_name, ".pdf"), plot = plot, path = ps$plot_path, ...)
-    dt <- return_data(plot = plot, data = data)
+    if (inherits(plot, "gg")) {
+        ggplot2::ggsave(filename = paste0(plot_name, ".pdf"), plot = plot, path = ps$plot_path, ...)
+        dt <- return_data_gg(plot = plot, data = data)
+    } else {
+        if(is.null(data) == TRUE & save_data == TRUE) {
+            stop("'plot' seems to be base-r, please provide data for saving or set save_data = FALSE.")
+        }
+        dt <- data.table::copy(data)
+    }
     dt <- drop_geometry(dt)
     saving_plot_data(dt = dt, save_data = save_data, excel = excel,
                      plot_name = plot_name, paths = ps)
     ## not save bc file might exists and is not created anew
 }
 
-save_d <- function(plot, plot_name, path, save_data = FALSE,
-                   data = NULL, excel = TRUE) {
-}
+
+## base_save <- function(plot, plot_name, path, save_data = FALSE,
+##                    data = NULL, excel = TRUE) {
+## }
+
+    
+## pdf(path, width = 30, height = 20)
+## plot_fit(fit3, labels)
+## dev.off()
 
 
 make_plot_dirs <- function(path) {
-        plot_path <- file.path(path, "plots")
-        data_path <- file.path(path, "plot_data")
-        if (! dir.exists(plot_path)) {
-            dir.create(plot_path, recursive = TRUE)
-            message(sprintf("Directory to save plot created: %s", plot_path))
-        }
-        if (! dir.exists(data_path)) {
-            dir.create(data_path, recursive = TRUE)
-            message(sprintf("Directory to save data from plot created: %s", data_path))
-        }
-        ps <- list("plot_path" = plot_path, "data_path" = data_path)
-        return(ps)
+    plot_path <- file.path(path, "plots")
+    data_path <- file.path(path, "plot_data")
+    if (! dir.exists(plot_path)) {
+        dir.create(plot_path, recursive = TRUE)
+        message(sprintf("Directory to save plot created: %s", plot_path))
+    }
+    if (! dir.exists(data_path)) {
+        dir.create(data_path, recursive = TRUE)
+        message(sprintf("Directory to save data from plot created: %s", data_path))
+    }
+    ps <- list("plot_path" = plot_path, "data_path" = data_path)
+    return(ps)
 }
 
-return_data <- function(plot, data) {
+return_data_gg <- function(plot, data) {
     ## is called by ggsave_d and save_d. If data is NULL and plot is
     ## no ggplot, doesn't work, so check
     if (is.null(data)) {
