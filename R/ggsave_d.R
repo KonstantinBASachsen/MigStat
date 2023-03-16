@@ -52,6 +52,7 @@ ggsave_d <- function(plot, plot_name, path, save_data = FALSE,
         if(is.null(data) == TRUE & save_data == TRUE) {
             stop("'plot' seems to be base-r, please provide data for saving or set save_data = FALSE.")
         }
+        base_save(plot, plot_name, ps$plot_data)
         dt <- data.table::copy(data)
     }
     dt <- drop_geometry(dt)
@@ -59,17 +60,6 @@ ggsave_d <- function(plot, plot_name, path, save_data = FALSE,
                      plot_name = plot_name, paths = ps)
     ## not save bc file might exists and is not created anew
 }
-
-
-## base_save <- function(plot, plot_name, path, save_data = FALSE,
-##                    data = NULL, excel = TRUE) {
-## }
-
-    
-## pdf(path, width = 30, height = 20)
-## plot_fit(fit3, labels)
-## dev.off()
-
 
 make_plot_dirs <- function(path) {
     plot_path <- file.path(path, "plots")
@@ -99,6 +89,13 @@ return_data_gg <- function(plot, data) {
         dt <- data.table::copy(data)
     }
     return(dt)
+}
+
+base_save <- function(plot, plot_name, path) {
+    pdf(file.path(path, paste0(plot_name, ".pdf")),
+        width = 30, height = 20)
+    plot
+    dev.off()
 }
 
 drop_geometry <- function(dt) {
