@@ -30,7 +30,7 @@
 ##' @export ggsave_d
 ##' @importFrom methods is
 ##' @author Konstantin
-ggsave_d <- function(plot, plot_name, path, save_data = FALSE,
+ggsave_d <- function(plt, plot_name, path, save_data = FALSE,
                      data = NULL, excel = TRUE, ...) {
     ## now filename and plot args are swapped compared to
     ## ggplot2::ggsave
@@ -48,14 +48,14 @@ ggsave_d <- function(plot, plot_name, path, save_data = FALSE,
     ps <- make_plot_dirs(path)
 ##    base_save(plot = plot, plot_name = plot_name, path = ps$plot_path)
     if (inherits(plot, "gg")) {
-        ggplot2::ggsave(filename = paste0(plot_name, ".pdf"), plot = plot, path = ps$plot_path, ...)
-        dt <- return_data_gg(plot = plot, data = data)
+        ggplot2::ggsave(filename = paste0(plot_name, ".pdf"), plot = plt, path = ps$plot_path, ...)
+        dt <- return_data_gg(plot = plt, data = data)
     } else {
         if(is.null(data) == TRUE & save_data == TRUE) {
-            stop("'plot' seems to be base-r, please provide data for saving or set save_data = FALSE.")
+            stop("'plt' seems to be base-r, please provide data for saving or set save_data = FALSE.")
         }
         print(ps$plot_path)
-        base_save(plot = plot, plot_name = plot_name, path = ps$plot_path)
+        base_save(plot = plt, plot_name = plot_name, path = ps$plot_path)
         dt <- data.table::copy(data)
         print(head(dt))
     }
