@@ -65,9 +65,16 @@ ggsave_d <- function(plt, plot_name, path, save_data = FALSE,
 }
 
 save_plot <- function(plt, plot_name, path, save_data = FALSE,
-                     data = NULL, excel = TRUE, ...) {
+                      data = NULL, excel = TRUE, ...) {
+    if (grepl("\\.", plot_name) == TRUE) {
+        stop("Detected '.' in plot_name. Please specify without file ending.")
+    }
     ps <- make_plot_dirs(path)
     base_save(plt = plt, plot_name = plot_name, path = ps$plot_path)
+    dt <- data.table::copy(data)
+    dt <- drop_geometry(dt)
+    saving_plot_data(dt = dt, save_data = save_data, excel = excel,
+                     plot_name = plot_name, paths = ps)
 }
 
 base_save <- function(plt, plot_name, path) {
