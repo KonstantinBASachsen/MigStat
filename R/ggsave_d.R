@@ -77,14 +77,14 @@ save_plot <- function(plt, plot_name, path, save_data = FALSE,
     ##     if(is.null(data) == TRUE & save_data == TRUE) { ## should go in return_data_base
     ##         stop("'plt' seems to be base-r, please provide data for saving or set save_data = FALSE.")
 #        }
-        base_save(plt = plt, plot_name = plot_name, path = ps$plot_path)
+    base_save(plt = plt, plot_name = plot_name, path = ps$plot_path)
         ## I should write return_data_base that checks if plt returns
         ## a data.table and if so, returns this table and if not, returns data
- #       dt <- data.table::copy(data)
+    dt <- data.table::copy(data)
     ## }
-    ## dt <- drop_geometry(dt)
-    ## saving_plot_data(dt = dt, save_data = save_data, excel = excel,
-    ##                  plot_name = plot_name, paths = ps)
+    dt <- drop_geometry(dt)
+    saving_plot_data(dt = dt, save_data = save_data, excel = excel,
+                     plot_name = plot_name, paths = ps)
 }
 
 base_save <- function(plt, plot_name, path) {
