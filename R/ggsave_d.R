@@ -64,6 +64,19 @@ ggsave_d <- function(plt, plot_name, path, save_data = FALSE,
     ## not save bc file might exists and is not created anew
 }
 
+save_plot <- function(plt, plot_name, path, save_data = FALSE,
+                     data = NULL, excel = TRUE, ...) {
+    ps <- make_plot_dirs(path)
+    base_save(plt = plt, plot_name = plot_name, path = ps$plot_path)
+}
+
+base_save <- function(plt, plot_name, path) {
+    grDevices::pdf(file.path(path, paste0(plot_name, ".pdf")),
+        width = 30, height = 20)
+    plt
+    grDevices::dev.off()
+}
+
 make_plot_dirs <- function(path) {
     plot_path <- file.path(path, "plots")
     data_path <- file.path(path, "plot_data")
@@ -94,12 +107,7 @@ return_data_gg <- function(plot, data) {
     return(dt)
 }
 
-base_save <- function(plot, plot_name, path) {
-    grDevices::pdf(file.path(path, paste0(plot_name, ".pdf")),
-        width = 30, height = 20)
-    plot
-    grDevices::dev.off()
-}
+
 
 drop_geometry <- function(dt) {
     data.table::setDT(dt) ## save to do this?
