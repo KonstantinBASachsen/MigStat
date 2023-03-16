@@ -38,13 +38,15 @@ ggsave_d <- function(plot, plot_name, path, save_data = FALSE,
     ## either make saving data optional or make usage similar to ggplot::ggsave()
     ## so this can be used without struggle if data is not to be saved
     ## checking name for file ending would be nice
-    if (is.null(plot)) {
-        stop("Please specify plot as either object (only ggplots) or function call (both base-r and ggplot).")
-    }
+
+    ## if (is.null(plot)) { ## class of plot(cars) is null actually
+    ##     stop("Please specify plot as either object (only ggplots) or function call (both base-r and ggplot).")
+    ## }
     if (grepl("\\.", plot_name) == TRUE) {
         stop("Detected '.' in plot_name. Please specify without file ending.")
     }
     ps <- make_plot_dirs(path)
+##    base_save(plot = plot, plot_name = plot_name, path = ps$plot_path)
     if (inherits(plot, "gg")) {
         ggplot2::ggsave(filename = paste0(plot_name, ".pdf"), plot = plot, path = ps$plot_path, ...)
         dt <- return_data_gg(plot = plot, data = data)
@@ -52,8 +54,10 @@ ggsave_d <- function(plot, plot_name, path, save_data = FALSE,
         if(is.null(data) == TRUE & save_data == TRUE) {
             stop("'plot' seems to be base-r, please provide data for saving or set save_data = FALSE.")
         }
-        base_save(plot, plot_name, ps$plot_data)
+        print(ps$plot_path)
+        base_save(plot = plot, plot_name = plot_name, path = ps$plot_path)
         dt <- data.table::copy(data)
+        print(head(dt))
     }
     dt <- drop_geometry(dt)
     saving_plot_data(dt = dt, save_data = save_data, excel = excel,
