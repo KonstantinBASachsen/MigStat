@@ -6,7 +6,7 @@
 ##' called plot_data. The data is saved under the same name as the
 ##' plot and it is saved as .csv.
 ##' @title Save plot and data used for plotting
-##' @param plot plot created with ggplot()
+##' @param plt plot created with ggplot()
 ##' @param plot_name Name of plot file and .csv file on disk. Specify
 ##'     without file ending. So it is "regions_flow" instead of
 ##'     "regions_flow.pdf"
@@ -95,10 +95,10 @@ return_data_gg <- function(plot, data) {
 }
 
 base_save <- function(plot, plot_name, path) {
-    pdf(file.path(path, paste0(plot_name, ".pdf")),
+    grDevices::pdf(file.path(path, paste0(plot_name, ".pdf")),
         width = 30, height = 20)
     plot
-    dev.off()
+    grDevices::dev.off()
 }
 
 drop_geometry <- function(dt) {
