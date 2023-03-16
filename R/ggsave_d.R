@@ -54,10 +54,8 @@ ggsave_d <- function(plt, plot_name, path, save_data = FALSE,
         if(is.null(data) == TRUE & save_data == TRUE) {
             stop("'plt' seems to be base-r, please provide data for saving or set save_data = FALSE.")
         }
-        print(ps$plot_path)
         base_save(plot = plt, plot_name = plot_name, path = ps$plot_path)
         dt <- data.table::copy(data)
-        print(head(dt))
     }
     dt <- drop_geometry(dt)
     saving_plot_data(dt = dt, save_data = save_data, excel = excel,
