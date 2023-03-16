@@ -47,7 +47,7 @@ ggsave_d <- function(plt, plot_name, path, save_data = FALSE,
     }
     ps <- make_plot_dirs(path)
 ##    base_save(plot = plot, plot_name = plot_name, path = ps$plot_path)
-    if (inherits(plot, "gg")) {
+    if (inherits(plt, "gg")) {
         ggplot2::ggsave(filename = paste0(plot_name, ".pdf"), plot = plt, path = ps$plot_path, ...)
         dt <- return_data_gg(plot = plt, data = data)
     } else {
