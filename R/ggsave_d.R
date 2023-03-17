@@ -30,7 +30,7 @@
 ##' @export ggsave_d
 ##' @importFrom methods is
 ##' @author Konstantin
-ggsave_d <- function(plt, plot_name, path, base = TRUE, save_data = FALSE,
+save_plot <- function(plt, plot_name, path, base = TRUE, save_data = FALSE,
                      data = NULL, excel = TRUE, ...) {
     ## now filename and plot args are swapped compared to
     ## ggplot2::ggsave
