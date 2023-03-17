@@ -30,7 +30,7 @@
 ##' @export ggsave_d
 ##' @importFrom methods is
 ##' @author Konstantin
-ggsave_d <- function(plt, plot_name, path, save_data = FALSE,
+ggsave_d <- function(plt, plot_name, path, base = TRUE, save_data = FALSE,
                      data = NULL, excel = TRUE, ...) {
     ## now filename and plot args are swapped compared to
     ## ggplot2::ggsave
@@ -46,11 +46,12 @@ ggsave_d <- function(plt, plot_name, path, save_data = FALSE,
         stop("Detected '.' in plot_name. Please specify without file ending.")
     }
     ps <- make_plot_dirs(path)
-    if (inherits(plt, "gg")) {
+    if (base == FALSE) {
         ggplot2::ggsave(filename = paste0(plot_name, ".pdf"), plot = plt, path = ps$plot_path, ...)
         dt <- return_data_gg(plot = plt, data = data)
-    } else {
-        if(is.null(data) == TRUE & save_data == TRUE) { ## should go in return_data_base
+    }
+    if  (base == TRUE) {
+        if (is.null(data) == TRUE & save_data == TRUE) { ## should go in return_data_base
             stop("'plt' seems to be base-r, please provide data for saving or set save_data = FALSE.")
         }
         base_save(plt = plt, plot_name = plot_name, path = ps$plot_path)
@@ -64,39 +65,39 @@ ggsave_d <- function(plt, plot_name, path, save_data = FALSE,
     ## not save bc file might exists and is not created anew
 }
 
-save_plot <- function(plt, plot_name, path, save_data = FALSE,
-                      data = NULL, excel = TRUE, base = TRUE, ...) {
-    if (grepl("\\.", plot_name) == TRUE) {
-        stop("Detected '.' in plot_name. Please specify without file ending.")
-    }
-    ps <- make_plot_dirs(path)
-    if (base == FALSE) {
-        message("type gg")
-        ggplot2::ggsave(filename = paste0(plot_name, ".pdf"), plot = plt, path = ps$plot_path, ...)
-        dt <- return_data_gg(plot = plt, data = data)
-    }
-    if (base == TRUE) {
-        message("type base")
-        base_save(plt = plt, plot_name = plot_name, path = ps$plot_path)
-        dt <- data.table::copy(data)
-    }
-    dt <- drop_geometry(dt)
-    saving_plot_data(dt = dt, save_data = save_data, excel = excel,
-                     plot_name = plot_name, paths = ps)
-}
+## save_plot <- function(plt, plot_name, path, save_data = FALSE,
+##                       data = NULL, excel = TRUE, base = TRUE, ...) {
+##     if (grepl("\\.", plot_name) == TRUE) {
+##         stop("Detected '.' in plot_name. Please specify without file ending.")
+##     }
+##     ps <- make_plot_dirs(path)
+##     if (base == FALSE) {
+##         message("type gg")
+##         ggplot2::ggsave(filename = paste0(plot_name, ".pdf"), plot = plt, path = ps$plot_path, ...)
+##         dt <- return_data_gg(plot = plt, data = data)
+##     }
+##     if (base == TRUE) {
+##         message("type base")
+##         base_save(plt = plt, plot_name = plot_name, path = ps$plot_path)
+##         dt <- data.table::copy(data)
+##     }
+##     dt <- drop_geometry(dt)
+##     saving_plot_data(dt = dt, save_data = save_data, excel = excel,
+##                      plot_name = plot_name, paths = ps)
+## }
 
-save_save_plot <- function(plt, plot_name, path, save_data = FALSE,
-                      data = NULL, excel = TRUE, ...) {
-    if (grepl("\\.", plot_name) == TRUE) {
-        stop("Detected '.' in plot_name. Please specify without file ending.")
-    }
-    ps <- make_plot_dirs(path)
-    base_save(plt = plt, plot_name = plot_name, path = ps$plot_path)
-    dt <- data.table::copy(data)
-    dt <- drop_geometry(dt)
-    saving_plot_data(dt = dt, save_data = save_data, excel = excel,
-                     plot_name = plot_name, paths = ps)
-}
+## save_save_plot <- function(plt, plot_name, path, save_data = FALSE,
+##                       data = NULL, excel = TRUE, ...) {
+##     if (grepl("\\.", plot_name) == TRUE) {
+##         stop("Detected '.' in plot_name. Please specify without file ending.")
+##     }
+##     ps <- make_plot_dirs(path)
+##     base_save(plt = plt, plot_name = plot_name, path = ps$plot_path)
+##     dt <- data.table::copy(data)
+##     dt <- drop_geometry(dt)
+##     saving_plot_data(dt = dt, save_data = save_data, excel = excel,
+##                      plot_name = plot_name, paths = ps)
+## }
 
 base_save <- function(plt, plot_name, path) {
     grDevices::pdf(file.path(path, paste0(plot_name, ".pdf")),
