@@ -64,6 +64,11 @@ get_inkar_vars <- function(inkar, vars, rb, zb, wide = TRUE) {
     if (wide == TRUE) {
         ink <- data.table::dcast(ink, Kennziffer ~ Indikator,
                                  value.var = "Wert")
+        ## Here sometimes a warning pops up that aggregate function is
+        ## missing. This happens if the same indicator happens to be
+        ## in the INKAR more than ones. This can happen I think with
+        ## ZOM and SDG. In this case a more helpful warning (or better
+        ## error) message would be good.
     }
     return(ink)
 }
