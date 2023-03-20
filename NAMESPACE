@@ -2,6 +2,7 @@
 
 export(cols_on_quantiles)
 export(do_join)
+export(get_distances)
 export(get_flows)
 export(join_inkar_vars)
 export(make_paths)
