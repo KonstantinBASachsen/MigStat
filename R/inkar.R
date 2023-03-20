@@ -100,7 +100,7 @@ get_raumbezug <- function(us) {
 ##' @import data.table
 ##' @export read_inkar
 ##' @author Konstantin
-read_inkar <- function(path, leading_0 = TRUE) {
+read_inkar <- function(path, leading_0 = FALSE) {
     Kennziffer <- NULL
     inkar <- data.table::fread(path, dec = ",")
 ### grap strings that start and end with [0-9] and add leading 0
