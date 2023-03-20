@@ -90,7 +90,12 @@ make_plot_dirs <- function(path) {
         dir.create(data_path, recursive = TRUE)
         message(sprintf("Directory to save data from plot created: %s", data_path))
     }
-    ps <- list("plot_path" = plot_path, "data_path" = data_path)
+    if (! dir.exists(model_path)) {
+        dir.create(model_path, recursive = TRUE)
+        message(sprintf("Directory to save models created: %s", model_path))
+    }
+    ps <- list("plot_path" = plot_path, "data_path" = data_path,
+               "model_path" = model_path)
     return(ps)
 }
 
