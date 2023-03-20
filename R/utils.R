@@ -128,7 +128,8 @@ read_mig <- function(path, file, type = "csv") {
     if (grepl("\\.", file) == TRUE) {
         stop("Detected '.' in file. Please specify without file ending.")
     }
-    mig <- data.table::fread(file.path(path, file, paste0(".", type)),
+    file <-  paste0(file, ".", type)
+    mig <- data.table::fread(file.path(path, file),
                              encoding = "UTF-8")
     return(mig)
 }
