@@ -26,6 +26,22 @@ beware when joining other data. still it is preferred because it saves memory."
     return(dist)
 }
 
+##' Computes all pairwise distances between all regions given in data
+##' table.
+##'
+##' @title Pairwise distances between regions
+##' @param shp data.table with at least two columns: AGS and geometry
+##' @param type character. If point_on_surface, distances between
+##'     sf::st_point_on_surface are computed. If centroid, distances
+##'     between sf::st_centroid. Check the sf documentation, if
+##'     necessary.
+##' @return data.table with three integer columns: Origin, destination
+##'     and distance. Origin and destination are the ags of both
+##'     regions respectively
+##' @import sf
+##' @import data.table
+##' @export get_distances
+##' @author Konstantin
 get_distances <- function(shp, type = c("point_on_surface", "centroid")) {
     #### there is room for improvement. I compute all pairwise
     #### distances, without using symmetry. This is especially bad
