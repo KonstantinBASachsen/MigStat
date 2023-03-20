@@ -1,5 +1,5 @@
 inkar_csv <- "/home/konstantin/Downloads/inkar_2021.csv"
-inkar <- MigStat::read_inkar(inkar_csv)
+inkar <- MigStat::read_inkar(inkar_csv, leading_0=TRUE)
 ex_dat <- MigStat:::read_examples()
 ######################################################################
 ###################### test read_inkar() #############################
