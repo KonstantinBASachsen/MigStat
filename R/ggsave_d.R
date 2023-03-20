@@ -150,16 +150,23 @@ saving_data <- function(dt, out_path, name, excel = TRUE) {
     }
     out_path <- make_plot_dirs(out_path)
     saving_plot_data(dt, save_data = TRUE, excel = excel,
-                     plot_name = name, paths = out_path)
+                     plot_name = name, paths = out_path,
+                     model = TRUE)
 }
 
-saving_plot_data <- function(dt, save_data, excel, plot_name, paths) {
-    ps <- paths
+saving_plot_data <- function(dt, save_data, excel, plot_name, paths,
+                             model = FALSE) {
+    if (model == TRUE) {
+        path <- paths$model_path
+    }
+    if (model == FALSE) {
+        path <- paths$data_path
+    }
     if (excel == TRUE & save_data == TRUE) {
-        fpath <- file.path(ps$data_path, paste0(plot_name, ".xlsx"))
+        fpath <- file.path(path, paste0(plot_name, ".xlsx"))
         openxlsx::write.xlsx(x = dt, fpath)
     } else if (excel == FALSE & save_data == TRUE) {
-        fpath <- file.path(ps$data_path, paste0(plot_name, ".csv"))
+        fpath <- file.path(path, paste0(plot_name, ".csv"))
         data.table::fwrite(x = dt, file = fpath) 
     } else if (save_data == FALSE) {
         message("plot data not saved")
