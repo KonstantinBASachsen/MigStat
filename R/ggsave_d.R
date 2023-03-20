@@ -23,6 +23,8 @@
 ##'     .csv. If the data to be saved is large this might take a long
 ##'     time. Saving as .csv currently does not work if data is a list
 ##'     of data frames.
+##' @param width width of plot in pixels
+##' @param height height of plot in pixels
 ##' @param ... Additional parameters passed to ggplot2::ggsave(). See
 ##'     ?ggplot2::ggsave
 ##'@return NULL. Saves plot and data to disk. Data is saved as .csv or
