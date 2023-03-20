@@ -1,4 +1,4 @@
-ex_dat <- MigStat:::read_examples()
+ex_dat <- read_examples()
 mig <- ex_dat$mig
 shps <- ex_dat$shps
 mig$gender <- sample(c("m", "f"), nrow(mig), replace = TRUE)
@@ -47,11 +47,11 @@ expect_equal(nrow(net), 17)
 ########################### get_net() grouped operations #######################
 ################################################################################
 us <- "st"
-all_regions <- MigStat:::get_regions(dt = mig, shps = shps, us = us, type = "all")
+all_regions <- get_regions(dt = mig, shps = shps, us = us, type = "all")
 
 values <- list("region" = all_regions, "gender" = c("m", "f"),
                "age_gr" = c("0-6", "7-16", "16-99"))
-net <- MigStat::get_flows(mig, us_o = us, by = c("gender", "age_gr"),
+net <- get_flows(mig, us_o = us, by = c("gender", "age_gr"),
                           fill = "groups", values = values)
 expected <- net[region == "05", wins]
 actual <- mig[EF02U2 == "05", .N, by = .( gender, age_gr)][, N]
