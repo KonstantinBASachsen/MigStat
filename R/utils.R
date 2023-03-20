@@ -109,27 +109,26 @@ do_join <- function(dt1, dt2, join_col, key1, key2 = "AGS", new_col = NULL, ...)
     return(dt1)
 }
 
-
-read_mig <- function(path,
-                     type = c("age", "complete", "sample",
-                              "reasonable", "simulation")) {
+##' 
+##'
+##' Reads migration statistics or actually any other tabular data that
+##' can be procesed by data.table::fread
+##' @title Read migration statistics
+##' @param path Path to migration statistics
+##' @param file File name without ending
+##' @param type character (optional) of file type.
+##' @return data.table
+##' @export read_mig
+##' @importFrom data.table fread
+##' @author Konstantin
+read_mig <- function(path, file, type = "csv") {
 ### function assumes that the different mig versions given by type are
 ### saved and reads the chosen one. Seems a bit complicated. Maybe it
 ### is better to just specify the file name?
-    type <- match.arg(type)
-  ## lol better with paste _type.csv
-    if(type == "age") {
-        file <- "mig.csv"
-    } else if (type == "complete") {
-        file <- "mig_complete.csv"
-    } else if (type == "reasonable") {
-        file <- "mig_reasonable.csv"
-    } else if (type == "simulation") {
-        file <- "moves_unif_year.csv"
-    } else {
-        file <- "mig_sample.csv"
+    if (grepl("\\.", file) == TRUE) {
+        stop("Detected '.' in file. Please specify without file ending.")
     }
-    mig <- data.table::fread(file.path(path, file),
+    mig <- data.table::fread(file.path(path, file, paste0(".", type)),
                              encoding = "UTF-8")
     return(mig)
 }
