@@ -157,9 +157,9 @@ drop_geometry <- function(dt) {
 ##'
 ##' @title Saves data
 ##' @param dt data to be saved
-##' @param out_path path. If it does not exist path and subfolders:
-##'     "plots" and "plot_data" are created. Data is saved in
-##'     "plot_data". Although this is misleading.
+##' @param out_path paths object.  If out_path does not exist path and
+##'     subfolders: "plots" and "plot_data" are created. Data is saved
+##'     in "plot_data". Although this is misleading.
 ##' @param name name of file to be saved. Without ending
 ##' @param excel logical, if TRUE, data is saved in excel format, if
 ##'     FALSE then in .csv
@@ -168,11 +168,11 @@ drop_geometry <- function(dt) {
 ##' @importFrom data.table fread
 ##' @importFrom openxlsx write.xlsx
 ##' @export saving_data
-saving_data <- function(dt, out_path, name, excel) {
-    if (grepl("\\.", plot_name) == TRUE) {
-        stop("Detected '.' in plot_name. Please specify without file ending.")
+saving_data <- function(dt, out_path, name, excel = TRUE) {
+    if (grepl("\\.", name) == TRUE) {
+        stop("Detected '.' in name. Please specify without file ending.")
     }
-    make_plot_dirs(out_path)
+    out_path <- make_plot_dirs(out_path)
     saving_plot_data(dt, save_data = TRUE, excel = excel,
                      plot_name = name, paths = out_path)
 }
