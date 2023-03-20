@@ -81,6 +81,7 @@ base_save <- function(plt, plot_name, path, width, height) {
 make_plot_dirs <- function(path) {
     plot_path <- file.path(path, "plots")
     data_path <- file.path(path, "plot_data")
+    model_path <- file.path(path, "models")
     if (! dir.exists(plot_path)) {
         dir.create(plot_path, recursive = TRUE)
         message(sprintf("Directory to save plot created: %s", plot_path))
