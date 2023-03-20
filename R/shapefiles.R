@@ -21,7 +21,7 @@
 ##' @return List of three data tables. Every data.table returns the
 ##'     shapefile for the three region types: federal states,
 ##'     districts and municipalities.
-##' @export read_clean_shapes
+##' @export read_clean_shps
 ##' @importFrom sf read_sf
 ##' @import data.table
 ##' @author Konstantin
