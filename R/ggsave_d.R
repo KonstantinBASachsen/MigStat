@@ -12,6 +12,8 @@
 ##'     "regions_flow.pdf"
 ##' @param path Directory where "plots" and "data_plots"
 ##'     subdirectories are created
+##' @param base logical, set to TRUE if plot is generated with base
+##'     graphics. FALSE if plot is generated with ggplot2.
 ##' @param save_data logical. If FALSE plot data is not saved.
 ##' @param data Optional. If given this data is saved instead of the
 ##'     one in the plot object. This is useful if the data called by
@@ -23,11 +25,11 @@
 ##'     of data frames.
 ##' @param ... Additional parameters passed to ggplot2::ggsave(). See
 ##'     ?ggplot2::ggsave
-##'@return NULL. Saves plot and data to disk. Data is saved as
-##'     .csv or .xlsx. Plot saved as .pdf by default but other formats can be
+##'@return NULL. Saves plot and data to disk. Data is saved as .csv or
+##'     .xlsx. Plot saved as .pdf by default but other formats can be
 ##'     used. See ?ggplot2::ggsave
 ##' @import openxlsx
-##' @export ggsave_d
+##' @export save_plot
 ##' @importFrom methods is
 ##' @author Konstantin
 save_plot <- function(plt, plot_name, path, base = TRUE, save_data = FALSE,
