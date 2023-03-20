@@ -33,7 +33,8 @@
 ##' @importFrom methods is
 ##' @author Konstantin
 save_plot <- function(plt, plot_name, path, base = TRUE, save_data = FALSE,
-                     data = NULL, excel = TRUE, ...) {
+                      data = NULL, excel = TRUE, width = 10, height = 0.7 * width,
+                      ...) {
     ## now filename and plot args are swapped compared to
     ## ggplot2::ggsave
     ## dont know anymore why I call copy
@@ -56,7 +57,8 @@ save_plot <- function(plt, plot_name, path, base = TRUE, save_data = FALSE,
         if (is.null(data) == TRUE & save_data == TRUE) { ## should go in return_data_base
             stop("'plt' seems to be base-r, please provide data for saving or set save_data = FALSE.")
         }
-        base_save(plt = plt, plot_name = plot_name, path = ps$plot_path)
+        base_save(plt = plt, plot_name = plot_name, path = ps$plot_path,
+                  width = width, height = height, ...)
         ## I should write return_data_base that checks if plt returns
         ## a data.table and if so, returns this table and if not, returns data
         dt <- data.table::copy(data)
@@ -67,9 +69,9 @@ save_plot <- function(plt, plot_name, path, base = TRUE, save_data = FALSE,
     ## not save bc file might exists and is not created anew
 }
 
-base_save <- function(plt, plot_name, path) {
+base_save <- function(plt, plot_name, path, width, height) {
     grDevices::pdf(file.path(path, paste0(plot_name, ".pdf")),
-        width = 30, height = 20)
+        width = width, height = height)
     plt
     grDevices::dev.off()
 }
