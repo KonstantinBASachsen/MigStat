@@ -16,7 +16,8 @@ Imports:
 	ggplot2,
 	openxlsx,
 	stats,
-	methods
+	methods,
+	MASS
 Suggests: 
     tinytest 
 

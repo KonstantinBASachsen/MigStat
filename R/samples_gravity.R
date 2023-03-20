@@ -17,7 +17,7 @@
 ##' @param theta numeric, to choose variance if distribution =
 ##'     "negbinom". See ?MASS::rnegbinom
 ##' @return data.table with new column "flows".
-##' @importFrom MASS rnegbinom
+##' @importFrom MASS rnegbin
 ##' @import data.table
 ##' @export samples_gravity
 ##' @author Konstantin
@@ -25,7 +25,7 @@ samples_gravity <- function(dt, params = c(0.5, 0.5, -3), n = 5e6,
                             distribution = c("pois", "negbinom"),
                             theta = NULL) {
     ## add check if coef dist < 0
-    linpred <- NULL
+    linpred <- distance <- .N <- NULL
     distribution <- match.arg(distribution)
     stopifnot("Not all columns in data" = c("pop_o", "pop_d", "distance") %in% colnames(dt))
     stopifnot("Distances == 0 in data" = dt[distance == 0, .N] == 0)
