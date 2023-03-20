@@ -1,15 +1,42 @@
-read_clean_shps <- function(clean_path, type = c("ags", "complete")) {
+##' 
+##'
+##' Reads tidied shapefiles from disk. Expects files in path that are
+##' named like 'states.shp' or 'states_all.shp'
+##'
+##' Regarding type: If type == "ags", every ags is only returned
+##' once. Often times the ags of regions does not change over the
+##' years. In these cases, year is omitted and the ags is returned
+##' only once.
+##'
+##' If instead type == "complete" then all ags's for every year are
+##' returned. This is useful for simulating data because then all ags
+##' of one year can be used. For other purposes, like joining geometry
+##' attribute it is not su useful because the data is a lot bigger.
+##' @title Reads tidied shapefiles from disk.
+##' @param path Path to shapefiles
+##' @param type character. If 'ags' then files 'states.shp',
+##'     'districts.shp' and 'munis.shp' are read. If type 'complete'
+##'     'states_all.shp', 'districts_all.shp' and 'munis_all.shp'. See
+##'     details
+##' @return List of three data tables. Every data.table returns the
+##'     shapefile for the three region types: federal states,
+##'     districts and municipalities.
+##' @export read_clean_shapes
+##' @importFrom sf read_sf
+##' @import data.table
+##' @author Konstantin
+read_clean_shps <- function(path, type = c("ags", "complete")) {
     GEN <- AGS <- NULL 
     type <- match.arg(type)
     if (type == "ags") {
-        st_path <- file.path(clean_path, "states.shp")
-        di_path <- file.path(clean_path, "districts.shp")
-        mu_path <- file.path(clean_path, "munis.shp")
+        st_path <- file.path(path, "states.shp")
+        di_path <- file.path(path, "districts.shp")
+        mu_path <- file.path(path, "munis.shp")
     }
     if (type == "complete") {
-        st_path <- file.path(clean_path, "states_all.shp")
-        di_path <- file.path(clean_path, "districts_all.shp")
-        mu_path <- file.path(clean_path, "munis_all.shp")
+        st_path <- file.path(path, "states_all.shp")
+        di_path <- file.path(path, "districts_all.shp")
+        mu_path <- file.path(path, "munis_all.shp")
     }
     states <- sf::read_sf(st_path)
     data.table::setDT(states)
