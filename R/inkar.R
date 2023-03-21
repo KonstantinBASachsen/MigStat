@@ -139,7 +139,7 @@ get_raumbezug <- function(us) {
 ##' @author Konstantin
 read_inkar <- function(path, tolower = TRUE, to_num = FALSE,
                        leading_0 = FALSE) {
-    Kennziffer <- Zeitbezug <- .SD <- NULL
+    Kennziffer <- Zeitbezug <- .SD <- varname <- NULL
     inkar <- data.table::fread(path, dec = ",")
 ### grap strings that start and end with [0-9] and add leading 0
 ### because in shapefiles and migration statistics the id is coded
