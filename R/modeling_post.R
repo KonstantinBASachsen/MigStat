@@ -138,12 +138,21 @@ save_model_plots <- function(extracts, path, title, lbls = NULL,
     for (i in seq_along(extracts)) {
         plt_name <- paste0("fit", i, name_suffix)
         save_plot(plot_fit(extracts[[i]], title = title, lbls = lbls, ...),
-                  plt_name, save_data = TRUE, path = ps$out, data = extracts[[i]]$preds)
+                  plt_name, save_data = TRUE, path = path, data = extracts[[i]]$preds)
     }
     return(NULL)
 }
 
-
+##' Saves model output in extracts_fit(fit)$model
+##'
+##' @title Saves everything in extracts_fit(fit)$model
+##' @param extracts List of extracts from extract_fit()
+##' @param path Output path, saves output in path/models.
+##' @param name_suffix character, optional. If not NULL, suffix is
+##'     appended to file names
+##' @return NULL
+##' @export save_model_output
+##' @author Konstantin
 save_model_output <- function(extracts, path, name_suffix = NULL) {
     for (i in seq_along(extracts)) {
         name <- paste0("fit", i, name_suffix)
