@@ -31,7 +31,7 @@ join_inkar_vars <- function(shp, inkar, vars,
         avail <- unlist(lapply(vars, function(x) check_availability(inkar, rb, year, x)))
         vars <- vars[avail != 0]
     }
-    ink <- get_inkar_vars(inkar, vars, rb, year)
+    ink <- get_inkar_vars(inkar, vars, rb, year, name_col = "Indikator")
     shp_ink <- join_inkar(shp, ink)
     return(shp_ink)
 }
@@ -48,26 +48,42 @@ check_availability <- function(inkar, rb, zb, var) {
 
 join_inkar <- function(shp, ink) {
     ### add message that wide == TRUE is expected
-    Kennziffer <- Indikator <- NULL
     data.table::setkeyv(shp, "AGS")
-    data.table::setkeyv(ink, "Kennziffer")
+    data.table::setkeyv(ink, "AGS")
     shp_joined <- shp[ink]
     return(shp_joined)
 }
 
+##' Extracts variables from INKAR in a either long or wide format.
+##'
+##' @title Extract INKAR variables
+##' @param inkar data.table inkar data
+##' @param vars character, variable names
+##' @param rb character, "Raumbezug" like: "Bundesländer", "Kreise"
+##'     etc.
+##' @param zb numeric, Zeitbezug
+##' @param wide logical, if TRUE, data are returned in wide format, if
+##'     false, in long format.
+##' @param name_col character, name of column where variable names
+##'     "vars" are stored. Usually "Indikator", in this package
+##'     "varname".
+##' @return data.table
+##' @import data.table
+##' @export get_inkar_vars
+##' @author Konstantin
 get_inkar_vars <- function(inkar, vars, rb, zb, wide = TRUE,
                            name_col = c("varname", "Indikator")) {
     Raumbezug <- Zeitbezug <- Indikator <- NULL
-    Kennziffer <- Wert  <- . <- NULL
+    Kennziffer <- Wert <- varname  <- . <- NULL
 
     ### really ugly would be nicer without all the ifs
     name_col <- match.arg(name_col)
     if (name_col == "Indikator") {
-        ink <- inkar[Raumbezug == rb & Zeitbezug == zb & Indikator %in% vars, ]
+        ink <- inkar[Raumbezug == rb & Zeitbezug %in% zb & Indikator %in% vars, ]
         ink <- ink[, .(Kennziffer, Indikator, Wert)]
     }
     if (name_col == "varname") {
-        ink <- inkar[Raumbezug == rb & Zeitbezug == zb & varname %in% vars, ]
+        ink <- inkar[Raumbezug == rb & Zeitbezug %in% zb & varname %in% vars, ]
         ink <- ink[, .(Kennziffer, varname, Wert)]
     }
 ##    ink <- ink[, .SD[1], by = c("Indikator", "Wert")] ## purpose?
