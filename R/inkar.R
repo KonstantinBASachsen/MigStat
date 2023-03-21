@@ -128,6 +128,8 @@ get_raumbezug <- function(us) {
 ##' @param path Path to inkar.csv
 ##' @param tolower logical, if TRUE, varnames are all set to lower
 ##'     case.
+##' @param to_num logical. If TRUE, c("Zeitbezug", "Wert",
+##'     "Kennziffer", "ID") are converted to numeric.
 ##' @param leading_0 If TRUE, converts the regional identiferi column,
 ##'     "Kennziffer", to character and adds leading 0's to one digit
 ##'     id's. See details.
@@ -135,7 +137,8 @@ get_raumbezug <- function(us) {
 ##' @import data.table
 ##' @export read_inkar
 ##' @author Konstantin
-read_inkar <- function(path, tolower = TRUE, leading_0 = FALSE) {
+read_inkar <- function(path, tolower = TRUE, to_num = FALSE,
+                       leading_0 = FALSE) {
     Kennziffer <- Zeitbezug <- .SD <- NULL
     inkar <- data.table::fread(path, dec = ",")
 ### grap strings that start and end with [0-9] and add leading 0
@@ -153,9 +156,11 @@ read_inkar <- function(path, tolower = TRUE, leading_0 = FALSE) {
     if (tolower == TRUE) {
         inkar <- inkar[, "varname" := tolower(varname)]
     }
-    num_cols <- c("Zeitbezug", "Wert", "Kennziffer", "ID")
-    inkar[Zeitbezug == "2016/2017/2018", "Zeitbezug" := NA]
-    inkar[, (num_cols) := lapply(.SD, as.numeric), .SDcols = num_cols]
+    if (to_num == TRUE) {
+        num_cols <- c("Wert", "Kennziffer", "ID")
+##        inkar[Zeitbezug == "2016/2017/2018", "Zeitbezug" := NA]
+        inkar[, (num_cols) := lapply(.SD, as.numeric), .SDcols = num_cols]
+    }
     return(inkar)
 }
 
