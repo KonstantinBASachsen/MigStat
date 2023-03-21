@@ -42,7 +42,8 @@ extract_fit <- function(fit) {
 ##' @author Konstantin
 ##' @import graphics
 ##' @export plot_fit
-plot_fit <- function(extract, lbls = NULL, title = NULL, title_size = 1.5, ...) {
+plot_fit <- function(extract, lbls = NULL, title = NULL,
+                     title_size = 1.5, ...) {
     stopifnot("Expects list with element 'preds" = "preds" %in% names(extract))
     x <- NULL
     graphics::par(mfrow = c(1, 2))
@@ -51,20 +52,20 @@ plot_fit <- function(extract, lbls = NULL, title = NULL, title_size = 1.5, ...) 
     obs_exp <- extract$preds$observed_exp
     if (is.null(lbls)) {
         graphics::plot(preds, obs, main = "log scale",
-             xlab = "Predicted", ylab = "Observed")
+                       xlab = "Predicted", ylab = "Observed")
         graphics::curve(x * 1, add = TRUE, col = "red")
         graphics::plot(preds, obs_exp, main = "original scale",
-             xlab = "Predicted", ylab = "Observed")
+                       xlab = "Predicted", ylab = "Observed")
         graphics::curve(exp(x), add = TRUE, col = "red")
     }
     if (!is.null(lbls)) {
         graphics::plot(preds, obs, main = "log scale",
-             xlab = "Predicted", ylab = "Observed",
-             type = "n")
+                       xlab = "Predicted", ylab = "Observed",
+                       type = "n")
         graphics::curve(x * 1, add = TRUE, col = "red")
         graphics::text(preds, obs, labels = lbls, ...)
         graphics::plot(preds, obs_exp, main = "original scale",
-             xlab = "Predicted", ylab = "Observed", type = "n")
+                       xlab = "Predicted", ylab = "Observed", type = "n")
         graphics::text(preds, obs_exp, labels = lbls, ...)
         graphics::curve(exp(x), add = TRUE, col = "red")
     }
@@ -75,3 +76,40 @@ plot_fit <- function(extract, lbls = NULL, title = NULL, title_size = 1.5, ...) 
     return(NULL)
 }
 
+##' Adds abbreviated names to federal states
+##'
+##' @title Short labels for federal states 
+##' @param shp shapefile for federal states
+##' @return data.table
+##' @import data.table
+##' @export gen_state_labels
+##' @author Konstantin
+gen_state_labels <- function(shp) {
+    AGS <- GEN <- NULL
+    lbls_dt <- shp[, .(AGS, GEN)]
+    lbls_dt[, "GEN_abbr" := c("SH", "HH", "NS", "Bre", "NRW", "Hes",
+                          "RLP", "BaWü", "Bay", "Saa", "Ber", "Bran",
+                          "MP", "Sac", "LSA", "T")]
+    return(lbls_dt)
+}
+##' Joins state labels to flow data and creates labels for plotting
+##'
+##' @title Joins state labels for plotting labels
+##' @param flows data.table of flows
+##' @param lbls_dt data.table of abbreviated names and AGS
+##' @param sep seperator for labels. So labels will be Ber sep HH,
+##'     default Ber > HH to indicate flows from Berlin to Hamburg
+##' @return data.table
+##' @import data.table
+##' @export join_state_labels
+##' @author Konstantin
+join_state_labels <- function(flows, lbls_dt, sep = " > ") {
+    AGS <- GEN_abbr <- lbl_o <- lbl_d <- NULL
+    flows <- merge(flows, lbls_dt[, .(AGS, GEN_abbr)], by.x =  "origin", by.y = "AGS")
+    data.table::setnames(flows, "GEN_abbr", "lbl_o")
+    flows <- merge(flows, lbls_dt[, .(AGS, GEN_abbr)], by.x =  "destination", by.y = "AGS")
+    data.table::setnames(flows, "GEN_abbr", "lbl_d")
+    flows[, "lbl" := paste(lbl_o, lbl_d, sep = sep)]
+    flows[, c("lbl_o", "lbl_d") := NULL]
+    return(flows)
+}
