@@ -114,7 +114,25 @@ join_state_labels <- function(flows, lbls_dt, sep = " > ") {
     return(flows)
 }
 
-
+##' Wrapper that saves conveniently plots from model extracts
+##'
+##' When extracting output from a model fit I often times use
+##' plot_fit() to quickly evaluate the fit of the model. This function
+##' takes a list of extract_fit() and saves plots created using
+##' plot_fit() from these extracts.
+##' @title Save plot_fit() from many models
+##' @param extracts list of extracts from extract_fit()
+##' @param path character path. In "path", if not existend three
+##'     subfolders: "plots", "plot_data" and "models" are created.
+##' @param title Title for every one of the plots
+##' @param lbls character, optional if not NULL then lbls instead of
+##'     points are plotted.
+##' @param name_suffix character, optional, if given, name_suffix is
+##'     appended to name of plots.
+##' @param ... optional parameters are passed to plot_fit()
+##' @return NULL
+##' @export save_model_plots
+##' @author Konstantin
 save_model_plots <- function(extracts, path, title, lbls = NULL,
                              name_suffix = NULL, ...) {
     for (i in seq_along(extracts)) {
@@ -124,6 +142,7 @@ save_model_plots <- function(extracts, path, title, lbls = NULL,
     }
     return(NULL)
 }
+
 
 save_model_output <- function(extracts, path, name_suffix = NULL) {
     for (i in seq_along(extracts)) {
