@@ -4,8 +4,6 @@ ex_dat <- MigStat:::read_examples()
 ######################################################################
 ###################### test read_inkar() #############################
 
-table(inkar[, Zeitbezug])
-
 expect_equal(typeof(inkar[, Wert]), "double")
 expect_equal(typeof(inkar[, Zeitbezug]), "character") ## there are e.g. 2010 bis 2019, so better not convert to numeric
 
