@@ -34,12 +34,15 @@ extract_fit <- function(fit) {
 ##' @param extract Extracted data from model, output of extract_fit().
 ##' @param lbls optional, character. If specified instead of plotting
 ##'     points the labels will be plotted.
+##' @param title character, optional. If set 'title' is added as
+##'     heading.
+##' @param title_size numeric, multiplicative factor for title size.
 ##' @param ... Additional parameters passed to text()
 ##' @return NULL
 ##' @author Konstantin
 ##' @import graphics
 ##' @export plot_fit
-plot_fit <- function(extract, lbls = NULL, ...) {
+plot_fit <- function(extract, lbls = NULL, title = NULL, title_size = 1.5, ...) {
     stopifnot("Expects list with element 'preds" = "preds" %in% names(extract))
     x <- NULL
     graphics::par(mfrow = c(1, 2))
@@ -64,6 +67,10 @@ plot_fit <- function(extract, lbls = NULL, ...) {
              xlab = "Predicted", ylab = "Observed", type = "n")
         graphics::text(preds, obs_exp, labels = lbls, ...)
         graphics::curve(exp(x), add = TRUE, col = "red")
+    }
+    if (!is.null(title)) {
+        mtext(title, side = 3, line = -1.5, cex = title_size, outer = TRUE,
+              font = 2)
     }
     return(NULL)
 }
