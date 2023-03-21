@@ -85,10 +85,10 @@ plot_fit <- function(extract, lbls = NULL, title = NULL,
 ##' @export gen_state_labels
 ##' @author Konstantin
 gen_state_labels <- function(shp) {
-    AGS <- GEN <- NULL
+    AGS <- GEN <- . <- NULL
     lbls_dt <- shp[, .(AGS, GEN)]
     lbls_dt[, "GEN_abbr" := c("SH", "HH", "NS", "Bre", "NRW", "Hes",
-                          "RLP", "BaWü", "Bay", "Saa", "Ber", "Bran",
+                          "RLP", "BaW\u00FC", "Bay", "Saa", "Ber", "Bran",
                           "MP", "Sac", "LSA", "T")]
     return(lbls_dt)
 }
@@ -104,7 +104,7 @@ gen_state_labels <- function(shp) {
 ##' @export join_state_labels
 ##' @author Konstantin
 join_state_labels <- function(flows, lbls_dt, sep = " > ") {
-    AGS <- GEN_abbr <- lbl_o <- lbl_d <- NULL
+    AGS <- GEN_abbr <- lbl_o <- lbl_d <- . <- NULL
     flows <- merge(flows, lbls_dt[, .(AGS, GEN_abbr)], by.x =  "origin", by.y = "AGS")
     data.table::setnames(flows, "GEN_abbr", "lbl_o")
     flows <- merge(flows, lbls_dt[, .(AGS, GEN_abbr)], by.x =  "destination", by.y = "AGS")
