@@ -60,9 +60,15 @@ new_rows <- n_new_rows(ex_dat$mig, ex_dat$shps, "mu", "mu", 100)
 ## use in the analyses. These variables I saved in a file
 ## "fdz_v8.csv". I use this file to subset the INKAR data so that it
 ## only contains these variables. This subset I then send to the FDZ.
-inkar_vars <- "~/extdata/inkar_additions/fdz_v8.csv"
+inkar_paths <- "~/extdata/inkar_additions/"
+inkar_vars <- file.path(inkar_paths, "fdz_v8.csv")
 inkar_vars <- fread(inkar_vars)[, .(varname, Kurzname)]
-inkar <- read_inkar(file.path(ps$inkar, "inkar_2021.csv"))
+v8 <- file.path(inkar_paths, "vars_v8.csv")
+inkar_v8 <- fread(v8)[, .(varname, Name)]
+inkar_vars <- merge(inkar_vars, inkar_v8, by = "varname")
+setnames(inkar_vars, "Name", "Langname")
+inkar <- read_inkar(file.path(inkar_paths, "inkar_2021.csv"),
+                    tolower = FALSE, to_num = FALSE)
 ### subesetting INKAR
 raumbezug <- c("Bundesländer", "Kreise", "Gemeinden")
 inkar <- inkar[Raumbezug %in% raumbezug, ]
@@ -74,7 +80,7 @@ setdiff(inkar_vars[, Kurzname], indikatoren)
 inkar <- merge(inkar, inkar_vars, by.x = "Indikator", by.y = "Kurzname")
 inkar <- inkar[!is.na(varname), ]
 inkar[, "Kennziffer_EU" := NULL]
-new_order <- c("varname", "Indikator", "Raumbezug", "Zeitbezug",
+new_order <- c("varname", "Indikator", "Langname", "Raumbezug", "Zeitbezug",
                "Wert", "Kennziffer", "Name")
 setcolorder(inkar, new_order)
 fpath <- "~/extdata/inkar_additions/inkar_fdz.csv"
