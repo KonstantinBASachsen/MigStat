@@ -71,6 +71,11 @@ inkar <- inkar[Raumbezug %in% raumbezug, ]
 ### the data.
 indikatoren <- inkar[, unique(Indikator)]
 setdiff(inkar_vars[, Kurzname], indikatoren)
-inkar <- inkar[Indikator %in% inkar_vars[, Kurzname]]
+inkar <- merge(inkar, inkar_vars, by.x = "Indikator", by.y = "Kurzname")
+inkar <- inkar[!is.na(varname), ]
+inkar[, "Kennziffer_EU" := NULL]
+new_order <- c("varname", "Indikator", "Raumbezug", "Zeitbezug",
+               "Wert", "Kennziffer", "Name")
+setcolorder(inkar, new_order)
 fpath <- "~/extdata/inkar_additions/inkar_fdz.csv"
 fwrite(inkar, fpath)
