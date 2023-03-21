@@ -55,15 +55,32 @@ join_inkar <- function(shp, ink) {
     return(shp_joined)
 }
 
-get_inkar_vars <- function(inkar, vars, rb, zb, wide = TRUE) {
+get_inkar_vars <- function(inkar, vars, rb, zb, wide = TRUE,
+                           name_col = c("varname", "Indikator")) {
     Raumbezug <- Zeitbezug <- Indikator <- NULL
     Kennziffer <- Wert  <- . <- NULL
-    ink <- inkar[Raumbezug == rb & Zeitbezug == zb & Indikator %in% vars, ]
+
+    ### really ugly would be nicer without all the ifs
+    name_col <- match.arg(name_col)
+    if (name_col == "Indikator") {
+        ink <- inkar[Raumbezug == rb & Zeitbezug == zb & Indikator %in% vars, ]
+        ink <- ink[, .(Kennziffer, Indikator, Wert)]
+    }
+    if (name_col == "varname") {
+        ink <- inkar[Raumbezug == rb & Zeitbezug == zb & varname %in% vars, ]
+        ink <- ink[, .(Kennziffer, varname, Wert)]
+    }
 ##    ink <- ink[, .SD[1], by = c("Indikator", "Wert")] ## purpose?
-    ink <- ink[, .(Kennziffer, Indikator, Wert)]
     if (wide == TRUE) {
-        ink <- data.table::dcast(ink, Kennziffer ~ Indikator,
-                                 value.var = "Wert")
+        if (name_col == "Indikator") {
+            ink <- data.table::dcast(ink, Kennziffer ~ Indikator,
+                                     value.var = "Wert")
+        }
+        if (name_col == "varname") {
+            ink <- data.table::dcast(ink, Kennziffer ~ varname,
+                                     value.var = "Wert")
+        }
+        colnames(ink)[colnames(ink) == "Kennziffer"] <- "AGS"
         ## Here sometimes a warning pops up that aggregate function is
         ## missing. This happens if the same indicator happens to be
         ## in the INKAR more than ones. This can happen I think with
