@@ -113,3 +113,22 @@ join_state_labels <- function(flows, lbls_dt, sep = " > ") {
     flows[, c("lbl_o", "lbl_d") := NULL]
     return(flows)
 }
+
+
+save_model_plots <- function(extracts, path, title, lbls = NULL,
+                             name_suffix = NULL, ...) {
+    for (i in seq_along(extracts)) {
+        plt_name <- paste0("fit", i, name_suffix)
+        save_plot(plot_fit(extracts[[i]], title = title, lbls = lbls, ...),
+                  plt_name, save_data = TRUE, path = ps$out, data = extracts[[i]]$preds)
+    }
+    return(NULL)
+}
+
+save_model_output <- function(extracts, path, name_suffix = NULL) {
+    for (i in seq_along(extracts)) {
+        name <- paste0("fit", i, name_suffix)
+        saving_data(extracts[[i]]$model, path, name)
+    }
+    return(NULL)
+}
