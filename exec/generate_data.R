@@ -65,7 +65,24 @@ inkar_vars <- file.path(inkar_paths, "fdz_v8.csv")
 inkar_vars <- fread(inkar_vars)[, .(varname, Kurzname)]
 v8 <- file.path(inkar_paths, "vars_v8.csv")
 inkar_v8 <- fread(v8)[, .(varname, Name)]
-inkar_vars <- merge(inkar_vars, inkar_v8, by = "varname")
+## So in the data I save here: inkar_fdz.csv there some rows seem to
+## be in there twice. I assume this might be because I accidently
+## merge some rows twice because the keys difer slightly. However both
+## keys seem to be the same:
+setdiff(inkar_v8[, varname], inkar_vars[, varname])
+setdiff(inkar_vars[, varname], inkar_v8[, varname])
+## keys are the same but keys are not unique!
+inkar_vars[, uniqueN(varname)] == nrow(inkar_vars)
+inkar_vars[, .N, by = varname][N > 1] ## as expected!
+inkar_v8[, .N, by = varname][N > 1] ## as expected!
+inkar_vars[varname == "EW_ges"]
+inkar_v8[varname == "EW_ges"]
+
+## making sure every variable is in the data just once
+inkar_v8 <- inkar_v8[, .SD[1], by = varname]
+inkar_vars <- inkar_vars[, .SD[1], by = varname]
+inkar_vars <- merge(inkar_vars, inkar_v8, by = "varname", all = FALSE)
+inkar_vars[, .N, by = varname][N > 1] == 0 ## as expected!
 setnames(inkar_vars, "Name", "Langname")
 inkar <- read_inkar(file.path(inkar_paths, "inkar_2021.csv"),
                     tolower = FALSE, to_num = FALSE)
@@ -83,5 +100,6 @@ inkar[, "Kennziffer_EU" := NULL]
 new_order <- c("varname", "Indikator", "Langname", "Raumbezug", "Zeitbezug",
                "Wert", "Kennziffer", "Name")
 setcolorder(inkar, new_order)
+setnames(inkar, "Name", "GEN")
 fpath <- "~/extdata/inkar_additions/inkar_fdz.csv"
 fwrite(inkar, fpath)
