@@ -386,15 +386,15 @@ read_shapes <- function(path, year = 2014) {
     #### type = 6 makes sure that geometry is of type
     #### sfc_MULTIPOLYGON. See ?sf::read_sf
     munis <- sf::read_sf(file.path(path, muni_file), type = 6)
-    munis <- right_crs(munis)
+##     munis <- right_crs(munis)
     munis <- data.table::setDT(munis)
 
     states <- sf::read_sf(file.path(path, states_file), type = 6)
-    states <- right_crs(states)
+##     states <- right_crs(states)
     states <- data.table::setDT(states)
 
     districts <- sf::read_sf(file.path(path, districts_file), type = 6)
-    districts <- right_crs(districts)
+##    districts <- right_crs(districts)
     districts <- data.table::setDT(districts)
     
     shapes <- list("state" = states, "district" = districts, "muni" = munis)
