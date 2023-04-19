@@ -13,10 +13,13 @@ correct_flows <- function(flows, dt) {
     flows2 <- flows2[, "flow_new" := sum(flow_new),
                      by = .(ags_new, destination, year)]
     check_flows(flows2, flows, hard = TRUE)
-    flows2 <- flows2[, .SD[1],
-                     keyby = c("ags_new", "destination", "year")]
+    keys <- c("ags_new", "destination", "year")
+    flows2 <- flows2[, .SD[1], keyby = keys]
     check_flows(flows2, flows, hard = FALSE)
-    flows2[!is.na(ags_new)]
+##     flows2[!is.na(ags_new)] na's should stay so it is clear were
+    ##     ags were not found
+
+    ## cols are returned in wrong order, fix!
     return(flows2)
 }
 
@@ -30,9 +33,10 @@ check_ags_can_be_found <- function(flows, dt) {
     not_found_n <- as.integer(not_found_n)
     if (sum(not_found_n) == 0) {
         message("All AGS were found")
+        tab <- NULL
     }
     if (sum(not_found_n) > 0) {
-        tab <- datab.table::data.table(y_min:y_max, not_found_n)
+        tab <- data.table::data.table(y_min:y_max, not_found_n)
         warning("Several AGS were not found!")
         warning(print(tab))
     }
