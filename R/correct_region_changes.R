@@ -57,6 +57,10 @@ check_flows <- function(flows_new, flows_old, hard = TRUE) {
     }
     if (hard == FALSE) {
         flows_n <- flows_new[, sum(flow_new, na.rm = TRUE)]
+        if (flows_exp == flows_n) {
+            mes <- sprintf("Flows after correction as expected: %s", flows_n)
+            message(mes)
+        }
         if (flows_exp != flows_n) {
             mes <- sprintf("Adjusted flows not as expected! Expected %s, got %s. Might be because some AGS could not be found.",
                            flows_exp, flows_n)
