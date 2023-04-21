@@ -1,7 +1,22 @@
+##' Corrects flows for changes in administrative boundaries
+##'
+##' correct_flows uses a table that is based upon the corrections for
+##' changes in administrative boundaries from the BBSR to correct
+##' flows between regions.
+##' @title Corrects flows for changes in administrative boundaries
+##' @param flows data.table of flows. Expects columns c("origin",
+##'     "destination", "year")
+##' @param dt data.table of conversion factors. Expects columns
+##'     c("year", "ags_old", "ags_new", "conv_p").
+##' @return data.table
+##' @import data.table
+##' @export correct_flows
+##' @author Konstantin
 correct_flows <- function(flows, dt) {
     ags_old <- ags_new <- . <- conv_p <- flow <- NULL
     flow_new <- destination <- .SD <- year <- NULL
-    cols <- setdiff(c("year", "ags_old"), colnames(dt))
+    cols <- setdiff(c("year", "ags_old", "ags_new", "conv_p"),
+                    colnames(dt))
     if (length(cols) > 0) {
         cols <- paste(cols, collapse = ", ")
         stop(sprintf("Column(s) %s not found", cols))
