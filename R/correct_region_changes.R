@@ -15,6 +15,21 @@
 correct_flows <- function(flows, dt) {
     ags_old <- ags_new <- . <- conv_p <- flow <- NULL
     flow_new <- destination <- .SD <- year <- NULL
+    #### checks flows data.table. "year" is always required. Other
+#### grouping variables are not allowed.
+    flows_cols <- c("origin", "destination", "year", "flow")
+    cols <- setdiff(flows_cols, colnames(flows))
+    if (length(cols) > 0) {
+        cols <- paste(cols, collapse = ", ")
+        stop(sprintf("Column(s) %s not found", cols))
+    }
+    cols <- setdiff(colnames(flows), flows_cols)
+    if (length(cols) > 0) {
+        cols <- paste(cols, collapse = ", ")
+        stop(sprintf("Column(s) %s are not supposed to be in 'flows'.", cols))
+    }
+    ### checks data.table with the
+    #### corrections
     cols <- setdiff(c("year", "ags_old", "ags_new", "conv_p"),
                     colnames(dt))
     if (length(cols) > 0) {
