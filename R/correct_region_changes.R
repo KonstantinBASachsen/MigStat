@@ -1,6 +1,11 @@
 correct_flows <- function(flows, dt) {
     ags_old <- ags_new <- . <- conv_p <- flow <- NULL
     flow_new <- destination <- .SD <- year <- NULL
+    cols <- setdiff(c("year", "ags_old"), colnames(dt))
+    if (length(cols) > 0) {
+        cols <- paste(cols, collapse = ", ")
+        stop(sprintf("Column(s) %s not found", cols))
+    }
     check_ags_can_be_found(flows, dt)
 ## all.x and allow.cartesian are necessary (?) bc for some ags there
 ## are several new ags, so several rows are joined
