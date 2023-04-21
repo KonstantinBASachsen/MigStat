@@ -5,23 +5,17 @@ shp <- read_clean_shps(ps$shps, "complete")$districts
 mig <- data.table::fread(file.path(ps$mig, "moves2000-2018.csv"))
 correct <- data.table::fread(file.path(ps$cor, "districts_19.csv"))
 flows <- get_flows(mig, "di", "di", by = "year")
+flows_gr <- get_flows(mig, "di", "di",
+                   by = c("year", "EF25"))
+
+## if there are other grouping variables present, correct_flows won't
+## produce the correct results
+expect_error(correct_flows(flows = flows_gr[year == 2012], dt = correct),
+             pattern = "not supposed to be in")
 
 ### wrong dt, test for colnames
 expect_error(correct_flows(flows = flows, dt = shp),
              pattern = "not found")
-
-### because mig was created with ags from date 01-01, some ags can not
-### be found and thus the flows after adustment are fewer (flows from
-### and to ags that are not found are missing).
-expect_warning(correct_flows(flows = flows, dt = correct),
-               pattern = "AGS were not found")
-
-## if there are other grouping variables present, correct_flows won't
-## produce the correct results
-flows <- get_flows(mig, "di", "di",
-                   by = c("year", "EF25"))
-expect_error(correct_flows(flows = flows[year == 2012], dt = correct),
-             pattern = "not supposed to be in")
 
 ## there might be origins that are not found and there might be
 ## destinations that are not found. Here I test for all four
