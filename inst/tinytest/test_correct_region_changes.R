@@ -20,3 +20,9 @@ expect_warning(correct_flows(flows = flows, dt = correct),
 ## same
 expect_message(correct_flows(flows = flows[year == 2012], dt = correct),
                pattern = "as expected")
+## if there are other grouping variables present, correct_flows won't
+## produce the correct results
+flows <- get_flows(mig, "di", "di",
+                   by = c("year", "EF25"))
+expect_error(correct_flows(flows = flows[year == 2012], dt = correct),
+             pattern = "not supposed to be in")
