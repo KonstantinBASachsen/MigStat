@@ -109,10 +109,6 @@ check_flows <- function(flows_new, flows_old, hard = TRUE) {
     if (hard == TRUE) {
         cols <- c("origin", "destination", "year")
         flows_n <- flows_new[, .SD[1], keyby = cols][, sum(flow, na.rm = TRUE)]
-        print(colnames(flows_new))
-        print(flows_new[is.na(flow), .N])
-        print(flows_exp)
-        print(flows_n)
         if (flows_exp != flows_n) {
             mes <- sprintf("Flows after merge not as expected! Expected %s, got %s",
                            flows_exp, flows_n)
