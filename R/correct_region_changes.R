@@ -8,13 +8,15 @@
 ##'     "destination", "year")
 ##' @param dt data.table of conversion factors. Expects columns
 ##'     c("year", "ags_old", "ags_new", "conv_p").
+##' @param round logical. If TRUE adusted flows are rounded to the
+##'     nearest integer.
 ##' @return data.table
 ##' @import data.table
 ##' @export correct_flows
 ##' @author Konstantin
 correct_flows <- function(flows, dt, round = TRUE) {
     ags_old <- ags_new <- . <- conv_p <- flow <- NULL
-    flow_new <- destination <- .SD <- year <- NULL
+    flow_new <- destination <- .SD <- year <- origin <- NULL
     #### checks flows data.table. "year" is always required. Other
 #### grouping variables are not allowed.
     flows_cols <- c("origin", "destination", "year", "flow")
@@ -79,6 +81,27 @@ correct_flows <- function(flows, dt, round = TRUE) {
 
     ## cols are returned in wrong order, fix!
     return(flows3)
+}
+
+correct_flows_ <- function(flows, dt, key) {
+    ags_old <- ags_new <- conv_p <- year <- flow <- NULL
+    key1 <- key
+    key2 <- setdiff(c("origin", "destination"), key1)
+    flows2 <- merge(flows,
+                    dt[, .(ags_old, ags_new, conv_p, year)],
+                    by.x = c(key1, "year"),
+                    by.y = c("ags_old", "year"),
+                    all.x = TRUE, allow.cartesian = TRUE)
+    flows2[, "flow_new" := flow * conv_p]
+    flows2 <- flows2[, "flow_new" := sum(flow_new),
+                     by = c("ags_new", key2, "year")]
+    check_flows(flows2, flows, hard = TRUE)
+    keys <- c("ags_new", key2, "year")
+    flows2 <- flows2[, .SD[1], keyby = keys]
+    check_flows(flows2, flows, hard = FALSE)
+    flows2 <- flows2[, .(origin = ags_new, get(key2),
+                         flow = flow_new, year)]
+    return(flows2)
 }
 
 check_ags_can_be_found <- function(flows, dt,
