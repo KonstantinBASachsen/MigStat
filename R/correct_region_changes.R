@@ -15,9 +15,8 @@
 ##' @export correct_flows
 ##' @author Konstantin
 correct_flows <- function(flows, dt, round = TRUE) {
-    ags_old <- ags_new <- . <- conv_p <- flow <- NULL
-    flow_new <- destination <- .SD <- year <- origin <- NULL
-    #### checks flows data.table. "year" is always required. Other
+    flow <- NULL
+        #### checks flows data.table. "year" is always required. Other
 #### grouping variables are not allowed.
     flows_cols <- c("origin", "destination", "year", "flow")
     cols <- setdiff(flows_cols, colnames(flows))
@@ -39,68 +38,44 @@ correct_flows <- function(flows, dt, round = TRUE) {
         stop(sprintf("Column(s) %s not found", cols))
     }
     check_ags_can_be_found(flows = flows, dt = dt, region = "origin")
-## all.x and allow.cartesian are necessary (?) bc for some ags there
-## are several new ags, so several rows are joined
-    flows2 <- merge(flows,
-                    dt[, .(ags_old, ags_new, conv_p, year)],
-                    by.x = c("origin", "year"),
-                    by.y = c("ags_old", "year"),
-                    all.x = TRUE, allow.cartesian = TRUE)
-    flows2[, "flow_new" := flow * conv_p]
-    flows2 <- flows2[, "flow_new" := sum(flow_new),
-                     by = .(ags_new, destination, year)]
-    check_flows(flows2, flows, hard = TRUE)
-    keys <- c("ags_new", "destination", "year")
-    flows2 <- flows2[, .SD[1], keyby = keys]
-    check_flows(flows2, flows, hard = FALSE)
-    flows2 <- flows2[, .(origin = ags_new, destination,
-                         flow = flow_new, year)]
-    ##### now the same for destinations
-    check_ags_can_be_found(flows = flows2, dt = dt, region = "destination")
-## all.x and allow.cartesian are necessary (?) bc for some ags there
-## are several new ags, so several rows are joined
-    flows3 <- merge(flows2,
-                    dt[, .(ags_old, ags_new, conv_p, year)],
-                    by.x = c("destination", "year"),
-                    by.y = c("ags_old", "year"),
-                    all.x = TRUE, allow.cartesian = TRUE)
-    flows3[, "flow_new" := flow * conv_p]
-    flows3 <- flows3[, "flow_new" := sum(flow_new),
-                     by = .(ags_new, origin, year)]
-    check_flows(flows3, flows2, hard = TRUE)
-    keys <- c("ags_new", "origin", "year")
-    flows3 <- flows3[, .SD[1], keyby = keys]
-    check_flows(flows3, flows2, hard = FALSE)
-    flows3 <- flows3[, .(origin, destination = ags_new,
-                         flow = flow_new, year)]
+    flows2 <- correct_flows_(flows, dt, key = "origin")
+    check_ags_can_be_found(flows = flows, dt = dt, region = "destination")
+    flows3 <- correct_flows_(flows2, dt, key = "destination")
     if (round == TRUE) {
         flows3[, "flow" := as.integer(round(flow, 0))]
     }
-##     flows2[!is.na(ags_new)] na's should stay so it is clear were
-    ##     ags were not found
-
-    ## cols are returned in wrong order, fix!
     return(flows3)
 }
 
 correct_flows_ <- function(flows, dt, key) {
     ags_old <- ags_new <- conv_p <- year <- flow <- NULL
-    key1 <- key
+    flow_new <- destination <- origin <- .SD <- . <- NULL
+    key1 <- key ## key for joining/ adusting
+    ## key2 key for grouping
     key2 <- setdiff(c("origin", "destination"), key1)
+    ## all.x and allow.cartesian are necessary (?) bc for some ags there
+    ## are several new ags, so several rows are joined
     flows2 <- merge(flows,
                     dt[, .(ags_old, ags_new, conv_p, year)],
                     by.x = c(key1, "year"),
                     by.y = c("ags_old", "year"),
                     all.x = TRUE, allow.cartesian = TRUE)
     flows2[, "flow_new" := flow * conv_p]
-    flows2 <- flows2[, "flow_new" := sum(flow_new),
-                     by = c("ags_new", key2, "year")]
-    check_flows(flows2, flows, hard = TRUE)
+    print(colnames(flows2))
     keys <- c("ags_new", key2, "year")
+    flows2 <- flows2[, "flow_new" := sum(flow_new),
+                     keyby = keys]
+    check_flows(flows2, flows, hard = TRUE)
     flows2 <- flows2[, .SD[1], keyby = keys]
     check_flows(flows2, flows, hard = FALSE)
-    flows2 <- flows2[, .(origin = ags_new, get(key2),
-                         flow = flow_new, year)]
+    if (key1 == "origin") {
+        flows2 <- flows2[, .(origin = ags_new, destination,
+                             flow = flow_new, year)]
+    }
+    if (key1 == "destination") {
+        flows2 <- flows2[, .(origin, destination = ags_new,
+                             flow = flow_new, year)]
+    }
     return(flows2)
 }
 
