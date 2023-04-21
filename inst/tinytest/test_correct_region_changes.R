@@ -2,8 +2,8 @@ ps <- make_paths()
 ps$data <- "~/Diss/exec/one_run/data/clean/"
 ps$cor <- file.path(ps$data, "corrections")
 shp <- read_clean_shps(ps$shps, "complete")$districts
-mig <- fread(file.path(ps$mig, "moves2000-2018.csv"))
-correct <- fread(file.path(ps$cor, "districts_19.csv"))
+mig <- data.table::fread(file.path(ps$mig, "moves2000-2018.csv"))
+correct <- data.table::fread(file.path(ps$cor, "districts_19.csv"))
 flows <- get_flows(mig, "di", "di", by = "year")
 
 ### wrong dt, test for colnames
