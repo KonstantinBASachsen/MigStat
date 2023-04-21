@@ -12,7 +12,7 @@
 ##' @import data.table
 ##' @export correct_flows
 ##' @author Konstantin
-correct_flows <- function(flows, dt) {
+correct_flows <- function(flows, dt, round = TRUE) {
     ags_old <- ags_new <- . <- conv_p <- flow <- NULL
     flow_new <- destination <- .SD <- year <- NULL
     #### checks flows data.table. "year" is always required. Other
@@ -36,7 +36,7 @@ correct_flows <- function(flows, dt) {
         cols <- paste(cols, collapse = ", ")
         stop(sprintf("Column(s) %s not found", cols))
     }
-    check_ags_can_be_found(flows, dt)
+    check_ags_can_be_found(flows = flows, dt = dt, region = "origin")
 ## all.x and allow.cartesian are necessary (?) bc for some ags there
 ## are several new ags, so several rows are joined
     flows2 <- merge(flows,
@@ -51,11 +51,34 @@ correct_flows <- function(flows, dt) {
     keys <- c("ags_new", "destination", "year")
     flows2 <- flows2[, .SD[1], keyby = keys]
     check_flows(flows2, flows, hard = FALSE)
+    flows2 <- flows2[, .(origin = ags_new, destination,
+                         flow = flow_new, year)]
+    ##### now the same for destinations
+    check_ags_can_be_found(flows = flows2, dt = dt, region = "destination")
+## all.x and allow.cartesian are necessary (?) bc for some ags there
+## are several new ags, so several rows are joined
+    flows3 <- merge(flows2,
+                    dt[, .(ags_old, ags_new, conv_p, year)],
+                    by.x = c("destination", "year"),
+                    by.y = c("ags_old", "year"),
+                    all.x = TRUE, allow.cartesian = TRUE)
+    flows3[, "flow_new" := flow * conv_p]
+    flows3 <- flows3[, "flow_new" := sum(flow_new),
+                     by = .(ags_new, origin, year)]
+    check_flows(flows3, flows2, hard = TRUE)
+    keys <- c("ags_new", "origin", "year")
+    flows3 <- flows3[, .SD[1], keyby = keys]
+    check_flows(flows3, flows2, hard = FALSE)
+    flows3 <- flows3[, .(origin, destination = ags_new,
+                         flow = flow_new, year)]
+    if (round == TRUE) {
+        flows3[, "flow" := as.integer(round(flow, 0))]
+    }
 ##     flows2[!is.na(ags_new)] na's should stay so it is clear were
     ##     ags were not found
 
     ## cols are returned in wrong order, fix!
-    return(flows2)
+    return(flows3)
 }
 
 check_ags_can_be_found <- function(flows, dt,
@@ -82,10 +105,14 @@ check_ags_can_be_found <- function(flows, dt,
 
 check_flows <- function(flows_new, flows_old, hard = TRUE) {
     flow <- .SD <- flow_new <- NULL
-    flows_exp <- flows_old[, sum(flow)]
+    flows_exp <- flows_old[, sum(flow, na.rm = TRUE)]
     if (hard == TRUE) {
         cols <- c("origin", "destination", "year")
-        flows_n <- flows_new[, .SD[1], keyby = cols][, sum(flow)]
+        flows_n <- flows_new[, .SD[1], keyby = cols][, sum(flow, na.rm = TRUE)]
+        print(colnames(flows_new))
+        print(flows_new[is.na(flow), .N])
+        print(flows_exp)
+        print(flows_n)
         if (flows_exp != flows_n) {
             mes <- sprintf("Flows after merge not as expected! Expected %s, got %s",
                            flows_exp, flows_n)
