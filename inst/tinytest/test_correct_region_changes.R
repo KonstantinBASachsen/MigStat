@@ -63,7 +63,7 @@ expect_warning(correct_flows(flows[year == 2000, ], correct[year == 2000]),
 ######################################################################
 ### No changes, same ags, so nothing should be changed
 cor_test <- correct[year == 1990]
-test_flows <- data.table(origin = c(1001, 15003),
+test_flows <- data.table::data.table(origin = c(1001, 15003),
                          destination = c(1051, 15003),
                          flow = c(100, 1000),
                          year = 1990)
@@ -72,7 +72,7 @@ expect_equal(test_flows2[, flow], test_flows[, flow])
 ### Eingemeindungen. Parts if the origins in the next test_flows were
 ### all matched to Sömmerda 16068. This means that parts of the flows
 ### of the origins have to be matched to 16068.
-test_flows <- data.table(origin = c(16014, 16018, 16038),
+test_flows <- data.table::data.table(origin = c(16014, 16018, 16038),
                          destination = c(1051, 15003, 1004),
                          flow = c(100, 1000, 500),
                          year = 1990)
@@ -84,7 +84,7 @@ expect_equal(test_flows2[origin == 16068, sum(flow)], expected)
 
 ### same as above but with the incorporated municipalities as
 ### destinations
-test_flows <- data.table(origin = c(1051, 15003, 1004),
+test_flows <- data.table::data.table(origin = c(1051, 15003, 1004),
                          destination = c(16014, 16018, 16038),
                          flow = c(100, 1000, 500),
                          year = 1990)
