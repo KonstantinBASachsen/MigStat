@@ -14,6 +14,21 @@
 ##' @import data.table
 ##' @export correct_flows
 ##' @author Konstantin
+##' @examples
+##' flows <- data.table::data.table(origin = c(1051, 15003, 1004),
+##'                                      destination = c(16014, 16018, 16038),
+##'                                      flow = c(100, 1000, 500),
+##'                                      year = 1990)
+##'
+##' correction_dt <- data.table::data.table(ags_old = c(1004, 1051,
+##' 15003, 16014, 16014, 16018, 16018, 16018, 1601, 16018, 16038),
+##' ags_new = c(1004, 1051, 15003, 16065, 16068, 16051, 16067, 16068,
+##' 16070, 16071, 16068),
+##' conv_p = c(1, 1, 1, 0.962118141, 0.037881859, 0.334847584,
+##'     0.241041861, 0.378831621, 0.004988537, 0.040290397, 1),
+##' year = 1990)
+##' 
+##' flows2 <- correct_flows(flows, correction_dt)
 correct_flows <- function(flows, dt, round = TRUE) {
     flow <- NULL
         #### checks flows data.table. "year" is always required. Other
