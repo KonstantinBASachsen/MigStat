@@ -62,7 +62,20 @@ correct_flows <- function(flows, dt, round = TRUE) {
     return(flows3)
 }
 
+##' Corrects the flows where either orgin or destination is the key.
+##'
+##' Expects two data.tables. This is bad design, I think it would be
+##' better to allow the user to specify the column that is to be
+##' adjusted and the column holding the AGS
+##' @title
+##' @param flows data.table with columns origin, destination, flow, year
+##' @param dt data.table correction information
+##' @param key character origin or destination
+##' @return data.table
+##' @import data.table
+##' @author Konstantin
 correct_flows_ <- function(flows, dt, key) {
+    ### probably not a good idea to bury check_flows() inhere
     ags_old <- ags_new <- conv_p <- year <- flow <- NULL
     flow_new <- destination <- origin <- .SD <- . <- NULL
     key1 <- key ## key for joining/ adusting
@@ -80,6 +93,7 @@ correct_flows_ <- function(flows, dt, key) {
     flows2 <- flows2[, "flow_new" := sum(flow_new),
                      keyby = keys]
     check_flows(flows2, flows, hard = TRUE)
+    ## there might be several rows, why again?
     flows2 <- flows2[, .SD[1], keyby = keys]
     check_flows(flows2, flows, hard = FALSE)
     if (key1 == "origin") {
@@ -93,9 +107,18 @@ correct_flows_ <- function(flows, dt, key) {
     return(flows2)
 }
 
+##' checks if all ags can be found in correction data.table
+##'
+##' @title 
+##' @param flows data.table of flows
+##' @param dt data.table of correction information
+##' @param region character either origin or destination
+##' @return data.table of number of not found ags per year
+##' @import data.table
+##' @author Konstantin
 check_ags_can_be_found <- function(flows, dt,
                                    region = c("origin", "destination")) {
-    year <- origin <- ags_old <- NULL
+    year <- ags_old <- NULL
     y_min <- flows[, min(year)]
     y_max <- flows[, max(year)]
     region <- match.arg(region)
@@ -115,6 +138,29 @@ check_ags_can_be_found <- function(flows, dt,
     return(tab)
 }
 
+##' Checks if number of flows is stays the same when adjusting for
+##' municipality changes
+##'
+##' @title
+##' @param flows_new data.table The new flows object that is to be
+##'     checked.
+##' @param flows_old data.table that is used as ground truth
+##' @param hard logical This is really badly implemented. If hard,
+##'     then the actual number of flows in flows_new is computed
+##'     differently. This is because in correct_flows() check_flows()
+##'     is used two times. The first time after joining the correction
+##'     table to the flows table. If the flows are not the same here
+##'     something has really gone wrong and exection s
+##'     stopped. Thatswhy hard == TRUE.
+##'
+##' It is used for the second time after adjusting the flows with the
+##' setting hard == FALSE. After adjusting the flows it might indeed
+##' be possible that flows are not the same. One reason, and the only
+##' reason I can think of, is that some ags were not found. Here
+##' instead of stopping the execution only a warning is emitted and it
+##' is up to the user to decide what to do.
+##' @return NULL
+##' @author Konstantin
 check_flows <- function(flows_new, flows_old, hard = TRUE) {
     flow <- .SD <- flow_new <- NULL
     flows_exp <- flows_old[, sum(flow, na.rm = TRUE)]
@@ -143,4 +189,5 @@ check_flows <- function(flows_new, flows_old, hard = TRUE) {
             warning(mes)
         }
     }
+    return(NULL)
 }
