@@ -61,7 +61,6 @@ correct_flows_ <- function(flows, dt, key) {
                     by.y = c("ags_old", "year"),
                     all.x = TRUE, allow.cartesian = TRUE)
     flows2[, "flow_new" := flow * conv_p]
-    print(colnames(flows2))
     keys <- c("ags_new", key2, "year")
     flows2 <- flows2[, "flow_new" := sum(flow_new),
                      keyby = keys]
@@ -115,11 +114,15 @@ check_flows <- function(flows_new, flows_old, hard = TRUE) {
     }
     if (hard == FALSE) {
         flows_n <- flows_new[, sum(flow_new, na.rm = TRUE)]
-        if (flows_exp == flows_n) {
+        ## testing with flows_n == flows_exp bad idea bc sometimes are
+        ## very small differences that do not matter but then test
+        ## shows difference
+        flows_diff <- flows_exp - flows_n
+        if (abs(flows_diff) < 1) {
             mes <- sprintf("Flows after correction as expected: %s", flows_n)
             message(mes)
         }
-        if (flows_exp != flows_n) {
+        if (abs(flows_diff) >= 1) {
             mes <- sprintf("Adjusted flows not as expected! Expected %s, got %s. Might be because some AGS could not be found.",
                            flows_exp, flows_n)
             warning(mes)
