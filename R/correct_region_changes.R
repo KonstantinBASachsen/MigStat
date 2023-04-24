@@ -67,7 +67,7 @@ correct_flows <- function(flows, dt, round = TRUE) {
 ##' Expects two data.tables. This is bad design, I think it would be
 ##' better to allow the user to specify the column that is to be
 ##' adjusted and the column holding the AGS
-##' @title
+##' @title Adjust flows for municipalitiy changes
 ##' @param flows data.table with columns origin, destination, flow, year
 ##' @param dt data.table correction information
 ##' @param key character origin or destination
@@ -109,7 +109,7 @@ correct_flows_ <- function(flows, dt, key) {
 
 ##' checks if all ags can be found in correction data.table
 ##'
-##' @title 
+##' @title Check if ags are found in correction table
 ##' @param flows data.table of flows
 ##' @param dt data.table of correction information
 ##' @param region character either origin or destination
@@ -141,7 +141,7 @@ check_ags_can_be_found <- function(flows, dt,
 ##' Checks if number of flows is stays the same when adjusting for
 ##' municipality changes
 ##'
-##' @title
+##' @title Check if number of flows stays the same
 ##' @param flows_new data.table The new flows object that is to be
 ##'     checked.
 ##' @param flows_old data.table that is used as ground truth
@@ -168,6 +168,11 @@ check_flows <- function(flows_new, flows_old, hard = TRUE) {
     if (hard == TRUE) {
         cols <- c("origin", "destination", "year")
         flows_n <- flows_new[, .SD[1], keyby = cols][, sum(flow, na.rm = TRUE)]
+        if (flows_exp == flows_n) {
+            mes <- sprintf("Flows after merge as expected! Flows: %s",
+                           flows_exp)
+            message(mes)
+        }
         if (flows_exp != flows_n) {
             mes <- sprintf("Flows after merge not as expected! Expected %s, got %s",
                            flows_exp, flows_n)
