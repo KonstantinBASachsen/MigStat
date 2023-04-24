@@ -159,6 +159,7 @@ check_ags_can_be_found <- function(flows, dt,
 ##' reason I can think of, is that some ags were not found. Here
 ##' instead of stopping the execution only a warning is emitted and it
 ##' is up to the user to decide what to do.
+##' @import data.table
 ##' @return NULL
 ##' @author Konstantin
 check_flows <- function(flows_new, flows_old, hard = TRUE) {
