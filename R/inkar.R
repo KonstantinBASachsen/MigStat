@@ -71,40 +71,6 @@ join_inkar <- function(shp, ink) {
 ##' @import data.table
 ##' @export get_inkar_vars
 ##' @author Konstantin
-get_inkar_vars <- function(inkar, vars, rb, zb, wide = TRUE,
-                           name_col = c("varname", "Indikator")) {
-    Raumbezug <- Zeitbezug <- Indikator <- NULL
-    Kennziffer <- Wert <- varname  <- . <- NULL
-
-    ### really ugly would be nicer without all the ifs
-    name_col <- match.arg(name_col)
-    if (name_col == "Indikator") {
-        ink <- inkar[Raumbezug == rb & Zeitbezug %in% zb & Indikator %in% vars, ]
-        ink <- ink[, .(Kennziffer, Indikator, Wert)]
-    }
-    if (name_col == "varname") {
-        ink <- inkar[Raumbezug == rb & Zeitbezug %in% zb & varname %in% vars, ]
-        ink <- ink[, .(Kennziffer, varname, Wert)]
-    }
-##    ink <- ink[, .SD[1], by = c("Indikator", "Wert")] ## purpose?
-    if (wide == TRUE) {
-        if (name_col == "Indikator") {
-            ink <- data.table::dcast(ink, Kennziffer ~ Indikator,
-                                     value.var = "Wert")
-        }
-        if (name_col == "varname") {
-            ink <- data.table::dcast(ink, Kennziffer ~ varname,
-                                     value.var = "Wert")
-        }
-        colnames(ink)[colnames(ink) == "Kennziffer"] <- "AGS"
-        ## Here sometimes a warning pops up that aggregate function is
-        ## missing. This happens if the same indicator happens to be
-        ## in the INKAR more than ones. This can happen I think with
-        ## ZOM and SDG. In this case a more helpful warning (or better
-        ## error) message would be good.
-    }
-    return(ink)
-}
 get_inkar_vars <- function (inkar, vars, rb, zb, wide = TRUE, name_col = c("varname", 
                                                                            "Indikator")) {
     #### Extrahiert Prediktoren aus dem INKAR Datensatz. 
@@ -135,7 +101,9 @@ get_inkar_vars <- function (inkar, vars, rb, zb, wide = TRUE, name_col = c("varn
     return(ink)
 }
 
+
 get_raumbezug <- function(us) {
+    
     stopifnot(us %in% c("st", "di", "mu"))
     if (us == "st") {
         rb <- "Bundesl\U00E4nder"
