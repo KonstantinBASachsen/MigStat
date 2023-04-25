@@ -71,29 +71,29 @@ join_inkar <- function(shp, ink) {
 ##' @import data.table
 ##' @export get_inkar_vars
 ##' @author Konstantin
-get_inkar_vars <- function (inkar, vars, rb, zb, wide = TRUE, name_col = c("varname", 
-                                                                           "Indikator")) {
+get_inkar_vars <- function(inkar, vars, rb, zb, wide = TRUE,
+                            name_col = c("varname", "Indikator")) {
     #### Extrahiert Prediktoren aus dem INKAR Datensatz. 
     Raumbezug <- Zeitbezug <- Indikator <- NULL
     Kennziffer <- Wert <- varname <- . <- NULL
     name_col <- match.arg(name_col)
     if (name_col == "Indikator") {
-        ink <- inkar[Raumbezug == rb & Zeitbezug %in% zb & Indikator %in% 
+        ink <- inkar[Raumbezug == rb & Zeitbezug %in% zb & Indikator %in%
                      vars, ]
         ink <- ink[, .(Kennziffer, Indikator, Zeitbezug, Wert)]
     }
     if (name_col == "varname") {
-        ink <- inkar[Raumbezug == rb & Zeitbezug %in% zb & varname %in% 
+        ink <- inkar[Raumbezug == rb & Zeitbezug %in% zb & varname %in%
                      vars, ]
         ink <- ink[, .(Kennziffer, varname, Zeitbezug, Wert)]
     }
     if (wide == TRUE) {
         if (name_col == "Indikator") {
-            ink <- data.table::dcast(ink, Kennziffer + Zeitbezug ~ Indikator, 
+            ink <- data.table::dcast(ink, Kennziffer + Zeitbezug ~ Indikator,
                                      value.var = "Wert")
         }
         if (name_col == "varname") {
-            ink <- data.table::dcast(ink, Kennziffer + Zeitbezug ~ varname, 
+            ink <- data.table::dcast(ink, Kennziffer + Zeitbezug ~ varname,
                                      value.var = "Wert")
         }
         colnames(ink)[colnames(ink) == "Kennziffer"] <- "AGS"
@@ -103,7 +103,6 @@ get_inkar_vars <- function (inkar, vars, rb, zb, wide = TRUE, name_col = c("varn
 
 
 get_raumbezug <- function(us) {
-    
     stopifnot(us %in% c("st", "di", "mu"))
     if (us == "st") {
         rb <- "Bundesl\U00E4nder"
@@ -160,4 +159,37 @@ read_inkar <- function(path, tolower = TRUE, to_num = FALSE,
     return(inkar)
 }
 
-
+##' Joins predictors to data.table of flows 
+##'
+##' Keys: In flows origin and year as well as destination and year are
+##' used for joining
+##' @title Predictors to flows
+##' @param flows data.table of flows
+##' @param design_mat data.table of predictors
+##' @param key character of length == 2, keys in design_mat used for
+##'     joining. Firs element of key is expected to be the AGS and the
+##'     second key the time period
+##' @return data.table
+##' @import data.table
+##' @export join_design_mat
+##' @author Konstantin
+join_design_mat <- function(flows, design_mat,
+                            key = c("AGS", "Zeitbezug")) {
+    #### Fügt die Prediktoren aus dem INKAR datensatz zu den
+#### aggregierten Wanderungen hinzu
+    stopifnot("key must be of length 2. First element of key for the AGS and the second for the period" = length(
+                  key) == 2)
+    cols <- colnames(design_mat)
+    vars <- cols[!cols %in% key]
+    ### better to just use merge? I think I read somewhere that then bc of methods
+    ### dispatch merge.data.table is used
+    flows <- data.table::merge.data.table(flows, design_mat,
+                   by.x = c("origin", "year"),
+                   by.y = key)
+    data.table::setnames(flows, vars, paste0(vars, "_o"))
+    flows <- data.table::merge.data.table(flows, design_mat,
+                   by.x = c("destination", "year"),
+                   by.y = key)
+    data.table::setnames(flows, vars, paste0(vars, "_d"))
+    return(flows)
+}
