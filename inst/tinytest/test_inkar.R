@@ -28,4 +28,6 @@ idx <- c(428, 86, 344, 196, 193, 419, 240, 161, 153, 480)
 vars <- indic[idx]
 avail <- unlist(lapply(vars, function(x) MigStat:::check_availability(inkar, rb, zb, x)))
 shp <- MigStat:::join_inkar_vars(shp, inkar, vars, us, zb)
-expect_equal(ncol(shp), shp_cols + length(vars[avail != 0]))
+## +1 bc new version of get_inkar_vars() also returns Zeitbezug
+expect_equal(ncol(shp), shp_cols + length(vars[avail != 0]) + 1) 
+
