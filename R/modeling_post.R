@@ -18,11 +18,18 @@ extract_fit <- function(fit) {
     coefs <- data.table::data.table("coefs" = names(coef(fit)),
                "estimate" = round(coef(fit), 2),
                "se" = round(sqrt(diag(vcov(fit))), 2))
-    r_squared <- round(summary(fit)$r.squared, 2)
-    adj_r_squared <- round(summary(fit)$adj.r.squared, 2)
+    if (inherits(fit, "lm") == TRUE) {
+        r_squared <- round(summary(fit)$r.squared, 2)
+        adj_r_squared <- round(summary(fit)$adj.r.squared, 2)
+    }
+    if (inherits(fit, "plm") == TRUE) {
+        r_squared <- round(as.numeric(summary(fit)$r.squared[1]), 2)
+        adj_r_squared <- round(as.numeric(summary(fit)$r.squared[2]), 2)
+    }
     model <- list("call" = call, "coefs" = coefs,
                   "r_squared" = r_squared,
                   "adj_r_squared" = adj_r_squared)
+
     extracted <- list("preds" = preds_obs, "model" = model)
     return(extracted)
 }
