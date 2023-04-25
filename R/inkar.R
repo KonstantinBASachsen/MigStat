@@ -105,9 +105,37 @@ get_inkar_vars <- function(inkar, vars, rb, zb, wide = TRUE,
     }
     return(ink)
 }
+get_inkar_vars <- function (inkar, vars, rb, zb, wide = TRUE, name_col = c("varname", 
+                                                                           "Indikator")) {
+    #### Extrahiert Prediktoren aus dem INKAR Datensatz. 
+    Raumbezug <- Zeitbezug <- Indikator <- NULL
+    Kennziffer <- Wert <- varname <- . <- NULL
+    name_col <- match.arg(name_col)
+    if (name_col == "Indikator") {
+        ink <- inkar[Raumbezug == rb & Zeitbezug %in% zb & Indikator %in% 
+                     vars, ]
+        ink <- ink[, .(Kennziffer, Indikator, Zeitbezug, Wert)]
+    }
+    if (name_col == "varname") {
+        ink <- inkar[Raumbezug == rb & Zeitbezug %in% zb & varname %in% 
+                     vars, ]
+        ink <- ink[, .(Kennziffer, varname, Zeitbezug, Wert)]
+    }
+    if (wide == TRUE) {
+        if (name_col == "Indikator") {
+            ink <- data.table::dcast(ink, Kennziffer + Zeitbezug ~ Indikator, 
+                                     value.var = "Wert")
+        }
+        if (name_col == "varname") {
+            ink <- data.table::dcast(ink, Kennziffer + Zeitbezug ~ varname, 
+                                     value.var = "Wert")
+        }
+        colnames(ink)[colnames(ink) == "Kennziffer"] <- "AGS"
+    }
+    return(ink)
+}
 
 get_raumbezug <- function(us) {
-    
     stopifnot(us %in% c("st", "di", "mu"))
     if (us == "st") {
         rb <- "Bundesl\U00E4nder"
