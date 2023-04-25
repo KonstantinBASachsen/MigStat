@@ -10,7 +10,8 @@
 ##' @import data.table
 ##' @export extract_fit
 extract_fit <- function(fit) {
-    preds <- predict(fit)
+     ## as.numeric bc if plm predicions have attributes that make plotting difficult
+    preds <- as.numeric(predict(fit))
     obs <- fit$model[, 1]
     call <- as.character(fit$call)[2]
     preds_obs <- data.table::data.table("predicted" = preds, "observed" = obs,
@@ -52,11 +53,11 @@ extract_fit <- function(fit) {
 plot_fit <- function(extract, lbls = NULL, title = NULL,
                      title_size = 1.5, ...) {
     stopifnot("Expects list with element 'preds" = "preds" %in% names(extract))
-    x <- NULL
-    graphics::par(mfrow = c(1, 2))
     preds <- extract$preds$predicted
     obs <- extract$preds$observed
     obs_exp <- extract$preds$observed_exp
+    graphics::par(mfrow = c(1, 2))
+    x <- NULL
     if (is.null(lbls)) {
         graphics::plot(preds, obs, main = "log scale",
                        xlab = "Predicted", ylab = "Observed")
