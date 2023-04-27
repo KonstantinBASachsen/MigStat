@@ -211,3 +211,20 @@ clean_output <- function(extracts, n_coefs = 4) {
   setcolorder(coefs, cols)
   return(coefs)
 }
+
+save_plots <- function(extracts, path, title, save_data, lbls = NULL, name_suffix = NULL, 
+          ...) {
+  n_plots <- length(extracts)
+  message(paste(n_plots, "plots will be saved"))
+  for (n in names(extracts)) {
+    if (is.null(lbls)) {
+      plt_name <- paste0("fit", n, name_suffix)
+    }
+    if (!is.null(lbls)) {
+      plt_name <- paste0("fit", n, name_suffix, "_lbls")
+    }
+    plt_title <- paste(title, plt_name, "_")
+    save_plot(plot_fit(extracts[[n]], title = title, lbls = lbls, 
+                       ...), plt_name, save_data = save_data, path = path, data = extracts[[n]]$preds)
+  }
+  return(NULL)
