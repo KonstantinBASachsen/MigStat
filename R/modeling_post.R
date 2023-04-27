@@ -228,3 +228,4 @@ save_plots <- function(extracts, path, title, save_data, lbls = NULL, name_suffi
                        ...), plt_name, save_data = save_data, path = path, data = extracts[[n]]$preds)
   }
   return(NULL)
+}
