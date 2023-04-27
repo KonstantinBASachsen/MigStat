@@ -26,9 +26,14 @@ make_paths <- function(which = c("work", "kamenz", "dresden"), paths = NULL) {
     )
     p_work <- list(
         mig = "~/extdata/simulated_moves/",
-        shps = "~/extdata/shapes31simple2/",
-        dist = "~/extdata/distances/",
-        fig = "~/Diss/exec/analysis/figs/fdz_sim_new"
+        shps = "~/Diss/exec/one_run/data/clean/shapes/31_12",
+        dist = "~/Diss/exec/one_run/data/clean/distances",
+        fig = "~/Diss/exec/analysis/figs/fdz_sim_new",
+        inkar = "~/Diss/exec/one_run/data/clean/inkar",
+        corrections = "~/Diss/exec/one_run/data/clean/corrections",
+        flows_districts = "~/Diss/exec/one_run/data/clean/flows_districts",
+        flows_states = "~/Diss/exec/one_run/data/clean/flows_states",
+        out = "~/Diss/exec/one_run/out"
     )
     path_list <- list("dresden" = p_dresden, "kamenz" = p_kamenz,
                       "work" = p_work)
