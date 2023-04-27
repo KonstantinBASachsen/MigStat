@@ -212,6 +212,26 @@ clean_output <- function(extracts, n_coefs = 4) {
   return(coefs)
 }
 
+clean_output <- function(extracts) {
+    ## should have one extract as input. The lapply should be outside
+    ## of the function. Also I should be able to check n_coefs by
+    ## checking the length?
+    ## groups <- names(extracts)
+    ## extracts <- extracts[[1]]
+    model_out <- ret_el(extracts, 2)
+    coefs <- ret_el(model_out, 2)
+    rsq <- ret_el(model_out, 3)
+    rsq <- as.numeric(rsq)
+    a_rsq <- ret_el(model_out, 4)
+    a_rsq <- as.numeric(a_rsq)
+##    coefs[, "model" := groups]
+    coefs[, "rsquared" := rsq]
+    coefs[, "a_rsquared" := a_rsq]
+    cols <- c( "coefs", "estimate", "se","rsquared", "a_rsquared")
+    setcolorder(coefs, cols)
+    return(coefs)
+}
+
 save_plots <- function(extracts, path, title, save_data, lbls = NULL, name_suffix = NULL, 
           ...) {
   n_plots <- length(extracts)
