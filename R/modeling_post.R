@@ -191,3 +191,23 @@ fit_models <- function(age_groups, years, data, formula) {
   fits <- fits[-1] ## first elements always NULL
   return(fits)
 }
+
+clean_output <- function(extracts, n_coefs = 4) {
+    ## should have one extract as input. The lapply should be outside
+    ## of the function. Also I should be able to check n_coefs by
+    ## checking the length?
+  model_out <- lapply(extracts, function(x) ret_el(x, 2))
+  coefs <- lapply(model_out, function(x) ret_el(x, 2))
+  rsq <- lapply(model_out, function(x) ret_el(x, 3))
+  rsq <- as.numeric(rsq)
+  a_rsq <- lapply(model_out, function(x) ret_el(x, 4))
+  a_rsq <- as.numeric(a_rsq)
+  groups <- names(extracts)
+  coefs <- rbindlist(coefs)
+  coefs[, "model" := rep(groups, each = n_coefs)]
+  coefs[, "rsquared" := rep(rsq, each = n_coefs)]
+  coefs[, "a_rsquared" := rep(a_rsq, each = n_coefs)]
+  cols <- c("model", "coefs", "estimate", "se","rsquared", "a_rsquared")
+  setcolorder(coefs, cols)
+  return(coefs)
+}
