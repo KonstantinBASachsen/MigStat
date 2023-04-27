@@ -183,13 +183,15 @@ join_design_mat <- function(flows, design_mat,
     vars <- cols[!cols %in% key]
     ### better to just use merge? I think I read somewhere that then bc of methods
     ### dispatch merge.data.table is used
-    flows <- data.table::merge.data.table(flows, design_mat,
+    flows <- merge(flows, design_mat,
                    by.x = c("origin", "year"),
-                   by.y = key)
+                   by.y = key,
+                   all.x = TRUE)
     data.table::setnames(flows, vars, paste0(vars, "_o"))
-    flows <- data.table::merge.data.table(flows, design_mat,
+    flows <- merge(flows, design_mat,
                    by.x = c("destination", "year"),
-                   by.y = key)
+                   by.y = key,
+                   all.x = TRUE)
     data.table::setnames(flows, vars, paste0(vars, "_d"))
     return(flows)
 }
