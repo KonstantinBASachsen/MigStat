@@ -76,13 +76,16 @@ correct_flows <- function(flows, dt, round = TRUE) {
 ##' @return data.table
 ##' @import data.table
 ##' @author Konstantin
-correct_flows_ <- function(to_correct, corrections, ags_col, year_col = "year") {
+correct_flows_ <- function(to_correct, corrections, ags_col,
+                           year_col = "year") {
     ### probably not a good idea to bury check_flows() inhere
     ags_old <- ags_new <- conv_p <- year <- flow <- NULL
     flow_new <- destination <- origin <- .SD <- . <- NULL
     key1 <- c(ags_col, year_col) ## key for joining/ adusting
+    print(paste("joinkey", key1))
     ## key2 key for grouping
-    key2 <- setdiff(colnames(to_correct), key1)
+    key2 <- setdiff(colnames(to_correct), c(key1, "flow", "flow_new"))
+    print(paste("groupkey", key2))
     ## all.x and allow.cartesian are necessary (?) bc for some ags there
     ## are several new ags, so several rows are joined
     flows2 <- merge(to_correct,
