@@ -70,7 +70,9 @@ correct_flow <- function(dt, cor_dt, ags_col, year_col = "year") {
                    by.x = by_x, by.y = by_y,
                    allow.cartesian = TRUE,
                    all.x = TRUE)
-    check_flows(tab_c, dt, hard = TRUE)
+    no_keys <- c("conv_p", "flow", "flow_new", "ags_new")
+    keys <- setdiff(colnames(tab_c), no_keys)
+    check_flows(tab_c, dt, keys, hard = TRUE)
     tab_c[, "flow_new" := flow * conv_p]
     no_keys <- c(ags_col, "conv_p", "flow", "flow_new")
     keys <- setdiff(colnames(tab_c), no_keys)
@@ -177,13 +179,11 @@ check_ags_can_be_found <- function(flows, dt,
 ##' @import data.table
 ##' @return NULL
 ##' @author Konstantin
-check_flows <- function(flows_new, flows_old, hard = TRUE) {
+check_flows <- function(flows_new, flows_old, keys, hard = TRUE) {
     flow <- .SD <- flow_new <- NULL
     flows_exp <- flows_old[, sum(flow, na.rm = TRUE)]
     if (hard == TRUE) {
-        cols <- c("origin", "destination", "year", "EF25")
-        flows_n <- flows_new[, .SD[1], keyby = cols][, sum(flow, na.rm = TRUE)]
-
+        flows_n <- flows_new[, .SD[1], keyby = keys][, sum(flow, na.rm = TRUE)]
         if (flows_exp == flows_n) {
             mes <- sprintf("Flows after merge as expected! Flows: %s",
                            flows_exp)
