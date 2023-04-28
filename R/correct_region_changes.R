@@ -56,7 +56,6 @@ correct_flows <- function(flows, dt, round = TRUE) {
     flows2 <- correct_flow(flows, dt, ags_col = "origin")
     check_ags_can_be_found(flows = flows, dt = dt, region = "destination")
     flows3 <- correct_flow(flows2, dt, ags_col = "destination")
-    print(flows3)
     if (round == TRUE) {
         flows3[, "flow" := as.integer(round(flow, 0))]
     }
