@@ -8,10 +8,10 @@ flows <- get_flows(mig, "di", "di", by = "year")
 flows_gr <- get_flows(mig, "di", "di",
                    by = c("year", "EF25"))
 
-## if there are other grouping variables present, correct_flows won't
-## produce the correct results
-expect_error(correct_flows(flows = flows_gr[year == 2012], dt = correct),
-             pattern = "not supposed to be in")
+## if there are other grouping variables present, these are taken as
+## additional grouping columns. A message is issued in this case
+expect_message(correct_flows(flows = flows_gr[year == 2012], dt = correct),
+             pattern = "additional key column")
 
 ### wrong dt, test for colnames
 expect_error(correct_flows(flows = flows, dt = shp),

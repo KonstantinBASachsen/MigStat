@@ -42,7 +42,7 @@ correct_flows <- function(flows, dt, round = TRUE) {
     cols <- setdiff(colnames(flows), flows_cols)
     if (length(cols) > 0) {
         cols <- paste(cols, collapse = ", ")
-        message(sprintf("Column(s) '%s' will be used as additional key colum(s).", cols))
+        message(sprintf("Column(s) '%s' will be used as additional key column(s).", cols))
     }
     ### checks data.table with the
     #### corrections
