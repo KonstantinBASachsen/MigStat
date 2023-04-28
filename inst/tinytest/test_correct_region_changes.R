@@ -90,3 +90,38 @@ test_flows <- data.table::data.table(origin = c(1051, 15003, 1004),
                          year = 1990)
 test_flows2 <- correct_flows(test_flows, correct)
 expect_equal(test_flows2[destination == 16068, sum(flow)], expected)
+
+
+######################################################################
+#### Test if specific corrections in simple example are correct ######
+######################################################################
+
+ids <- c("id1", "id1", "id1", "id2", "id2", "id2", "id4", "id4")
+group <- c("A", "B", "C", "A", "B", "C", "A", "B")
+flow <- c(1, 2, 3, 4, 5, 6, 7, 8)
+year <- 2015
+dest <- c("id4", "id4", "id4", "id5","id5", "id5", "id2", "id2")
+tab1 <- data.table(region = ids, group = group, flow = flow, year = year)
+tab1 <- data.table(origin = ids, destination = dest,
+                   group = group, flow = flow, year = year)
+# Create the second data table
+ids <- c("id1", "id1", "id2", "id2", "id2", "id4", "id5")
+ids_new <- c("id1", "id3", "id2", "id3", "id4", "id4", "id5")
+conv <- c(0.9, 0.1, 0.7, 0.2, 0.1, 1, 1)
+year <- 2015
+tab2 <- data.table(ags_old = ids, ags_new = ids_new, conv_p = conv, year = year)
+
+#### do corrections for origin work?
+tab_c <- correct_flow(tab1, tab2, ags_col = "origin")
+setcolorder(tab_c, c("origin", "destination", "group", "flow"))
+tab_c <- tab_c[order(origin, destination, group), ]
+
+expect_equal(tab_c[origin == "id1" & destination == "id4", flow], c(0.9, 1.8, 2.7))
+expect_equal(tab_c[origin == "id3" & destination == "id4", flow], c(0.1, 0.2, 0.3))
+#### do corrections for destination work?
+tab_c <- correct_flow(tab1, tab2, ags_col = "destination")
+setcolorder(tab_c, c("origin", "destination", "group", "flow"))
+tab_c <- tab_c[order(origin, destination, group), ]
+expect_equal(tab_c[origin == "id1" & destination == "id4", flow], c(1, 2, 3))
+expect_equal(tab_c[origin == "id4" & group == "A", flow], c(4.9, 1.4, 0.7))
+expect_equal(tab_c[origin == "id4" & group == "B", flow], c(5.6, 1.6, 0.8))
