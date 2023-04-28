@@ -53,15 +53,30 @@ correct_flows <- function(flows, dt, round = TRUE) {
         stop(sprintf("Column(s) %s not found", cols))
     }
     check_ags_can_be_found(flows = flows, dt = dt, region = "origin")
-    flows2 <- correct_flows_(flows, dt, ags_col = "origin")
-    print(flows2)
+    flows2 <- correct_flow(flows, dt, ags_col = "origin")
     check_ags_can_be_found(flows = flows, dt = dt, region = "destination")
-    flows3 <- correct_flows_(flows2, dt, ags_col = "destination")
+    flows3 <- correct_flow(flows2, dt, ags_col = "destination")
     print(flows3)
     if (round == TRUE) {
         flows3[, "flow" := as.integer(round(flow, 0))]
     }
     return(flows3)
+}
+
+correct_flow <- function(dt, cor_dt, ags_col, year_col = "year") {
+    by_x <- c(ags_col, year_col)
+    by_y <- c("ags_old", "year")
+    tab_c <- merge(dt, cor_dt[, .(ags_old, ags_new, conv_p, year)],
+                   by.x = by_x, by.y = by_y,
+                   allow.cartesian = TRUE,
+                   all.x = TRUE)
+    tab_c[, "flow_new" := flow * conv_p]
+    no_keys <- c(ags_col, "conv_p", "flow", "flow_new")
+    keys <- setdiff(colnames(tab_c), no_keys)
+    tab_c <- tab_c[, .(flow_new = sum(flow_new)),
+                   keyby = keys]
+    setnames(tab_c, c("ags_new", "flow_new"), c(ags_col, "flow"))
+    return(tab_c)
 }
 
 ##' Corrects the flows where either orgin or destination is the key.
