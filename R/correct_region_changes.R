@@ -42,7 +42,7 @@ correct_flows <- function(flows, dt, round = TRUE) {
     cols <- setdiff(colnames(flows), flows_cols)
     if (length(cols) > 0) {
         cols <- paste(cols, collapse = ", ")
-        stop(sprintf("Column(s) %s are not supposed to be in 'flows'.", cols))
+        message(sprintf("Column(s) '%s' will be used as additional key colum(s).", cols))
     }
     ### checks data.table with the
     #### corrections
@@ -53,9 +53,11 @@ correct_flows <- function(flows, dt, round = TRUE) {
         stop(sprintf("Column(s) %s not found", cols))
     }
     check_ags_can_be_found(flows = flows, dt = dt, region = "origin")
-    flows2 <- correct_flows_(flows, dt, key = "origin")
+    flows2 <- correct_flows_(flows, dt, ags_col = "origin")
+    print(flows2)
     check_ags_can_be_found(flows = flows, dt = dt, region = "destination")
-    flows3 <- correct_flows_(flows2, dt, key = "destination")
+    flows3 <- correct_flows_(flows2, dt, ags_col = "destination")
+    print(flows3)
     if (round == TRUE) {
         flows3[, "flow" := as.integer(round(flow, 0))]
     }
@@ -74,36 +76,29 @@ correct_flows <- function(flows, dt, round = TRUE) {
 ##' @return data.table
 ##' @import data.table
 ##' @author Konstantin
-correct_flows_ <- function(flows, dt, key) {
+correct_flows_ <- function(to_correct, corrections, ags_col, year_col = "year") {
     ### probably not a good idea to bury check_flows() inhere
     ags_old <- ags_new <- conv_p <- year <- flow <- NULL
     flow_new <- destination <- origin <- .SD <- . <- NULL
-    key1 <- key ## key for joining/ adusting
+    key1 <- c(ags_col, year_col) ## key for joining/ adusting
     ## key2 key for grouping
-    key2 <- setdiff(c("origin", "destination"), key1)
+    key2 <- setdiff(colnames(to_correct), key1)
     ## all.x and allow.cartesian are necessary (?) bc for some ags there
     ## are several new ags, so several rows are joined
-    flows2 <- merge(flows,
-                    dt[, .(ags_old, ags_new, conv_p, year)],
-                    by.x = c(key1, "year"),
+    flows2 <- merge(to_correct,
+                    corrections[, .(ags_old, ags_new, conv_p, year)],
+                    by.x = key1,
                     by.y = c("ags_old", "year"),
                     all.x = TRUE, allow.cartesian = TRUE)
     flows2[, "flow_new" := flow * conv_p]
     keys <- c("ags_new", key2, "year")
-    flows2 <- flows2[, "flow_new" := sum(flow_new),
+    flows2 <- flows2[, .(flow_new = sum(flow_new)),
                      keyby = keys]
-    check_flows(flows2, flows, hard = TRUE)
+##     check_flows(flows2, flows, hard = TRUE)
     ## there might be several rows, why again?
     flows2 <- flows2[, .SD[1], keyby = keys]
-    check_flows(flows2, flows, hard = FALSE)
-    if (key1 == "origin") {
-        flows2 <- flows2[, .(origin = ags_new, destination,
-                             flow = flow_new, year)]
-    }
-    if (key1 == "destination") {
-        flows2 <- flows2[, .(origin, destination = ags_new,
-                             flow = flow_new, year)]
-    }
+    setnames(flows2, "ags_new", ags_col)
+##    check_flows(flows2, flows, hard = FALSE)
     return(flows2)
 }
 
