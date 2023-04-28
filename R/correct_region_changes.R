@@ -83,47 +83,6 @@ correct_flow <- function(dt, cor_dt, ags_col, year_col = "year") {
     return(tab_c)
 }
 
-##' Corrects the flows where either orgin or destination is the key.
-##'
-##' Expects two data.tables. This is bad design, I think it would be
-##' better to allow the user to specify the column that is to be
-##' adjusted and the column holding the AGS
-##' @title Adjust flows for municipalitiy changes
-##' @param flows data.table with columns origin, destination, flow, year
-##' @param dt data.table correction information
-##' @param key character origin or destination
-##' @return data.table
-##' @import data.table
-##' @author Konstantin
-correct_flows_ <- function(to_correct, corrections, ags_col,
-                           year_col = "year") {
-    ### probably not a good idea to bury check_flows() inhere
-    ags_old <- ags_new <- conv_p <- year <- flow <- NULL
-    flow_new <- destination <- origin <- .SD <- . <- NULL
-    key1 <- c(ags_col, year_col) ## key for joining/ adusting
-    print(paste("joinkey", key1))
-    ## key2 key for grouping
-    key2 <- setdiff(colnames(to_correct), c(key1, "flow", "flow_new"))
-    print(paste("groupkey", key2))
-    ## all.x and allow.cartesian are necessary (?) bc for some ags there
-    ## are several new ags, so several rows are joined
-    flows2 <- merge(to_correct,
-                    corrections[, .(ags_old, ags_new, conv_p, year)],
-                    by.x = key1,
-                    by.y = c("ags_old", "year"),
-                    all.x = TRUE, allow.cartesian = TRUE)
-    flows2[, "flow_new" := flow * conv_p]
-    keys <- c("ags_new", key2, "year")
-    flows2 <- flows2[, .(flow_new = sum(flow_new)),
-                     keyby = keys]
-##     check_flows(flows2, flows, hard = TRUE)
-    ## there might be several rows, why again?
-    flows2 <- flows2[, .SD[1], keyby = keys]
-    setnames(flows2, "ags_new", ags_col)
-##    check_flows(flows2, flows, hard = FALSE)
-    return(flows2)
-}
-
 ##' checks if all ags can be found in correction data.table
 ##'
 ##' @title Check if ags are found in correction table
