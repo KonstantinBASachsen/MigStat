@@ -95,10 +95,9 @@ correct_flow <- function(dt, cor_dt, ags_col, year_col = "year") {
 check_ags_can_be_found <- function(flows, dt,
                                    region = c("origin", "destination")) {
     year <- ags_old <- NULL
-    y_min <- flows[, min(year)]
-    y_max <- flows[, max(year)]
+    years <- sort(flows[, unique(year)])
     region <- match.arg(region)
-    not_found_n <- lapply(y_min:y_max, function(y)
+    not_found_n <- lapply(years, function(y)
         length(setdiff(flows[year == y, unique(get(region))],
                        dt[year == y, unique(ags_old)])))
     not_found_n <- as.integer(not_found_n)
@@ -107,9 +106,9 @@ check_ags_can_be_found <- function(flows, dt,
         tab <- NULL
     }
     if (sum(not_found_n) > 0) {
-        tab <- data.table::data.table(y_min:y_max, not_found_n)
+        tab <- data.table::data.table(years, not_found_n)
         warning(sprintf("Several AGS were not found for '%s'!", region))
-        warning(print(tab))
+   ##     warning(tab)
     }
     return(tab)
 }
