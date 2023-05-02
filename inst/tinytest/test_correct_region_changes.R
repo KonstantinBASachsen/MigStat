@@ -4,6 +4,7 @@ ps$cor <- file.path(ps$data, "corrections")
 shp <- read_clean_shps(ps$shps, "complete")$districts
 mig <- data.table::fread(file.path(ps$mig, "moves2000-2018.csv"))
 correct <- data.table::fread(file.path(ps$cor, "districts_19.csv"))
+correct <- data.table::fread(file.path(ps$cor, "districts_19_fdz.csv"))
 flows <- get_flows(mig, "di", "di", by = "year")
 flows_gr <- get_flows(mig, "di", "di",
                    by = c("year", "EF25"))
