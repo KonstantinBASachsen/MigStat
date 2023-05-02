@@ -138,3 +138,28 @@ ret_el <- function(l, idx) {
   el <- l[[idx]]
   return(el)
 }
+
+##' Name elements of list and create attribute "name" for each element
+##'
+##' A little helper function that names all elements of a list and
+##' additionally creates a new attribute for every element of the list
+##' called 'name' that has the same value as the named element. This
+##' is useful to use lapply() and use the names of the elements.
+##' @title Name elements of list and create attribute "name" for each element
+##' @param list a list that is to be named
+##' @param names a vector of the same length as list that is used for naming
+##' @return list
+##' @export name_list
+##' @author Konstantin
+##' @examples
+##' 
+name_list <- function(list, names) {
+    stopifnot("list and names must be of same length" = length(list) == length(names))
+    names(list) <- as.character(names)
+    message("Elements of list named.")
+    for (n in names(list)) {
+        list[[n]]$name <- n
+    }
+    message("Name attribute for each element created")
+    return(list)
+}
