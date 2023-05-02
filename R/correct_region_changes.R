@@ -63,6 +63,7 @@ correct_flows <- function(flows, dt, round = TRUE) {
 }
 
 correct_flow <- function(dt, cor_dt, ags_col, year_col = "year") {
+    . <- ags_old <- ags_new <- conv_p <- flow <- flow_new <- NULL
     by_x <- c(ags_col, year_col)
     by_y <- c("ags_old", "year")
     tab_c <- merge(dt, cor_dt[, .(ags_old, ags_new, conv_p, year)],
@@ -119,6 +120,8 @@ check_ags_can_be_found <- function(flows, dt,
 ##' @param flows_new data.table The new flows object that is to be
 ##'     checked.
 ##' @param flows_old data.table that is used as ground truth
+##' @param keys character specifies the columns by which the flow is
+##'     summed. See Details
 ##' @param hard logical This is really badly implemented. If hard,
 ##'     then the actual number of flows in flows_new is computed
 ##'     differently. This is because in correct_flows() check_flows()
@@ -133,6 +136,16 @@ check_ags_can_be_found <- function(flows, dt,
 ##' reason I can think of, is that some ags were not found. Here
 ##' instead of stopping the execution only a warning is emitted and it
 ##' is up to the user to decide what to do.
+##' @details keys When trying to adjust for regional changes first to
+##'     every ags the new ags is joined and the relevant conversion
+##'     factor. When this is done then for every old ags are sometimes
+##'     many rows joined and thus the number of flows in the data
+##'     increases. The "true" number of flows is obtained by grouping
+##'     by "keys" and computing the sum of flows for every unique
+##'     key. If no other grouping variables are present this can be
+##'     achieved by simply summing over c("origin", "destination",
+##'     "year") but there might be additional grouping columns like
+##'     age or gender.
 ##' @import data.table
 ##' @return NULL
 ##' @author Konstantin
