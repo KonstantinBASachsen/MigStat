@@ -193,13 +193,25 @@ fit_models <- function(age_groups, years, data, formula) {
     return(fits)
 }
 
-clean_output <- function(extracts) {
-    ## should have one extract as input. The lapply should be outside
-    ## of the function. Also I should be able to check n_coefs by
-    ## checking the length?
-    ## groups <- names(extracts)
-    ## extracts <- extracts[[1]]
-    model_out <- ret_el(extracts, 2)
+##' When fitting many models comparison between them is easy if all
+##' relevant information is in one data.table. clean_output() can be
+##' called on extract_fit(model) to convert the list of the model
+##' information returned by extract_fit() to a data.table. These
+##' data.tables can be combined easily to one data.table that
+##' encompasses the output of several models
+##'
+##' @title Convert List of model extracts to data.table
+##' @param extract list from extract_fit(model)
+##' @return data.table
+##' @export clean_output
+##' @import data.table
+##' @author Konstantin
+##' @examples
+##' fit <- lm(dist ~ speed, data = cars)
+##' extract <- extract_fit(fit)
+##' out <- clean_output(extract)
+clean_output <- function(extract) {
+    model_out <- ret_el(extract, 2)
     coefs <- ret_el(model_out, 2)
     rsq <- ret_el(model_out, 3)
     rsq <- as.numeric(rsq)
@@ -209,7 +221,7 @@ clean_output <- function(extracts) {
     coefs[, "rsquared" := rsq]
     coefs[, "a_rsquared" := a_rsq]
     cols <- c( "coefs", "estimate", "se","rsquared", "a_rsquared")
-    setcolorder(coefs, cols)
+    data.table::setcolorder(coefs, cols)
     return(coefs)
 }
 
