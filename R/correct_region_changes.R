@@ -108,7 +108,7 @@ check_ags_can_be_found <- function(flows, dt,
     if (sum(not_found_n) > 0) {
         tab <- data.table::data.table(years, not_found_n)
         warning(sprintf("Several AGS were not found for '%s'!", region))
-   ##     warning(tab)
+        print(tab)
     }
     return(tab)
 }
