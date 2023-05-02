@@ -67,6 +67,37 @@ clean_output <- function(extract) {
     return(coefs)
 }
 
+##' Create a data.table from a list of model outputs
+##'
+##' Intended to be used on list of outputs returned by clean_output()
+##' @title data.table from list of models
+##' @param models_list list of model outputs created by clean_output()
+##' @param names optional. Vector of names
+##' @return data.table
+##' @import data.table
+##' @export make_models_dt
+##' @author Konstantin
+##' @examples
+##' x <- rnorm(100)
+##' y <- 0.1 * x + rnorm(100)
+##' group <- sample(c("A", "B", "C"), 100, replace = TRUE)
+##' dt <- data.table(x, y, group)
+##' models <- lapply(c("A", "B", "C"), function(g) lm(y ~ x, data = dt[group == g]))
+##' extracts <- lapply(models, extract_fit)
+##' output <- lapply(extracts, clean_output)
+##' make_models_dt(output, c("A", "B", "C"))
+make_models_dt <- function(models_list, names = NULL) {
+    if (is.null(names(models_list)) & is.null(names)) {
+        warning("list not named and no names specified. Models names sequentially")
+    }
+    if (!is.null(names)) {
+        stopifnot("list and names must be of same length" = length(models_list) == length(names))
+        names(models_list) <- as.character(names)
+    }
+    models <- data.table::rbindlist(models_list, idcol = "model")
+    return(models)
+}
+
 ##' Plot predicted vs observed on log scale used for modeling and
 ##' original scale
 ##'
