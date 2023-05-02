@@ -133,3 +133,8 @@ read_mig <- function(path, file, type = "csv") {
                              encoding = "UTF-8")
     return(mig)
 }
+
+ret_el <- function(l, idx) {
+  el <- l[[idx]]
+  return(el)
+}

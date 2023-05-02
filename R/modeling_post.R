@@ -35,6 +35,38 @@ extract_fit <- function(fit) {
     return(extracted)
 }
 
+##' When fitting many models comparison between them is easy if all
+##' relevant information is in one data.table. clean_output() can be
+##' called on extract_fit(model) to convert the list of the model
+##' information returned by extract_fit() to a data.table. These
+##' data.tables can be combined easily to one data.table that
+##' encompasses the output of several models
+##'
+##' @title Convert List of model extracts to data.table
+##' @param extract list from extract_fit(model)
+##' @return data.table
+##' @export clean_output
+##' @import data.table
+##' @author Konstantin
+##' @examples
+##' fit <- lm(dist ~ speed, data = cars)
+##' extract <- extract_fit(fit)
+##' out <- clean_output(extract)
+clean_output <- function(extract) {
+    model_out <- ret_el(extract, 2)
+    coefs <- ret_el(model_out, 2)
+    rsq <- ret_el(model_out, 3)
+    rsq <- as.numeric(rsq)
+    a_rsq <- ret_el(model_out, 4)
+    a_rsq <- as.numeric(a_rsq)
+##    coefs[, "model" := groups]
+    coefs[, "rsquared" := rsq]
+    coefs[, "a_rsquared" := a_rsq]
+    cols <- c( "coefs", "estimate", "se","rsquared", "a_rsquared")
+    data.table::setcolorder(coefs, cols)
+    return(coefs)
+}
+
 ##' Plot predicted vs observed on log scale used for modeling and
 ##' original scale
 ##'
@@ -84,44 +116,6 @@ plot_fit <- function(extract, lbls = NULL, title = NULL,
     return(NULL)
 }
 
-##' Adds abbreviated names to federal states
-##'
-##' @title Short labels for federal states 
-##' @param shp shapefile for federal states
-##' @return data.table
-##' @import data.table
-##' @export gen_state_labels
-##' @author Konstantin
-gen_state_labels <- function(shp) {
-    AGS <- GEN <- . <- NULL
-    lbls_dt <- shp[, .(AGS, GEN)]
-    lbls_dt[, "GEN_abbr" := c("SH", "HH", "NS", "Bre", "NRW", "Hes",
-                          "RLP", "BaW\u00FC", "Bay", "Saa", "Ber", "Bran",
-                          "MP", "Sac", "LSA", "T")]
-    return(lbls_dt)
-}
-##' Joins state labels to flow data and creates labels for plotting
-##'
-##' @title Joins state labels for plotting labels
-##' @param flows data.table of flows
-##' @param lbls_dt data.table of abbreviated names and AGS
-##' @param sep seperator for labels. So labels will be Ber sep HH,
-##'     default Ber > HH to indicate flows from Berlin to Hamburg
-##' @return data.table
-##' @import data.table
-##' @export join_state_labels
-##' @author Konstantin
-join_state_labels <- function(flows, lbls_dt, sep = " > ") {
-    AGS <- GEN_abbr <- lbl_o <- lbl_d <- . <- NULL
-    flows <- merge(flows, lbls_dt[, .(AGS, GEN_abbr)], by.x =  "origin", by.y = "AGS")
-    data.table::setnames(flows, "GEN_abbr", "lbl_o")
-    flows <- merge(flows, lbls_dt[, .(AGS, GEN_abbr)], by.x =  "destination", by.y = "AGS")
-    data.table::setnames(flows, "GEN_abbr", "lbl_d")
-    flows[, "lbl" := paste(lbl_o, lbl_d, sep = sep)]
-    flows[, c("lbl_o", "lbl_d") := NULL]
-    return(flows)
-}
-
 ##' Wrapper that saves conveniently plots from model extracts
 ##'
 ##' When extracting output from a model fit I often times use
@@ -167,62 +161,6 @@ save_model_output <- function(extracts, path, name_suffix = NULL) {
         saving_data(extracts[[i]]$model, path, name)
     }
     return(NULL)
-}
-
-ret_el <- function(l, idx) {
-  el <- l[[idx]]
-  return(el)
-}
-
-fit_models <- function(age_groups, years, data, formula) {
-    ### would be better as more general function that fits models for
-### subsets of data. Maybe loop explicitly over subsets?
-    age_gr <- NULL ## why no cmd note for "year"
-    n_age <- length(age_groups)
-    n_y <- length(years)
-    fits <- vector(mode = "list", 
-                   length = length(n_age * n_y))
-    for (y in years) {
-        for (g in age_groups) {
-            n <- paste(y, g, sep = "_")
-            fits[n] <- lapply(formula, function(x) 
-                lm(x, data = data[age_gr == g & year == y]))
-        }
-    }
-    fits <- fits[-1] ## first elements always NULL. Looks dangerous!
-    return(fits)
-}
-
-##' When fitting many models comparison between them is easy if all
-##' relevant information is in one data.table. clean_output() can be
-##' called on extract_fit(model) to convert the list of the model
-##' information returned by extract_fit() to a data.table. These
-##' data.tables can be combined easily to one data.table that
-##' encompasses the output of several models
-##'
-##' @title Convert List of model extracts to data.table
-##' @param extract list from extract_fit(model)
-##' @return data.table
-##' @export clean_output
-##' @import data.table
-##' @author Konstantin
-##' @examples
-##' fit <- lm(dist ~ speed, data = cars)
-##' extract <- extract_fit(fit)
-##' out <- clean_output(extract)
-clean_output <- function(extract) {
-    model_out <- ret_el(extract, 2)
-    coefs <- ret_el(model_out, 2)
-    rsq <- ret_el(model_out, 3)
-    rsq <- as.numeric(rsq)
-    a_rsq <- ret_el(model_out, 4)
-    a_rsq <- as.numeric(a_rsq)
-##    coefs[, "model" := groups]
-    coefs[, "rsquared" := rsq]
-    coefs[, "a_rsquared" := a_rsq]
-    cols <- c( "coefs", "estimate", "se","rsquared", "a_rsquared")
-    data.table::setcolorder(coefs, cols)
-    return(coefs)
 }
 
 save_plots <- function(extracts, path, title, save_data, lbls = NULL, name_suffix = NULL, 
