@@ -81,7 +81,7 @@ clean_output <- function(extract) {
 ##' x <- rnorm(100)
 ##' y <- 0.1 * x + rnorm(100)
 ##' group <- sample(c("A", "B", "C"), 100, replace = TRUE)
-##' dt <- data.table(x, y, group)
+##' dt <- data.table::data.table(x, y, group)
 ##' models <- lapply(c("A", "B", "C"), function(g) lm(y ~ x, data = dt[group == g]))
 ##' extracts <- lapply(models, extract_fit)
 ##' output <- lapply(extracts, clean_output)
