@@ -116,67 +116,14 @@ plot_fit <- function(extract, lbls = NULL, title = NULL,
     return(NULL)
 }
 
-##' Wrapper that saves conveniently plots from model extracts
-##'
-##' When extracting output from a model fit I often times use
-##' plot_fit() to quickly evaluate the fit of the model. This function
-##' takes a list of extract_fit() and saves plots created using
-##' plot_fit() from these extracts.
-##' @title Save plot_fit() from many models
-##' @param extracts list of extracts from extract_fit()
-##' @param path character path. In "path", if not existend three
-##'     subfolders: "plots", "plot_data" and "models" are created.
-##' @param title Title for every one of the plots
-##' @param lbls character, optional if not NULL then lbls instead of
-##'     points are plotted.
-##' @param name_suffix character, optional, if given, name_suffix is
-##'     appended to name of plots.
-##' @param ... optional parameters are passed to plot_fit()
-##' @return NULL
-##' @export save_model_plots
-##' @author Konstantin
-save_model_plots <- function(extracts, path, title, lbls = NULL,
-                             name_suffix = NULL, ...) {
-    for (i in seq_along(extracts)) {
-        plt_name <- paste0("fit", i, name_suffix)
-        save_plot(plot_fit(extracts[[i]], title = title, lbls = lbls, ...),
-                  plt_name, save_data = TRUE, path = path, data = extracts[[i]]$preds)
-    }
+save_model_plot <- function(extract, path, main, name_suffix,
+                            lbls = NULL, title_size = 1.5, ...) {
+    stopifnot("extract must have name attribute" = is.character(extract$name))
+    e <- extract
+    main <- sprintf(main, e$name)
+    plt_name <- paste0(e$name, name_suffix)
+    save_plot(plot_fit(extract = e, lbls = lbls, title = main,
+                       title_size = title_size),
+              path = path, plot_name = plt_name, data = e$preds, ...)
     return(NULL)
-}
-
-##' Saves model output in extracts_fit(fit)$model
-##'
-##' @title Saves everything in extracts_fit(fit)$model
-##' @param extracts List of extracts from extract_fit()
-##' @param path Output path, saves output in path/models.
-##' @param name_suffix character, optional. If not NULL, suffix is
-##'     appended to file names
-##' @return NULL
-##' @export save_model_output
-##' @author Konstantin
-save_model_output <- function(extracts, path, name_suffix = NULL) {
-    for (i in seq_along(extracts)) {
-        name <- paste0("fit", i, name_suffix)
-        saving_data(extracts[[i]]$model, path, name)
-    }
-    return(NULL)
-}
-
-save_plots <- function(extracts, path, title, save_data, lbls = NULL, name_suffix = NULL, 
-          ...) {
-  n_plots <- length(extracts)
-  message(paste(n_plots, "plots will be saved"))
-  for (n in names(extracts)) {
-    if (is.null(lbls)) {
-      plt_name <- paste0("fit", n, name_suffix)
-    }
-    if (!is.null(lbls)) {
-      plt_name <- paste0("fit", n, name_suffix, "_lbls")
-    }
-    plt_title <- paste(title, plt_name, "_")
-    save_plot(plot_fit(extracts[[n]], title = title, lbls = lbls, 
-                       ...), plt_name, save_data = save_data, path = path, data = extracts[[n]]$preds)
-  }
-  return(NULL)
 }
