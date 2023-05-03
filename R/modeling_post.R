@@ -51,8 +51,8 @@ extract_fit <- function(fit) {
 ##' @examples
 ##' fit <- lm(dist ~ speed, data = cars)
 ##' extract <- extract_fit(fit)
-##' out <- clean_output(extract)
-clean_output <- function(extract) {
+##' out <- clean_extract(extract)
+clean_extract <- function(extract) {
     model_out <- ret_el(extract, 2)
     coefs <- ret_el(model_out, 2)
     rsq <- ret_el(model_out, 3)
@@ -69,9 +69,9 @@ clean_output <- function(extract) {
 
 ##' Create a data.table from a list of model outputs
 ##'
-##' Intended to be used on list of outputs returned by clean_output()
+##' Intended to be used on list of outputs returned by clean_extract()
 ##' @title data.table from list of models
-##' @param models_list list of model outputs created by clean_output()
+##' @param models_list list of model outputs created by clean_extract()
 ##' @param names optional. Vector of names
 ##' @return data.table
 ##' @import data.table
