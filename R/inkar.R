@@ -120,9 +120,9 @@ get_raumbezug <- function(us) {
 ##' that the data can be joined to shapefile and migration statistics.
 ##'
 ##' @title Read inkar data set as data.table
-##' @param path Path to inkar.csv
+##' @param file Ffull path to inkar.csv
 ##' @param tolower logical, if TRUE, varnames are all set to lower
-##'     case.
+##'     case. If no column 'varname' in data, tolower = TRUE is ignored.
 ##' @param to_num logical. If TRUE, c("Zeitbezug", "Wert",
 ##'     "Kennziffer", "ID") are converted to numeric.
 ##' @param leading_0 If TRUE, converts the regional identiferi column,
@@ -132,10 +132,10 @@ get_raumbezug <- function(us) {
 ##' @import data.table
 ##' @export read_inkar
 ##' @author Konstantin
-read_inkar <- function(path, tolower = TRUE, to_num = FALSE,
+read_inkar <- function(file, tolower = TRUE, to_num = FALSE,
                        leading_0 = FALSE) {
     Kennziffer <- Zeitbezug <- .SD <- varname <- NULL
-    inkar <- data.table::fread(path, dec = ",")
+    inkar <- data.table::fread(file, dec = ",", encoding = "UTF-8")
 ### grap strings that start and end with [0-9] and add leading 0
 ### because in shapefiles and migration statistics the id is coded
 ### that way
@@ -148,13 +148,18 @@ read_inkar <- function(path, tolower = TRUE, to_num = FALSE,
                 to make sure joining to shapefile works"
         message(sprintf(mes, old, new))
     }
-    if (tolower == TRUE) {
+    if (tolower == TRUE & "varname" %in% colnames(inkar)) {
         inkar <- inkar[, "varname" := tolower(varname)]
+        message("Variable names in 'varname' converted to lower case.")
+    }
+    if (tolower == TRUE & !"varname" %in% colnames(inkar)) {
+        message("tolower = TRUE ignored because 'varname' not in data")
     }
     if (to_num == TRUE) {
         num_cols <- c("Wert", "Kennziffer", "ID")
 ##        inkar[Zeitbezug == "2016/2017/2018", "Zeitbezug" := NA]
         inkar[, (num_cols) := lapply(.SD, as.numeric), .SDcols = num_cols]
+        message("Columns ", paste(num_cols, collapse = ", "), " converted to numeric")
     }
     return(inkar)
 }
