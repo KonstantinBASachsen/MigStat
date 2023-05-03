@@ -152,14 +152,23 @@ ret_el <- function(l, idx) {
 ##' @export name_list
 ##' @author Konstantin
 ##' @examples
-##' 
+##' l <- list(1, 3, "A", "model")
+##' names <- c("intercept", "beta", "group", "fit1")
+##' ## name_list(l, n) ### throws error
+##' l <- list(list(1), list(3), list("A"), list("model"))
+##' name_list(l, n)
 name_list <- function(list, names) {
     stopifnot("list and names must be of same length" = length(list) == length(names))
+    stopifnot("All elements of 'l' must be lists as well" = all(vapply(l, is.list, logical(1))))
     names(list) <- as.character(names)
     message("Elements of list named.")
-    for (n in names(list)) {
+    for (n in names) {
         list[[n]]$name <- n
     }
     message("Name attribute for each element created")
     return(list)
 }
+
+
+
+
