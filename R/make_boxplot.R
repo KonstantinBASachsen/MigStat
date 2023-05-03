@@ -32,8 +32,10 @@ get_box_data <- function(mig, col, by,
     }
     cols <- colnames(dt_box)
     gr <- by[by != "year"]
-    cols[grepl(gr, cols)] <- "group"
-    colnames(dt_box) <- cols
+    if (length(gr) > 0) {
+        cols[grepl(gr, cols)] <- "group"
+        colnames(dt_box) <- cols
+    }
     return(dt_box)
 }
 
