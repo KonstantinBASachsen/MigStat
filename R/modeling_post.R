@@ -116,6 +116,30 @@ plot_fit <- function(extract, lbls = NULL, title = NULL,
     return(NULL)
 }
 
+##' Saves data and plot returned from plot_fit()
+##'
+##' The saving of the plot returned by plot_fit() and the accompanying
+##' data is a little tedious because the plot and the data to be saved
+##' depend upon extract. The name of the plot file and the title of
+##' the plot typically depend upon the name attribute of
+##' extract. save_model_plot() is intended to be used with lapply() to
+##' automate some of these tedious tasks.
+##' @title Saves data and plot returned from plot_fit()
+##' @param extract list of model information, returned by
+##'     extract_fit()
+##' @param path Path were data and plot are saved. Two subfolders are
+##'     created if they do not exist: path/plots and path/plot_data.
+##' @param main character, plot title. The name attribute of extract
+##'     is appended.
+##' @param name_suffix additional suffix for the plot name. The plot
+##'     name will be paste0(extract$name, name_suffix).
+##' @param lbls character, optional. If not NULL, lbls are plotted
+##'     instead of points.
+##' @param title_size numeric, optional, size of the plot title
+##' @param ... additional parameters passed to save_plot()
+##' @return NULL
+##' @export save_model_plot
+##' @author Konstantin
 save_model_plot <- function(extract, path, main, name_suffix,
                             lbls = NULL, title_size = 1.5, ...) {
     stopifnot("extract must have name attribute" = is.character(extract$name))
