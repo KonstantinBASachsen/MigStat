@@ -36,7 +36,7 @@ extract_fit <- function(fit) {
 }
 
 ##' When fitting many models comparison between them is easy if all
-##' relevant information is in one data.table. clean_output() can be
+##' relevant information is in one data.table. clean_extract() can be
 ##' called on extract_fit(model) to convert the list of the model
 ##' information returned by extract_fit() to a data.table. These
 ##' data.tables can be combined easily to one data.table that
@@ -45,7 +45,7 @@ extract_fit <- function(fit) {
 ##' @title Convert List of model extracts to data.table
 ##' @param extract list from extract_fit(model)
 ##' @return data.table
-##' @export clean_output
+##' @export clean_extract
 ##' @import data.table
 ##' @author Konstantin
 ##' @examples
@@ -65,37 +65,6 @@ clean_extract <- function(extract) {
     cols <- c( "coefs", "estimate", "se","rsquared", "a_rsquared")
     data.table::setcolorder(coefs, cols)
     return(coefs)
-}
-
-##' Create a data.table from a list of model outputs
-##'
-##' Intended to be used on list of outputs returned by clean_extract()
-##' @title data.table from list of models
-##' @param models_list list of model outputs created by clean_extract()
-##' @param names optional. Vector of names
-##' @return data.table
-##' @import data.table
-##' @export make_models_dt
-##' @author Konstantin
-##' @examples
-##' x <- rnorm(100)
-##' y <- 0.1 * x + rnorm(100)
-##' group <- sample(c("A", "B", "C"), 100, replace = TRUE)
-##' dt <- data.table::data.table(x, y, group)
-##' models <- lapply(c("A", "B", "C"), function(g) lm(y ~ x, data = dt[group == g]))
-##' extracts <- lapply(models, extract_fit)
-##' output <- lapply(extracts, clean_output)
-##' make_models_dt(output, c("A", "B", "C"))
-make_models_dt <- function(models_list, names = NULL) {
-    if (is.null(names(models_list)) & is.null(names)) {
-        warning("list not named and no names specified. Models names sequentially")
-    }
-    if (!is.null(names)) {
-        stopifnot("list and names must be of same length" = length(models_list) == length(names))
-        names(models_list) <- as.character(names)
-    }
-    models <- data.table::rbindlist(models_list, idcol = "model")
-    return(models)
 }
 
 ##' Plot predicted vs observed on log scale used for modeling and
