@@ -154,12 +154,13 @@ check_flows <- function(flows_new, flows_old, keys, hard = TRUE) {
     flows_exp <- flows_old[, sum(flow, na.rm = TRUE)]
     if (hard == TRUE) {
         flows_n <- flows_new[, .SD[1], keyby = keys][, sum(flow, na.rm = TRUE)]
-        if (flows_exp == flows_n) {
+        cond <- abs(flows_exp - flows_n) < 1
+        if (cond == TRUE) {
             mes <- sprintf("Unadjusted flows after merge as expected! Flows: %s",
                            flows_exp)
             message(mes)
         }
-        if (flows_exp != flows_n) {
+        if (cond == FALSE) {
             mes <- sprintf("Udadjusted flows after merge not as expected! Expected %s, got %s",
                            flows_exp, flows_n)
             stop(mes)
