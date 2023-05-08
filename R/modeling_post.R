@@ -19,9 +19,13 @@ extract_fit <- function(fit) {
     coefs <- data.table::data.table("coefs" = names(coef(fit)),
                "estimate" = round(coef(fit), 2),
                "se" = round(sqrt(diag(vcov(fit))), 2))
-    if (inherits(fit, "lm") == TRUE) {
+    if (inherits(fit, "lm") == TRUE & inherits(fit, "glm") == FALSE) {
         r_squared <- round(summary(fit)$r.squared, 2)
         adj_r_squared <- round(summary(fit)$adj.r.squared, 2)
+    }
+    if (inherits(fit, "glm") == TRUE) {
+      r_squared <- NA
+      adj_r_squared <- NA
     }
     if (inherits(fit, "plm") == TRUE) {
         r_squared <- round(as.numeric(summary(fit)$r.squared[1]), 2)
