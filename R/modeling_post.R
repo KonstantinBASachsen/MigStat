@@ -22,10 +22,12 @@ extract_fit <- function(fit) {
     if (inherits(fit, "lm") == TRUE & inherits(fit, "glm") == FALSE) {
         r_squared <- round(summary(fit)$r.squared, 2)
         adj_r_squared <- round(summary(fit)$adj.r.squared, 2)
+        link  <- "identity"
     }
     if (inherits(fit, "glm") == TRUE) {
       r_squared <- NA
       adj_r_squared <- NA
+      link <- fit$family$link
     }
     if (inherits(fit, "plm") == TRUE) {
         r_squared <- round(as.numeric(summary(fit)$r.squared[1]), 2)
@@ -33,7 +35,7 @@ extract_fit <- function(fit) {
     }
     model <- list("call" = call, "coefs" = coefs,
                   "r_squared" = r_squared,
-                  "adj_r_squared" = adj_r_squared)
+                  "adj_r_squared" = adj_r_squared, "link" = link)
 
     extracted <- list("preds" = preds_obs, "model" = model)
     return(extracted)
