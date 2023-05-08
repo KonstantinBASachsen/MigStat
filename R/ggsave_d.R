@@ -52,7 +52,8 @@ save_plot <- function(plt, plot_name, path, base = TRUE, save_data = FALSE,
     }
     ps <- make_plot_dirs(path)
     if (base == FALSE) {
-        ggplot2::ggsave(filename = paste0(plot_name, ".pdf"), plot = plt, path = ps$plot_path, ...)
+        ggplot2::ggsave(filename = paste0(plot_name, ".pdf"), plot = plt, 
+                        path = ps$plot_path, width = width, height = height, ...)
         dt <- return_data_gg(plot = plt, data = data)
     }
     if  (base == TRUE) {
