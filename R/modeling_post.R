@@ -24,6 +24,7 @@ extract_fit <- function(fit) {
         r_squared <- round(summary(fit)$r.squared, 2)
         adj_r_squared <- round(summary(fit)$adj.r.squared, 2)
         link  <- "identity"
+        aic <- NA
     }
     if (inherits(fit, "glm") == TRUE) {
         preds <- as.numeric(predict(fit))
