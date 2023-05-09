@@ -10,24 +10,32 @@
 ##' @import data.table
 ##' @export extract_fit
 extract_fit <- function(fit) {
-     ## as.numeric bc if plm predicions have attributes that make plotting difficult
-    preds <- as.numeric(predict(fit))
-    obs <- fit$model[, 1]
+    ## as.numeric bc if plm predicions have attributes that make plotting difficult
+    ## the column names do not make sense anymore but the code works
     call <- as.character(fit$call)[2]
-    preds_obs <- data.table::data.table("predicted" = preds, "observed" = obs,
-                            "observed_exp" = exp(obs))
     coefs <- data.table::data.table("coefs" = names(coef(fit)),
                "estimate" = round(coef(fit), 2),
                "se" = round(sqrt(diag(vcov(fit))), 2))
     if (inherits(fit, "lm") == TRUE & inherits(fit, "glm") == FALSE) {
+        preds <- as.numeric(predict(fit))
+        obs <- fit$model[, 1]
+        preds_obs <- data.table::data.table("predicted" = preds, "observed" = obs,
+                                            "observed_exp" = exp(obs))
         r_squared <- round(summary(fit)$r.squared, 2)
         adj_r_squared <- round(summary(fit)$adj.r.squared, 2)
         link  <- "identity"
     }
     if (inherits(fit, "glm") == TRUE) {
-      r_squared <- NA
-      adj_r_squared <- NA
-      link <- fit$family$link
+        preds <- as.numeric(predict(fit))
+        obs <- fit$model[, 1]
+        preds_obs <- data.table::data.table("predicted" = preds, "observed" = obs,
+                                            "observed_exp" = exp(obs))
+        preds_obs <- data.table::data.table("predicted" = preds, "observed" = log(obs),
+                                            "observed_exp" = obs)
+        r_squared <- NA
+        adj_r_squared <- NA
+        aic <- fit$aic
+        link <- fit$family$link
     }
     if (inherits(fit, "plm") == TRUE) {
         r_squared <- round(as.numeric(summary(fit)$r.squared[1]), 2)
