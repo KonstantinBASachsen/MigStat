@@ -43,8 +43,9 @@ extract_fit <- function(fit) {
     }
     model <- list("call" = call, "coefs" = coefs,
                   "r_squared" = r_squared,
-                  "adj_r_squared" = adj_r_squared, "link" = link)
-
+                  "adj_r_squared" = adj_r_squared,
+                  "aic" = aic,
+                  "link" = link)
     extracted <- list("preds" = preds_obs, "model" = model)
     return(extracted)
 }
