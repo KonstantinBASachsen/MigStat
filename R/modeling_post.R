@@ -74,10 +74,12 @@ clean_extract <- function(extract) {
     rsq <- as.numeric(rsq)
     a_rsq <- ret_el(model_out, 4)
     a_rsq <- as.numeric(a_rsq)
+    aic <- ret_el(model_out, 5)
 ##    coefs[, "model" := groups]
     coefs[, "rsquared" := rsq]
     coefs[, "a_rsquared" := a_rsq]
-    cols <- c( "coefs", "estimate", "se","rsquared", "a_rsquared")
+    coefs[, "aic" := aic]
+    cols <- c( "coefs", "estimate", "se","rsquared", "a_rsquared", "aic")
     data.table::setcolorder(coefs, cols)
     return(coefs)
 }
@@ -131,43 +133,43 @@ plot_fit <- function(extract, lbls = NULL, title = NULL,
     return(NULL)
 }
 
-plot_fit_glm <- function(extract, lbls = NULL, title = NULL,
-                     title_size = 1.5, ...) {
-    stopifnot("Expects list with element 'preds" = "preds" %in% names(extract))
-    preds <- extract$preds$predicted
-    obs <- extract$preds$observed
-    obs[obs == 0] <- 0.1
-    obs_exp <- extract$preds$observed_exp
-    graphics::par(mfrow = c(1, 2))
-    q <- quantile(obs, 0.99)
-    x <- NULL
-    if (is.null(lbls)) {
-        graphics::plot(preds, log(obs), main = "log scale",
-                       xlab = "Predicted", ylab = "Observed")
-        graphics::curve(x * 1, add = TRUE, col = "red")
-        graphics::plot(preds, obs, main = "original scale",
-                       xlab = "Predicted", ylab = "Observed",
-                       ylim = c(0, q))
-        graphics::curve(exp(x), add = TRUE, col = "red")
-    }
-    if (!is.null(lbls)) {
-        graphics::plot(preds, log(obs), main = "log scale",
-                       xlab = "Predicted", ylab = "Observed",
-                       type = "n")
-        graphics::curve(x * 1, add = TRUE, col = "red")
-        graphics::text(preds, obs, labels = lbls, ...)
-        graphics::plot(preds, obs, main = "original scale",
-                       xlab = "Predicted", ylab = "Observed", type = "n",
-                       ylim = c(0, q))
-        graphics::text(preds, obs_exp, labels = lbls, ...)
-        graphics::curve(exp(x), add = TRUE, col = "red")
-    }
-    if (!is.null(title)) {
-        mtext(title, side = 3, line = -1.5, cex = title_size, outer = TRUE,
-              font = 2)
-    }
-    return(NULL)
-}
+## plot_fit_glm <- function(extract, lbls = NULL, title = NULL,
+##                      title_size = 1.5, ...) {
+##     stopifnot("Expects list with element 'preds" = "preds" %in% names(extract))
+##     preds <- extract$preds$predicted
+##     obs <- extract$preds$observed
+##     obs[obs == 0] <- 0.1
+##     obs_exp <- extract$preds$observed_exp
+##     graphics::par(mfrow = c(1, 2))
+##     q <- quantile(obs, 0.99)
+##     x <- NULL
+##     if (is.null(lbls)) {
+##         graphics::plot(preds, log(obs), main = "log scale",
+##                        xlab = "Predicted", ylab = "Observed")
+##         graphics::curve(x * 1, add = TRUE, col = "red")
+##         graphics::plot(preds, obs, main = "original scale",
+##                        xlab = "Predicted", ylab = "Observed",
+##                        ylim = c(0, q))
+##         graphics::curve(exp(x), add = TRUE, col = "red")
+##     }
+##     if (!is.null(lbls)) {
+##         graphics::plot(preds, log(obs), main = "log scale",
+##                        xlab = "Predicted", ylab = "Observed",
+##                        type = "n")
+##         graphics::curve(x * 1, add = TRUE, col = "red")
+##         graphics::text(preds, obs, labels = lbls, ...)
+##         graphics::plot(preds, obs, main = "original scale",
+##                        xlab = "Predicted", ylab = "Observed", type = "n",
+##                        ylim = c(0, q))
+##         graphics::text(preds, obs_exp, labels = lbls, ...)
+##         graphics::curve(exp(x), add = TRUE, col = "red")
+##     }
+##     if (!is.null(title)) {
+##         mtext(title, side = 3, line = -1.5, cex = title_size, outer = TRUE,
+##               font = 2)
+##     }
+##     return(NULL)
+## }
 
 ##' Saves data and plot returned from plot_fit()
 ##'
