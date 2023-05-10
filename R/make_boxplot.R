@@ -16,20 +16,20 @@ get_box_data <- function(mig, col, by,
     ### when more than two grouping variables are given. Does also not
     ### work when two grouping variables are given and both are not
 ### year.
-    if (length(by[by != "year"]) > 1) {
-        stop("Excluding 'year' only one by variable is allowed currently")
-    }
+    ## if (length(by[by != "year"]) > 1) {
+    ##     stop("Excluding 'year' only one by variable is allowed currently")
+    ## }
     ##    dt_box <- mig[, stats::fivenum(get(col)), keyby = by]
-    dt_box <- mig[, c(stats::quantile(get(col), probs), .N), keyby = by]
+    dt_box <- mig[, c(stats::quantile(get(col), probs), sum(get(col))), keyby = by]
     stats <- c("ymin", "y25", "ymed", "y75", "ymax", "N")
     dt_box[, `:=`("what", stats), keyby = by]
     formula <- sprintf("%s ~ what", paste(by, collapse = " + "))
     dt_box <- data.table::dcast(dt_box, formula = formula, value.var = "V1")
-    if ("year" %in% by) {
-        ### dont know if this is a good idea. maybe just hand in
-        ### year_short directly if desired
-        dt_box[, `:=`("year_short", substr(as.factor(year), 3, 4))]
-    }
+    ## if ("year" %in% by) {
+    ##     ### dont know if this is a good idea. maybe just hand in
+    ##     ### year_short directly if desired
+    ##     dt_box[, `:=`("year_short", substr(as.factor(year), 3, 4))]
+    ## }
     cols <- colnames(dt_box)
     gr <- by[by != "year"]
     if (length(gr) > 0) {
