@@ -51,24 +51,22 @@ get_box_data <- function(mig, col, by,
 ##' @return plot object
 ##' @author Konstantin
 ##' @import ggplot2
-custom_boxplot <- function(dt, title, group = "group") {
+custom_boxplot <- function(dt) {
     ## Plotted die 5 Punkte Zusammenfassung, welche mit get_box_data()
     ## erstellt wurde.
-    dt <- make_facet_labels(dt, group)
-    dt <- reorder_lbls_levels(dt)
-    box_dist <- ggplot2::ggplot(dt, ggplot2::aes_string("year_short")) +
+    box_dist <- ggplot2::ggplot(dt) +
         ggplot2::geom_boxplot(
-                     ggplot2::aes_string(x = "year_short",
-                                         min = "ymin", lower = "y25",
-                                         middle = "ymed", upper = "y75", max = "ymax",
-                                         group = "year"), stat = "identity") +
-    ggplot2::facet_wrap(ggplot2::vars(labels), drop = FALSE) +
-    theme_brrrp(maj.y = TRUE) +
-    ggplot2::theme(
-        axis.text.x = ggplot2::element_text(angle = 45)) +
-    ggplot2::ggtitle(title) +
-    ggplot2::xlab("Jahr") +
-    ggplot2::ylab("Distanz in km")
+                     ggplot2::aes(x = "year_short", min = "ymin",
+                                  lower = "y25", middle = "ymed",
+                                  upper = "y75", max = "ymax",
+                                  group = group), stat = "identity") 
+    ## ggplot2::facet_wrap(ggplot2::vars(labels), drop = FALSE) +
+    ## theme_brrrp(maj.y = TRUE) +
+    ## ggplot2::theme(
+    ##     axis.text.x = ggplot2::element_text(angle = 45)) +
+    ## ggplot2::ggtitle(title) +
+    ## ggplot2::xlab("Jahr") +
+    ## ggplot2::ylab("Distanz in km")
     return(box_dist)
 }
 
