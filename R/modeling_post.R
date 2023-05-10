@@ -101,29 +101,37 @@ clean_extract <- function(extract) {
 ##' @import graphics
 ##' @export plot_fit
 plot_fit <- function(extract, lbls = NULL, title = NULL,
-                     title_size = 1.5, ...) {
+                     title_size = 1.5, fast = FALSE, ...) {
     stopifnot("Expects list with element 'preds" = "preds" %in% names(extract))
     preds <- extract$preds$predicted
     obs <- extract$preds$observed
     obs_exp <- extract$preds$observed_exp
     graphics::par(mfrow = c(1, 2))
+    if (fast) {
+        pch <- "."
+    } else  {
+        pch <- 16
+    }
     x <- NULL
     if (is.null(lbls)) {
         graphics::plot(preds, obs, main = "log scale",
-                       xlab = "Predicted", ylab = "Observed")
+                       xlab = "Predicted", ylab = "Observed",
+                       pch = pch, cex = 4, col = alpha("black", 0.3))
         graphics::curve(x * 1, add = TRUE, col = "red")
         graphics::plot(preds, obs_exp, main = "original scale",
-                       xlab = "Predicted", ylab = "Observed")
+                       xlab = "Predicted", ylab = "Observed",
+                       pch = pch, cex = 4, col = alpha("black", 0.3))
         graphics::curve(exp(x), add = TRUE, col = "red")
     }
     if (!is.null(lbls)) {
         graphics::plot(preds, obs, main = "log scale",
                        xlab = "Predicted", ylab = "Observed",
-                       type = "n")
+                       type = "n", , pch = pch, cex = 4, col = alpha("black", 0.3))
         graphics::curve(x * 1, add = TRUE, col = "red")
         graphics::text(preds, obs, labels = lbls, ...)
         graphics::plot(preds, obs_exp, main = "original scale",
-                       xlab = "Predicted", ylab = "Observed", type = "n")
+                       xlab = "Predicted", ylab = "Observed", type = "n",
+                       pch = pch, cex = 4, col = alpha("black", 0.3))
         graphics::text(preds, obs_exp, labels = lbls, ...)
         graphics::curve(exp(x), add = TRUE, col = "red")
     }
@@ -197,13 +205,13 @@ plot_fit <- function(extract, lbls = NULL, title = NULL,
 ##' @export save_model_plot
 ##' @author Konstantin
 save_model_plot <- function(extract, path, main, name_suffix,
-                            lbls = NULL, title_size = 1.5, ...) {
+                            lbls = NULL, title_size = 1.5, fast, ...) {
     stopifnot("extract must have name attribute" = is.character(extract$name))
     e <- extract
     main <- sprintf(main, e$name)
     plt_name <- paste0(e$name, name_suffix)
     save_plot(plot_fit(extract = e, lbls = lbls, title = main,
-                       title_size = title_size),
+                       title_size = title_size, fast = fast),
               path = path, plot_name = plt_name, data = e$preds, ...)
     return(NULL)
 }
