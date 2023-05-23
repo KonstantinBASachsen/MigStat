@@ -95,6 +95,9 @@ clean_extract <- function(extract) {
 ##' @param title character, optional. If set 'title' is added as
 ##'     heading.
 ##' @param title_size numeric, multiplicative factor for title size.
+##' @param fast logical, if TRUE "." is used as pch. This increases
+##'     plotting speed a lot and is encouraged if there are many
+##'     points. It also reduces overplotting.
 ##' @param ... Additional parameters passed to text()
 ##' @return NULL
 ##' @author Konstantin
@@ -200,6 +203,9 @@ plot_fit <- function(extract, lbls = NULL, title = NULL,
 ##' @param lbls character, optional. If not NULL, lbls are plotted
 ##'     instead of points.
 ##' @param title_size numeric, optional, size of the plot title
+##' @param fast logical, if TRUE "." is used as pch. This increases
+##'     plotting speed a lot and is encouraged if there are many
+##'     points. It also reduces overplotting.
 ##' @param ... additional parameters passed to save_plot()
 ##' @return NULL
 ##' @export save_model_plot

@@ -46,14 +46,13 @@ get_box_data <- function(mig, col, by,
 ##' 
 ##' @title Boxplot with facets
 ##' @param dt data.table returned by get_box_data()
-##' @param title Plot title
-##' @param group variable used for faceting
 ##' @return plot object
 ##' @author Konstantin
 ##' @import ggplot2
 custom_boxplot <- function(dt) {
     ## Plotted die 5 Punkte Zusammenfassung, welche mit get_box_data()
     ## erstellt wurde.
+    group <- NULL
     box_dist <- ggplot2::ggplot(dt) +
         ggplot2::geom_boxplot(
                      ggplot2::aes(x = "year_short", min = "ymin",
