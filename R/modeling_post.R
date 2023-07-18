@@ -47,6 +47,31 @@ extract_fit <- function(fit) {
                   "adj_r_squared" = adj_r_squared,
                   "aic" = aic,
                   "link" = link)
+
+    extracted <- list("preds" = preds_obs, "model" = model)
+    return(extracted)
+}
+
+extract_fastglm <- function(fit) {
+    call <- as.character(fit$call)[2]
+    coefs <- data.table::data.table("coefs" = names(coef(fit)),
+                                    "estimate" = round(coef(fit), 2),
+                                    "se" = round(fit$se ,2))
+    preds <- fit$linear.predictors
+    preds_exp <- fit$fitted.values    
+    obs <- fit$y
+    preds_obs <- data.table::data.table("predicted" = preds, "observed" = log(obs),
+                                        "observed_exp" = obs)
+
+    r_squared <- NA
+    adj_r_squared <- NA
+    aic <- fit$aic
+    link <- fit$family$link
+    model <- list("call" = call, "coefs" = coefs,
+                  "r_squared" = r_squared,
+                  "adj_r_squared" = adj_r_squared,
+                  "aic" = aic,
+                  "link" = link)
     extracted <- list("preds" = preds_obs, "model" = model)
     return(extracted)
 }
