@@ -80,7 +80,7 @@ if_not_exist_create <- function(path) {
 make_paths <- function(project_path) {
     paths <- list()
 ################# Data paths ###################
-    paths$data <- file.path(project_path, "data")
+    paths$data <- file.path(project_path, "extdata")
 ###### Raw Data ##############
     paths$raw <- file.path(paths$data, "raw")
     paths$raw_shapes <- file.path(paths$raw, "shapes")
@@ -99,5 +99,10 @@ make_paths <- function(project_path) {
     paths$clean_flows_bl <- file.path(paths$clean, "flows_states")
     paths$raw_flows_di <- file.path(paths$raw, "flows_districts")
     paths$clean_flows_di <- file.path(paths$clean, "flows_districts")
+    paths$clean_sim <- file.path(paths$clean, "simulations")
+######## others #############    
+    paths$provide <- "~/extdata/provide/"
+    paths$exec <- file.path(project_path, "exec")
+    paths$tidying <- file.path(paths$exec, "tidying")
     return(paths)
 }
