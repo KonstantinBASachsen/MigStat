@@ -1,7 +1,7 @@
-ps <- make_paths()
+ps <- make_paths("~/Diss/exec/test_run/")
 ps$data <- "~/Diss/exec/one_run/data/clean/"
 ps$cor <- file.path(ps$data, "corrections")
-shp <- read_clean_shps(ps$shps, "complete")$districts
+shp <- read_clean_shps(ps$clean_shapes, "complete")$districts
 mig <- data.table::fread(file.path(ps$mig, "moves2000-2018.csv"))
 correct <- data.table::fread(file.path(ps$cor, "districts_19.csv"))
 correct <- data.table::fread(file.path(ps$cor, "districts_19_fdz.csv"))
