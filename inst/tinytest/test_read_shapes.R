@@ -1,4 +1,5 @@
-shp_path <- "~/extdata/shapes31_test/no_ewz"
+ps <- make_paths("~/Diss/")
+shp_path <- file.path(ps$raw_shapes, "new")
 shapes <- MigStat::read_shapes(shp_path)
 
 ### administrative entities to read

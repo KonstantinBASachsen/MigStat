@@ -1,5 +1,5 @@
-paths <- make_paths()
-dist_f <- file.path(paths$dist, "distances_st.csv")
+## paths <- make_paths("~/Diss")
+## dist_f <- file.path(paths$dist, "distances_st.csv")
 ## Currently I do not use read_distances because I just compute them
 ## using get_distances. Will change when I analyze municipalities
 

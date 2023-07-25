@@ -1,8 +1,8 @@
 ex_dat <- MigStat:::read_examples() ## still reads AGS cols as character...
 mig <- ex_dat$mig
 shps <- ex_dat$shps
-shps <- MigStat:::read_clean_shps("/home/konstantin/extdata/shapes31simple2", type = "complete")
-
+##shps <- MigStat:::read_clean_shps("/home/konstantin/extdata/shapes31simple2", type = "complete")
+shps <- MigStat:::read_clean_shps("/home/konstantin/extdata/clean/shapes/", type = "complete")
 ### I want to check if variables are added correctly. Particularly, if
 ### the grouping of some ags to one municipality works. 
 mig[, "year" := EF12U3] ## should do this only once when reading data,

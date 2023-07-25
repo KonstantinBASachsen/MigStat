@@ -30,6 +30,8 @@ def_p_examples <- function(ds) {
 ##    shp_path <-  "/home/konstantin/Diss/inst/extdata/vg250-ew_3112.utm32s.shape.ebenen/vg250-ew_ebenen"
     shp_path <-  "~/Documents/Diss/inst/extdata/shapes/no_ewz"
     shp_path <- "~/extdata/shapes31_test/no_ewz"
+    shp_path <- "~/extdata/clean/shapes/"
+    shp_path <- "~/extdata/raw/shapes/new"
     if (ds == "mig") {
         path  <- mig_path
     }

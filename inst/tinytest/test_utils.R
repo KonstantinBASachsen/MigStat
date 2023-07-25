@@ -1,7 +1,8 @@
 ex_dat <- MigStat:::read_examples() ## still reads AGS cols as character...
 mig <- ex_dat$mig
 shps <- ex_dat$shps
-shps <- read_clean_shps("/home/konstantin/extdata/shapes31simple2", type = "ags")
+ps <- make_paths("~/Diss/")
+shps <- read_clean_shps(ps$clean_shapes, type = "ags")
 
 
 #### testing do_join
