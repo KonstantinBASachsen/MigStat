@@ -17,7 +17,6 @@ Imports:
 	openxlsx,
 	stats,
 	methods,
-	MASS,
-	graphics
+	MASS
 Suggests: 
     tinytest 

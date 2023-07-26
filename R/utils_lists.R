@@ -45,14 +45,10 @@ name_list <- function(list, names) {
 ##' @export list_to_dt
 ##' @author Konstantin
 ##' @examples
-##' x <- rnorm(100)
-##' y <- 0.1 * x + rnorm(100)
-##' group <- sample(c("A", "B", "C"), 100, replace = TRUE)
-##' dt <- data.table::data.table(x, y, group)
-##' models <- lapply(c("A", "B", "C"), function(g) lm(y ~ x, data = dt[group == g]))
-##' extracts <- lapply(models, extract_fit)
-##' output <- lapply(extracts, clean_extract)
-##' list_to_dt(output, c("A", "B", "C"))
+##' model1 <- data.table::data.table(coefs=letters[1:3], estimate =c(1, 3, 4))
+##' model2 <- data.table::data.table(coefs = letters[1:5], estimate=seq(3:7))
+##' l <- list(model1, model2)
+##' list_to_dt(list = l, c("model1", "model2"))  
 list_to_dt <- function(list, names = NULL, id_col = "model") {
     if (is.null(names(list)) & is.null(names)) {
         warning("list not named and no names specified. Models names sequentially")
@@ -64,3 +60,4 @@ list_to_dt <- function(list, names = NULL, id_col = "model") {
     models <- data.table::rbindlist(list, idcol = id_col)
     return(models)
 }
+
