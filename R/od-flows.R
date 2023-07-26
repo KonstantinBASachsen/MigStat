@@ -81,7 +81,7 @@ get_flows <- function(dt,
     if (type == "net") {
         us <- c(us_o, us_d)
         us <- us[us != "none"]
-         flows <- get_net(dt = dt, us = us, by = by)
+         flows <- get_net_(dt = dt, us = us, by = by)
     }
     if (fill != "none") {
         check_input_elements(values = values, flows = flows, type)
@@ -91,7 +91,7 @@ get_flows <- function(dt,
     return(flows)
 }
 
-get_net <- function(dt, us = c("st", "di", "mu"), by = NULL) {
+get_net_ <- function(dt, us = c("st", "di", "mu"), by = NULL) {
     wins <- get_flows_only(dt, us_o = "none", us_d = us, by = by)
     keyw <- colnames(wins)[colnames(wins) != "wins"]
     losses <- get_flows_only(dt, us_o = us, us_d = "none", by = by)
@@ -102,6 +102,41 @@ get_net <- function(dt, us = c("st", "di", "mu"), by = NULL) {
     net[is.na(losses), "losses" := 0]
     net[, "net" := wins - losses]
     return(net)
+}
+
+##' Aggregates origin-destination flows to net/wins/losses per region
+##'
+##' Net migration, wins and losses by region
+##' @param flows data.table of flows
+##' @param by character, grouping variables to stratify results by
+##' @return data.table
+##' @import data.table
+##' @export get_net
+##' @author Konstantin
+##' @examples
+##' ### generate data
+##' regions <- c("reg1", "reg2", "reg3")
+##' flows <- data.table::CJ(regions, regions)
+##' colnames(flows) <- c("origin", "destination")
+##' flows[, flow := runif(n = nrow(flows), min = 100, max = 1000)]
+##' flows[, gender := sample(c("f", "m"), size = nrow(flows), replace = TRUE)]
+##'
+##' net <- get_net(flows) ## does not work
+##' net <- get_net(flows, by = "gender")
+get_net <- function(flows, by = NULL) {
+    . <- flow <- i.losses <- NULL
+    losses <- flows[, .(losses = sum(flow)),
+                    keyby = c("origin", by)]
+    data.table::setnames(losses, "origin", "region")
+    wins <- flows[, .(wins = sum(flow)),
+                  keyby = c("destination", by)]
+    data.table::setnames(wins, "destination", "region")
+    data.table::setkeyv(losses, c("region",  by))
+    data.table::setkeyv(wins, c("region", by))
+    wins[losses, "losses" := i.losses]
+    wins[, "saldo" := wins - losses]
+    wins[, "total" := wins + losses]
+    return(wins)
 }
 
 get_flows_only <- function(dt, us_o = NULL, us_d = NULL, by = NULL) {
