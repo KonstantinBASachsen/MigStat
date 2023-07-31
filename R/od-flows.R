@@ -104,7 +104,7 @@ get_net_ <- function(dt, us = c("st", "di", "mu"), by = NULL) {
     return(net)
 }
 
-##' Aggregates origin-destination flows to net/wins/losses per region
+##' Aggregates origin-destination flows to saldo/wins/losses/total per region
 ##'
 ##' Net migration, wins and losses by region
 ##' @param flows data.table of flows
@@ -220,6 +220,30 @@ include_missing_obs <- function(flows, fill, values, type) {
     return(flows)
 }
 
+##' Checks if number of rows in flows data.table is as expected
+##'
+##' @param flows data.table of flows data
+##' @param all_pairs data.table that holds all covariate combinations
+##' @return NULL
+##' @author Konstantin
+##' @export check_flow_number
+check_flow_number <- function(flows, all_pairs) {
+    if (nrow(flows) < nrow(all_pairs)) {
+        warning("Rows are missing! Please use fill_obs().")
+    }
+    if (nrow(flows) >= nrow(all_pairs)) {
+        message("Row number correct!")
+    }
+    return(NULL)
+}
+
+##' Fills missing observation in a flows data.table with 0's
+##'
+##' When fitting models to flows or even when just visualizing or
+##' computing net statistics the analyses will be flawed because the
+##' flows data.table is not complete in the sense that all
+##' combinations of covariates like origin, destination, age etc. are
+##' in the table. Only these combinations that result in a non 0.
 ##' flow. fill_obs() adds all the missing covariate combinations and
 ##' sets the flow of those to 0.
 ##' @param flows data.table
