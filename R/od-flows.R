@@ -220,6 +220,36 @@ include_missing_obs <- function(flows, fill, values, type) {
     return(flows)
 }
 
+##' flow. fill_obs() adds all the missing covariate combinations and
+##' sets the flow of those to 0.
+##' @param flows data.table
+##' @param all_pairs data.table of all covariate combinations
+##' @return data.table
+##' @export fill_obs
+##' @import data.table
+##' @author Konstantin
+##' @examples
+##' regions <- c("reg1", "reg2")
+##' ### complete observations
+##' all_pairs <- data.table::CJ(origin = regions,
+##'                             destination = regions,
+##'                             gender = c("m", "f"))
+##' flows <- all_pairs[- c(1:4)] ## simulates missing flows from region 1
+##' flows[, flow := c(100, 200, 150, 300)]
+##' net <- get_net(flows, by = "gender") ## NA's
+##' flows <- fill_obs(flows, all_pairs, c("origin", "destination", "gender"))
+##' net2 <- get_net(flows, by = "gender") ## correct results
+fill_obs <- function(flows, all_pairs, key = NULL) {
+    if (is.null(key)) {
+        key <- c("origin", "destination", "age_group", "year")
+    }
+    data.table::setkeyv(flows, key)
+    data.table::setkeyv(all_pairs, key)
+    flows <- flows[all_pairs]
+    flows[is.na(flow), "flow" := 0]
+    stopifnot("Rows seem to be missing" = nrow(flows) >= nrow(all_pairs))
+    return(flows)
+}
 
 ##' Ungroups an MigStat::get_flows() object
 ##'
