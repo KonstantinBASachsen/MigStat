@@ -190,7 +190,9 @@ get_regions <- function(dt, shps, us = c("st", "di", "mu"),
 }
 
 include_missing_obs <- function(flows, fill, values, type) {
-    ### I think this function is not needed anymore
+    ### I think this function is not needed anymore. It is somewhere!
+    ### I think I probably should replace it's usage by the more
+    ### straight forward fill_obs()
     flow <- origin <- destination <- . <- region<- NULL
     values <- do.call(data.table::CJ, values)
     key <- names(values)
@@ -248,6 +250,8 @@ check_flow_number <- function(flows, all_pairs) {
 ##' sets the flow of those to 0.
 ##' @param flows data.table
 ##' @param all_pairs data.table of all covariate combinations
+##' @param key character specify variable names. Defaults to
+##'     c("origin", "destination", "age_group", "year").
 ##' @return data.table
 ##' @export fill_obs
 ##' @import data.table
@@ -263,10 +267,9 @@ check_flow_number <- function(flows, all_pairs) {
 ##' net <- get_net(flows, by = "gender") ## NA's
 ##' flows <- fill_obs(flows, all_pairs, c("origin", "destination", "gender"))
 ##' net2 <- get_net(flows, by = "gender") ## correct results
-fill_obs <- function(flows, all_pairs, key = NULL) {
-    if (is.null(key)) {
-        key <- c("origin", "destination", "age_group", "year")
-    }
+fill_obs <- function(flows, all_pairs,
+                     key = c("origin", "destination", "age_group", "year")) {
+    flow <- NULL
     data.table::setkeyv(flows, key)
     data.table::setkeyv(all_pairs, key)
     flows <- flows[all_pairs]
