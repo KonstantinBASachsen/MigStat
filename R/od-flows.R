@@ -190,6 +190,7 @@ get_regions <- function(dt, shps, us = c("st", "di", "mu"),
 }
 
 include_missing_obs <- function(flows, fill, values, type) {
+    ### I think this function is not needed anymore
     flow <- origin <- destination <- . <- region<- NULL
     values <- do.call(data.table::CJ, values)
     key <- names(values)
